@@ -48,6 +48,12 @@ import {
   ChartTooltipContent,
   type ChartConfig,
 } from '@/components/ui/chart'
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from '@/components/ui/tooltip'
 import { 
   Bar, 
   BarChart, 
@@ -146,7 +152,11 @@ import {
   Thermometer,
   FolderOpen,
   FileCheck,
-  Clock3
+  Clock3,
+  Newspaper,
+  ArrowRight,
+  Loader2,
+  AlertTriangle
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { ThemeToggle } from '@/components/theme-toggle'
@@ -547,6 +557,15 @@ const activityTimeline = [
   { id: 5, action: 'Gửi thông báo đến GV', user: 'Hoàng Văn E', time: '3 giờ trước', type: 'notify', icon: <Bell className="w-4 h-4" />, color: 'bg-pink-500' },
 ]
 
+// News ticker data
+const newsTickerItems = [
+  { id: 1, text: '📢 Đăng ký đề tài NCKH năm 2026 - Hạn chót: 15/5/2026', type: 'info', priority: 'high' },
+  { id: 2, text: '🎉 Hệ thống đã cập nhật phiên bản 2.0 với nhiều tính năng mới', type: 'success', priority: 'normal' },
+  { id: 3, text: '⚠️ Lịch nghỉ lễ 30/4 - 1/5: Các lớp học sẽ được bù vào tuần sau', type: 'warning', priority: 'high' },
+  { id: 4, text: '📚 Mở thêm 5 lớp học kỳ hè cho các khoa CNTT và Kinh tế', type: 'info', priority: 'normal' },
+  { id: 5, text: '🏆 Trường đạt top 10 trường đại học chất lượng đào tạo 2026', type: 'success', priority: 'normal' },
+]
+
 export default function HomePage() {
   const [activeMenu, setActiveMenu] = useState<string | null>(null)
   const [currentTime, setCurrentTime] = useState(new Date())
@@ -661,6 +680,7 @@ export default function HomePage() {
   }
 
   return (
+    <TooltipProvider delayDuration={300}>
     <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-100 dark:from-gray-950 dark:via-gray-900 dark:to-gray-950 flex relative overflow-hidden">
       {/* Floating Gradient Orbs Background */}
       <div className="fixed inset-0 overflow-hidden pointer-events-none z-0">
@@ -869,14 +889,21 @@ export default function HomePage() {
 
             <div className="flex items-center gap-2">
               {/* Search Button */}
-              <Button 
-                variant="ghost" 
-                size="icon"
-                className="hidden sm:flex h-9 w-9 hover:bg-gray-100 dark:hover:bg-gray-800"
-                onClick={() => setShowSearch(true)}
-              >
-                <Search className="w-4 h-4" />
-              </Button>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button 
+                    variant="ghost" 
+                    size="icon"
+                    className="hidden sm:flex h-9 w-9 hover:bg-gray-100 dark:hover:bg-gray-800"
+                    onClick={() => setShowSearch(true)}
+                  >
+                    <Search className="w-4 h-4" />
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent side="bottom">
+                  <p>Tìm kiếm nhanh <kbd className="ml-1 px-1.5 py-0.5 text-[10px] bg-gray-100 dark:bg-gray-700 rounded">Ctrl+K</kbd></p>
+                </TooltipContent>
+              </Tooltip>
 
               {/* Notifications */}
               <DropdownMenu>
@@ -909,26 +936,38 @@ export default function HomePage() {
               </DropdownMenu>
 
               {/* Feedback Button */}
-              <Button 
-                variant="ghost" 
-                size="icon"
-                className="hidden sm:flex h-9 w-9 hover:bg-gray-100 dark:hover:bg-gray-800"
-                onClick={() => setShowFeedback(true)}
-                title="Gửi phản hồi"
-              >
-                <MessageSquare className="w-4 h-4" />
-              </Button>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button 
+                    variant="ghost" 
+                    size="icon"
+                    className="hidden sm:flex h-9 w-9 hover:bg-gray-100 dark:hover:bg-gray-800"
+                    onClick={() => setShowFeedback(true)}
+                  >
+                    <MessageSquare className="w-4 h-4" />
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent side="bottom">
+                  <p>Gửi phản hồi</p>
+                </TooltipContent>
+              </Tooltip>
 
               {/* Help Button */}
-              <Button 
-                variant="ghost" 
-                size="icon"
-                className="hidden sm:flex h-9 w-9 hover:bg-gray-100 dark:hover:bg-gray-800"
-                onClick={() => setShowShortcuts(true)}
-                title="Phím tắt (F1)"
-              >
-                <HelpCircle className="w-4 h-4" />
-              </Button>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button 
+                    variant="ghost" 
+                    size="icon"
+                    className="hidden sm:flex h-9 w-9 hover:bg-gray-100 dark:hover:bg-gray-800"
+                    onClick={() => setShowShortcuts(true)}
+                  >
+                    <HelpCircle className="w-4 h-4" />
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent side="bottom">
+                  <p>Phím tắt <kbd className="ml-1 px-1.5 py-0.5 text-[10px] bg-gray-100 dark:bg-gray-700 rounded">F1</kbd></p>
+                </TooltipContent>
+              </Tooltip>
 
               {/* Theme Toggle */}
               <ThemeToggle />
@@ -988,6 +1027,36 @@ export default function HomePage() {
             </div>
           </div>
         </header>
+
+        {/* News Ticker Banner */}
+        <div className="bg-gradient-to-r from-emerald-600 via-teal-600 to-cyan-600 dark:from-emerald-700 dark:via-teal-700 dark:to-cyan-700 py-2 overflow-hidden">
+          <div className="flex items-center gap-3 px-4">
+            <div className="flex items-center gap-2 bg-white/20 px-3 py-1 rounded-full backdrop-blur-sm flex-shrink-0">
+              <Newspaper className="w-4 h-4 text-white animate-pulse" />
+              <span className="text-white text-sm font-semibold whitespace-nowrap">Tin mới</span>
+            </div>
+            <div className="relative flex-1 overflow-hidden">
+              <div className="flex gap-12 animate-marquee whitespace-nowrap">
+                {[...newsTickerItems, ...newsTickerItems].map((item, index) => (
+                  <div key={`${item.id}-${index}`} className="flex items-center gap-2 text-white/90 text-sm">
+                    <span className={cn(
+                      "inline-block w-2 h-2 rounded-full flex-shrink-0",
+                      item.type === 'info' && "bg-blue-300",
+                      item.type === 'success' && "bg-emerald-300",
+                      item.type === 'warning' && "bg-amber-300"
+                    )} />
+                    <span>{item.text}</span>
+                    {item.priority === 'high' && (
+                      <Badge className="bg-red-500/80 text-white text-[10px] px-1.5 py-0 h-4 border-0 animate-pulse">
+                        Quan trọng
+                      </Badge>
+                    )}
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
 
         {/* Content Area */}
         <ScrollArea className="flex-1">
@@ -2576,5 +2645,6 @@ export default function HomePage() {
         </div>
       )}
     </div>
+    </TooltipProvider>
   )
 }
