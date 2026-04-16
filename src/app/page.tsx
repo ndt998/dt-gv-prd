@@ -520,6 +520,9 @@ export default function HomePage() {
   const [showSearch, setShowSearch] = useState(false)
   const [showShortcuts, setShowShortcuts] = useState(false)
   const [showFeedback, setShowFeedback] = useState(false)
+  const [showProfile, setShowProfile] = useState(false)
+  const [profileTab, setProfileTab] = useState('info')
+  const [showWeather, setShowWeather] = useState(false)
   const [expandedStats, setExpandedStats] = useState(false)
   const [selectedDepartment, setSelectedDepartment] = useState('all')
   const [activeTab, setActiveTab] = useState('overview')
@@ -566,6 +569,7 @@ export default function HomePage() {
         setShowSearch(false)
         setShowShortcuts(false)
         setShowFeedback(false)
+        setShowProfile(false)
         setActiveMenu(null)
       }
     }
@@ -915,20 +919,24 @@ export default function HomePage() {
                     </div>
                   </DropdownMenuLabel>
                   <DropdownMenuSeparator />
-                  <DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => { setShowProfile(true); setProfileTab('info'); }}>
                     <User className="w-4 h-4 mr-2" />
                     Thông tin cá nhân
                   </DropdownMenuItem>
-                  <DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => { setShowProfile(true); setProfileTab('settings'); }}>
                     <Settings className="w-4 h-4 mr-2" />
                     Cài đặt
                   </DropdownMenuItem>
-                  <DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => { setShowProfile(true); setProfileTab('security'); }}>
+                    <Shield className="w-4 h-4 mr-2" />
+                    Bảo mật
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => setShowShortcuts(true)}>
                     <HelpCircle className="w-4 h-4 mr-2" />
                     Trợ giúp
                   </DropdownMenuItem>
                   <DropdownMenuSeparator />
-                  <DropdownMenuItem className="text-red-600 dark:text-red-400">
+                  <DropdownMenuItem className="text-red-600 dark:text-red-400" onClick={() => toast.info('Đăng xuất', { description: 'Tính năng đang được phát triển' })}>
                     <LogOut className="w-4 h-4 mr-2" />
                     Đăng xuất
                   </DropdownMenuItem>
@@ -2172,6 +2180,197 @@ export default function HomePage() {
                 >
                   <Send className="w-4 h-4 mr-2" />
                   Gửi
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+      )}
+
+      {/* Profile Settings Modal */}
+      {showProfile && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm animate-in fade-in" onClick={() => setShowProfile(false)}>
+          <Card className="w-full max-w-2xl mx-4 shadow-2xl border-0 animate-in zoom-in-95" onClick={e => e.stopPropagation()}>
+            <CardHeader className="pb-4">
+              <div className="flex items-center justify-between">
+                <CardTitle className="flex items-center gap-2">
+                  <User className="w-5 h-5 text-emerald-500" />
+                  Cài đặt tài khoản
+                </CardTitle>
+                <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => setShowProfile(false)}>
+                  <X className="w-4 h-4" />
+                </Button>
+              </div>
+            </CardHeader>
+            <CardContent>
+              <Tabs value={profileTab} onValueChange={setProfileTab}>
+                <TabsList className="grid w-full grid-cols-3 mb-4">
+                  <TabsTrigger value="info" className="gap-2">
+                    <User className="w-4 h-4" />
+                    <span className="hidden sm:inline">Thông tin</span>
+                  </TabsTrigger>
+                  <TabsTrigger value="settings" className="gap-2">
+                    <Settings className="w-4 h-4" />
+                    <span className="hidden sm:inline">Cài đặt</span>
+                  </TabsTrigger>
+                  <TabsTrigger value="security" className="gap-2">
+                    <Shield className="w-4 h-4" />
+                    <span className="hidden sm:inline">Bảo mật</span>
+                  </TabsTrigger>
+                </TabsList>
+
+                <TabsContent value="info" className="space-y-4 animate-in fade-in">
+                  <div className="flex flex-col items-center gap-4 mb-6">
+                    <Avatar className="h-24 w-24">
+                      <AvatarImage src="/prd-logo.png" alt="User" />
+                      <AvatarFallback className="bg-emerald-100 text-emerald-700 text-2xl font-bold">AD</AvatarFallback>
+                    </Avatar>
+                    <Button variant="outline" size="sm">Đổi ảnh đại diện</Button>
+                  </div>
+                  <div className="grid gap-4">
+                    <div className="grid sm:grid-cols-2 gap-4">
+                      <div className="space-y-2">
+                        <label className="text-sm font-medium">Họ và tên</label>
+                        <Input defaultValue="Admin" />
+                      </div>
+                      <div className="space-y-2">
+                        <label className="text-sm font-medium">Email</label>
+                        <Input defaultValue="admin@prd.edu.vn" type="email" />
+                      </div>
+                    </div>
+                    <div className="grid sm:grid-cols-2 gap-4">
+                      <div className="space-y-2">
+                        <label className="text-sm font-medium">Số điện thoại</label>
+                        <Input defaultValue="0901234567" />
+                      </div>
+                      <div className="space-y-2">
+                        <label className="text-sm font-medium">Chức vụ</label>
+                        <Input defaultValue="Quản trị viên" />
+                      </div>
+                    </div>
+                    <div className="space-y-2">
+                      <label className="text-sm font-medium">Khoa/Phòng ban</label>
+                      <Select defaultValue="admin">
+                        <SelectTrigger>
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="admin">Ban quản trị</SelectItem>
+                          <SelectItem value="cntt">Khoa CNTT</SelectItem>
+                          <SelectItem value="kinhte">Khoa Kinh tế</SelectItem>
+                          <SelectItem value="kythuat">Khoa Kỹ thuật</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  </div>
+                </TabsContent>
+
+                <TabsContent value="settings" className="space-y-4 animate-in fade-in">
+                  <div className="space-y-4">
+                    <div className="flex items-center justify-between p-4 rounded-lg bg-gray-50 dark:bg-gray-800">
+                      <div className="flex items-center gap-3">
+                        <Bell className="w-5 h-5 text-emerald-500" />
+                        <div>
+                          <p className="font-medium">Thông báo email</p>
+                          <p className="text-sm text-gray-500">Nhận thông báo qua email</p>
+                        </div>
+                      </div>
+                      <input type="checkbox" defaultChecked className="h-5 w-5 accent-emerald-500" />
+                    </div>
+                    <div className="flex items-center justify-between p-4 rounded-lg bg-gray-50 dark:bg-gray-800">
+                      <div className="flex items-center gap-3">
+                        <Globe className="w-5 h-5 text-emerald-500" />
+                        <div>
+                          <p className="font-medium">Ngôn ngữ</p>
+                          <p className="text-sm text-gray-500">Chọn ngôn ngữ hiển thị</p>
+                        </div>
+                      </div>
+                      <Select defaultValue="vi">
+                        <SelectTrigger className="w-32">
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="vi">Tiếng Việt</SelectItem>
+                          <SelectItem value="en">English</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    <div className="flex items-center justify-between p-4 rounded-lg bg-gray-50 dark:bg-gray-800">
+                      <div className="flex items-center gap-3">
+                        <Calendar className="w-5 h-5 text-emerald-500" />
+                        <div>
+                          <p className="font-medium">Định dạng ngày</p>
+                          <p className="text-sm text-gray-500">Chọn định dạng hiển thị ngày</p>
+                        </div>
+                      </div>
+                      <Select defaultValue="dd/mm/yyyy">
+                        <SelectTrigger className="w-32">
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="dd/mm/yyyy">DD/MM/YYYY</SelectItem>
+                          <SelectItem value="mm/dd/yyyy">MM/DD/YYYY</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  </div>
+                </TabsContent>
+
+                <TabsContent value="security" className="space-y-4 animate-in fade-in">
+                  <div className="space-y-4">
+                    <Card className="border border-gray-200 dark:border-gray-700">
+                      <CardHeader className="pb-3">
+                        <CardTitle className="text-base">Đổi mật khẩu</CardTitle>
+                      </CardHeader>
+                      <CardContent className="space-y-4">
+                        <div className="space-y-2">
+                          <label className="text-sm font-medium">Mật khẩu hiện tại</label>
+                          <Input type="password" placeholder="••••••••" />
+                        </div>
+                        <div className="space-y-2">
+                          <label className="text-sm font-medium">Mật khẩu mới</label>
+                          <Input type="password" placeholder="••••••••" />
+                        </div>
+                        <div className="space-y-2">
+                          <label className="text-sm font-medium">Xác nhận mật khẩu mới</label>
+                          <Input type="password" placeholder="••••••••" />
+                        </div>
+                        <Button className="bg-emerald-500 hover:bg-emerald-600">Cập nhật mật khẩu</Button>
+                      </CardContent>
+                    </Card>
+                    <div className="flex items-center justify-between p-4 rounded-lg bg-gray-50 dark:bg-gray-800">
+                      <div className="flex items-center gap-3">
+                        <Shield className="w-5 h-5 text-emerald-500" />
+                        <div>
+                          <p className="font-medium">Xác thực hai yếu tố</p>
+                          <p className="text-sm text-gray-500">Bảo vệ tài khoản với 2FA</p>
+                        </div>
+                      </div>
+                      <Button variant="outline" size="sm">Bật</Button>
+                    </div>
+                    <div className="flex items-center justify-between p-4 rounded-lg bg-gray-50 dark:bg-gray-800">
+                      <div className="flex items-center gap-3">
+                        <Activity className="w-5 h-5 text-emerald-500" />
+                        <div>
+                          <p className="font-medium">Lịch sử đăng nhập</p>
+                          <p className="text-sm text-gray-500">Xem các phiên đăng nhập gần đây</p>
+                        </div>
+                      </div>
+                      <Button variant="outline" size="sm">Xem</Button>
+                    </div>
+                  </div>
+                </TabsContent>
+              </Tabs>
+              <div className="pt-4 mt-4 border-t flex justify-end gap-2">
+                <Button variant="outline" onClick={() => setShowProfile(false)}>Hủy</Button>
+                <Button 
+                  className="bg-emerald-500 hover:bg-emerald-600"
+                  onClick={() => {
+                    toast.success('Đã lưu thay đổi!', { icon: <CheckCircle2 className="w-4 h-4" /> })
+                    setShowProfile(false)
+                  }}
+                >
+                  Lưu thay đổi
                 </Button>
               </div>
             </CardContent>
