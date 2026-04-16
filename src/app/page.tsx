@@ -652,24 +652,20 @@ export default function HomePage() {
   const [classSearchResults, setClassSearchResults] = useState<Array<{id: string, code: string, name: string}>>([])
   const [isSearchingClasses, setIsSearchingClasses] = useState(false)
   const [showClassSearchResults, setShowClassSearchResults] = useState(false)
+  const [showWelcomeGuide, setShowWelcomeGuide] = useState(false)
 
   useEffect(() => {
     const timer = setInterval(() => setCurrentTime(new Date()), 1000)
     return () => clearInterval(timer)
   }, [])
 
-  // Welcome toast on first load
+  // Welcome Guide on first load
   useEffect(() => {
-    const hasSeenWelcome = sessionStorage.getItem('hasSeenWelcome')
+    const hasSeenWelcome = sessionStorage.getItem('hasSeenWelcomeGuide')
     if (!hasSeenWelcome) {
       setTimeout(() => {
-        toast.success('Chào mừng đến với Hệ thống Phòng Đào Tạo!', {
-          description: 'Bạn có thể sử dụng Ctrl+K để tìm kiếm nhanh.',
-          icon: <Sparkles className="w-4 h-4" />,
-          duration: 5000,
-        })
-        sessionStorage.setItem('hasSeenWelcome', 'true')
-      }, 1000)
+        setShowWelcomeGuide(true)
+      }, 1500)
     }
   }, [])
 
@@ -858,7 +854,7 @@ export default function HomePage() {
           
           {/* Class Search Results Dropdown */}
           {showClassSearchResults && (searchQuery || classSearchResults.length > 0) && (
-            <div className="absolute left-4 right-4 top-full mt-1 bg-white dark:bg-gray-900 rounded-lg shadow-xl border border-gray-200 dark:border-gray-700 max-h-60 overflow-y-auto z-50">
+            <div className="absolute left-4 right-4 top-full mt-1 bg-white dark:bg-gray-900 rounded-xl shadow-2xl border border-gray-200 dark:border-gray-700 max-h-60 overflow-y-auto z-50 overflow-hidden">
               {isSearchingClasses ? (
                 <div className="p-4 text-center text-gray-500">
                   <Loader2 className="w-5 h-5 animate-spin mx-auto mb-2" />
@@ -866,13 +862,15 @@ export default function HomePage() {
                 </div>
               ) : classSearchResults.length > 0 ? (
                 <div className="py-2">
-                  <div className="px-3 py-1.5 text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase">
+                  <div className="px-3 py-1.5 text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase flex items-center gap-2">
+                    <Search className="w-3 h-3" />
                     Kết quả tìm kiếm
                   </div>
-                  {classSearchResults.map((cls) => (
+                  {classSearchResults.map((cls, index) => (
                     <button
                       key={cls.id}
-                      className="w-full flex items-center gap-3 px-3 py-2 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors text-left"
+                      className="w-full flex items-center gap-3 px-3 py-2.5 hover:bg-emerald-50 dark:hover:bg-emerald-900/20 transition-all text-left group animate-in slide-in-from-left"
+                      style={{ animationDelay: `${index * 50}ms` }}
                       onClick={() => {
                         toast.success(`Đã chọn lớp: ${cls.code}`, {
                           description: cls.name,
@@ -883,20 +881,22 @@ export default function HomePage() {
                         setShowClassSearchResults(false)
                       }}
                     >
-                      <div className="p-2 rounded-lg bg-emerald-100 dark:bg-emerald-900/30 text-emerald-600 dark:text-emerald-400">
+                      <div className="p-2.5 rounded-xl bg-gradient-to-br from-emerald-100 to-teal-100 dark:from-emerald-900/30 dark:to-teal-900/30 text-emerald-600 dark:text-emerald-400 group-hover:scale-110 transition-transform shadow-sm">
                         <GraduationCap className="w-4 h-4" />
                       </div>
                       <div className="flex-1 min-w-0">
-                        <p className="font-medium text-gray-900 dark:text-white text-sm">{cls.code}</p>
+                        <p className="font-semibold text-gray-900 dark:text-white text-sm group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors">{cls.code}</p>
                         <p className="text-xs text-gray-500 dark:text-gray-400 truncate">{cls.name}</p>
                       </div>
-                      <ChevronRight className="w-4 h-4 text-gray-400" />
+                      <ChevronRight className="w-4 h-4 text-gray-300 group-hover:text-emerald-500 transition-colors" />
                     </button>
                   ))}
                 </div>
               ) : searchQuery ? (
                 <div className="p-4 text-center text-gray-500">
-                  <Search className="w-5 h-5 mx-auto mb-2 opacity-50" />
+                  <div className="w-10 h-10 rounded-full bg-gray-100 dark:bg-gray-800 flex items-center justify-center mx-auto mb-2">
+                    <Search className="w-5 h-5 opacity-50" />
+                  </div>
                   <span className="text-sm">Không tìm thấy lớp với mã "{searchQuery}"</span>
                 </div>
               ) : null}
@@ -1030,16 +1030,23 @@ export default function HomePage() {
         <div className="p-4 border-t border-white/10">
           <a
             href="/admin/login"
-            className="w-full flex items-center gap-3 px-4 py-3 rounded-xl bg-white/10 hover:bg-white/20 text-white transition-all duration-300 group"
+            className="w-full flex items-center gap-3 px-4 py-3 rounded-xl bg-white/10 hover:bg-gradient-to-r hover:from-emerald-400/30 hover:to-teal-400/30 text-white transition-all duration-300 group hover:scale-[1.02] hover:shadow-lg relative overflow-hidden"
           >
-            <div className="flex-shrink-0 p-2 rounded-lg bg-white/10 group-hover:bg-white/20 transition-colors">
+            {/* Pulsing indicator */}
+            <div className="absolute top-2 right-2">
+              <span className="relative flex h-2 w-2">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-300"></span>
+              </span>
+            </div>
+            <div className="flex-shrink-0 p-2 rounded-lg bg-white/10 group-hover:bg-white/20 transition-colors group-hover:rotate-12">
               <Shield className="w-5 h-5" />
             </div>
             <div className="flex-1 text-left">
               <span className="font-semibold">Quản trị viên</span>
               <p className="text-xs text-emerald-200">Đăng nhập admin</p>
             </div>
-            <ChevronRight className="w-4 h-4 opacity-50 group-hover:opacity-100" />
+            <ChevronRight className="w-4 h-4 opacity-50 group-hover:opacity-100 group-hover:translate-x-1 transition-all" />
           </a>
         </div>
       </aside>
@@ -1139,13 +1146,13 @@ export default function HomePage() {
                     variant="ghost" 
                     size="icon"
                     className="hidden sm:flex h-9 w-9 hover:bg-gray-100 dark:hover:bg-gray-800"
-                    onClick={() => setShowShortcuts(true)}
+                    onClick={() => setShowWelcomeGuide(true)}
                   >
                     <HelpCircle className="w-4 h-4" />
                   </Button>
                 </TooltipTrigger>
                 <TooltipContent side="bottom">
-                  <p>Phím tắt <kbd className="ml-1 px-1.5 py-0.5 text-[10px] bg-gray-100 dark:bg-gray-700 rounded">F1</kbd></p>
+                  <p>Hướng dẫn sử dụng</p>
                 </TooltipContent>
               </Tooltip>
 
@@ -1216,7 +1223,7 @@ export default function HomePage() {
               <span className="text-white text-sm font-semibold whitespace-nowrap">Tin mới</span>
             </div>
             <div className="flex-1 text-center py-1">
-              <span className="text-white/70 text-sm italic">Chưa có thông báo mới</span>
+              <span className="text-white/80 text-sm">Danh sách lớp học sẽ hiển thị tại đây sau khi được cập nhật</span>
             </div>
           </div>
         </div>
@@ -2439,17 +2446,107 @@ export default function HomePage() {
           </div>
         </ScrollArea>
 
-        {/* Footer */}
-        <footer className="mt-auto border-t border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 py-4 px-4 lg:px-8">
-          <div className="flex flex-col sm:flex-row items-center justify-between gap-2 text-sm text-gray-500 dark:text-gray-400">
-            <p>&copy; 2024 Phòng Đào tạo. Bản quyền thuộc về trường đại học.</p>
-            <div className="flex items-center gap-4">
-              <span className="flex items-center gap-2">
-                <span className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse" />
-                Phiên bản 2.0.0
-              </span>
-              <Separator orientation="vertical" className="h-4 hidden sm:block" />
-              <span className="hidden sm:inline">Lần truy cập cuối: {formatTime(currentTime)}</span>
+        {/* Enhanced Footer */}
+        <footer className="mt-auto border-t border-gray-200 dark:border-gray-800 bg-gradient-to-b from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-950">
+          <div className="px-4 lg:px-8 py-8">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+              {/* Column 1: Logo & Description */}
+              <div className="space-y-4">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 bg-emerald-100 dark:bg-emerald-900/30 rounded-lg flex items-center justify-center">
+                    <img src="/prd-logo.png" alt="Logo PRD" className="w-8 h-8 object-contain" />
+                  </div>
+                  <div>
+                    <h3 className="font-bold text-gray-900 dark:text-white">Phòng Đào Tạo</h3>
+                    <p className="text-xs text-gray-500 dark:text-gray-400">Hệ thống quản lý</p>
+                  </div>
+                </div>
+                <p className="text-sm text-gray-600 dark:text-gray-400 leading-relaxed">
+                  Hệ thống quản lý đào tạo toàn diện, hỗ trợ giảng viên và sinh viên theo dõi lịch học, báo cáo và thống kê.
+                </p>
+              </div>
+
+              {/* Column 2: Quick Links */}
+              <div>
+                <h4 className="font-semibold text-gray-900 dark:text-white mb-4">Liên kết nhanh</h4>
+                <ul className="space-y-2">
+                  <li>
+                    <button onClick={() => setActiveMenu(null)} className="text-sm text-gray-600 dark:text-gray-400 hover:text-emerald-600 dark:hover:text-emerald-400 transition-colors flex items-center gap-2">
+                      <Home className="w-4 h-4" />
+                      Trang chủ
+                    </button>
+                  </li>
+                  <li>
+                    <button onClick={() => setActiveTab('charts')} className="text-sm text-gray-600 dark:text-gray-400 hover:text-emerald-600 dark:hover:text-emerald-400 transition-colors flex items-center gap-2">
+                      <BarChart3 className="w-4 h-4" />
+                      Thống kê
+                    </button>
+                  </li>
+                  <li>
+                    <button onClick={() => setActiveMenu('gantt')} className="text-sm text-gray-600 dark:text-gray-400 hover:text-emerald-600 dark:hover:text-emerald-400 transition-colors flex items-center gap-2">
+                      <Calendar className="w-4 h-4" />
+                      Lịch học
+                    </button>
+                  </li>
+                </ul>
+              </div>
+
+              {/* Column 3: Support */}
+              <div>
+                <h4 className="font-semibold text-gray-900 dark:text-white mb-4">Hỗ trợ</h4>
+                <ul className="space-y-2">
+                  <li>
+                    <button onClick={() => setShowWelcomeGuide(true)} className="text-sm text-gray-600 dark:text-gray-400 hover:text-emerald-600 dark:hover:text-emerald-400 transition-colors flex items-center gap-2">
+                      <BookOpen className="w-4 h-4" />
+                      Hướng dẫn
+                    </button>
+                  </li>
+                  <li>
+                    <button onClick={() => setShowFeedback(true)} className="text-sm text-gray-600 dark:text-gray-400 hover:text-emerald-600 dark:hover:text-emerald-400 transition-colors flex items-center gap-2">
+                      <MessageSquare className="w-4 h-4" />
+                      Liên hệ hỗ trợ
+                    </button>
+                  </li>
+                  <li>
+                    <a href="mailto:support@prd.edu.vn" className="text-sm text-gray-600 dark:text-gray-400 hover:text-emerald-600 dark:hover:text-emerald-400 transition-colors flex items-center gap-2">
+                      <Mail className="w-4 h-4" />
+                      support@prd.edu.vn
+                    </a>
+                  </li>
+                </ul>
+              </div>
+
+              {/* Column 4: System Info */}
+              <div>
+                <h4 className="font-semibold text-gray-900 dark:text-white mb-4">Thông tin hệ thống</h4>
+                <ul className="space-y-3">
+                  <li className="flex items-center justify-between text-sm">
+                    <span className="text-gray-500 dark:text-gray-400">Phiên bản</span>
+                    <Badge variant="outline" className="text-emerald-600 dark:text-emerald-400 border-emerald-200 dark:border-emerald-800">v3.0.0</Badge>
+                  </li>
+                  <li className="flex items-center justify-between text-sm">
+                    <span className="text-gray-500 dark:text-gray-400">Cập nhật cuối</span>
+                    <span className="text-gray-700 dark:text-gray-300">16/04/2026</span>
+                  </li>
+                  <li className="flex items-center justify-between text-sm">
+                    <span className="text-gray-500 dark:text-gray-400">Trạng thái</span>
+                    <span className="flex items-center gap-1.5 text-emerald-600 dark:text-emerald-400">
+                      <span className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse" />
+                      Hoạt động
+                    </span>
+                  </li>
+                </ul>
+              </div>
+            </div>
+
+            {/* Copyright */}
+            <div className="mt-8 pt-6 border-t border-gray-200 dark:border-gray-800">
+              <div className="flex flex-col sm:flex-row items-center justify-between gap-2 text-sm text-gray-500 dark:text-gray-400">
+                <p>© 2026 Phòng Đào Tạo. All rights reserved.</p>
+                <div className="flex items-center gap-4">
+                  <span className="hidden sm:inline">Lần truy cập cuối: {formatTime(currentTime)}</span>
+                </div>
+              </div>
             </div>
           </div>
         </footer>
@@ -2956,6 +3053,85 @@ export default function HomePage() {
           </Card>
         </div>
       )}
+
+      {/* Welcome Guide Modal */}
+      {showWelcomeGuide && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm animate-in fade-in" onClick={() => setShowWelcomeGuide(false)}>
+          <Card className="w-full max-w-lg mx-4 shadow-2xl border-0 animate-in zoom-in-95" onClick={e => e.stopPropagation()}>
+            <CardHeader className="pb-4 text-center">
+              <div className="mx-auto w-16 h-16 bg-gradient-to-br from-emerald-100 to-teal-100 dark:from-emerald-900/30 dark:to-teal-900/30 rounded-full flex items-center justify-center mb-4">
+                <Sparkles className="w-8 h-8 text-emerald-600 dark:text-emerald-400" />
+              </div>
+              <CardTitle className="text-xl">Chào mừng đến với Hệ thống Phòng Đào Tạo!</CardTitle>
+              <CardDescription>Khám phá các tính năng hữu ích để làm việc hiệu quả hơn</CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              {[
+                { 
+                  icon: <Search className="w-5 h-5" />, 
+                  title: 'Tìm kiếm nhanh', 
+                  description: 'Sử dụng thanh tìm kiếm để tìm lớp theo mã (VD: 1/2026)',
+                  color: 'bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400'
+                },
+                { 
+                  icon: <Zap className="w-5 h-5" />, 
+                  title: 'Phím tắt', 
+                  description: 'Nhấn Ctrl+K để tìm kiếm nhanh',
+                  color: 'bg-amber-100 dark:bg-amber-900/30 text-amber-600 dark:text-amber-400'
+                },
+                { 
+                  icon: <Menu className="w-5 h-5" />, 
+                  title: 'Điều hướng', 
+                  description: 'Bấm vào các menu bên trái để truy cập chức năng',
+                  color: 'bg-purple-100 dark:bg-purple-900/30 text-purple-600 dark:text-purple-400'
+                },
+                { 
+                  icon: <Shield className="w-5 h-5" />, 
+                  title: 'Quản trị', 
+                  description: 'Truy cập Quản trị viên ở cuối sidebar để cấu hình hệ thống',
+                  color: 'bg-emerald-100 dark:bg-emerald-900/30 text-emerald-600 dark:text-emerald-400'
+                },
+              ].map((tip, index) => (
+                <div 
+                  key={index} 
+                  className="flex items-start gap-4 p-4 rounded-xl bg-gray-50 dark:bg-gray-800/50 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors animate-in slide-in-from-left"
+                  style={{ animationDelay: `${index * 100}ms` }}
+                >
+                  <div className={cn("p-2.5 rounded-xl flex-shrink-0", tip.color)}>
+                    {tip.icon}
+                  </div>
+                  <div>
+                    <h4 className="font-semibold text-gray-900 dark:text-white">{tip.title}</h4>
+                    <p className="text-sm text-gray-500 dark:text-gray-400 mt-0.5">{tip.description}</p>
+                  </div>
+                </div>
+              ))}
+            </CardContent>
+            <div className="p-6 pt-2">
+              <Button 
+                className="w-full bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 text-white shadow-lg"
+                onClick={() => {
+                  sessionStorage.setItem('hasSeenWelcomeGuide', 'true')
+                  setShowWelcomeGuide(false)
+                }}
+              >
+                <Rocket className="w-4 h-4 mr-2" />
+                Bắt đầu sử dụng
+              </Button>
+            </div>
+          </Card>
+        </div>
+      )}
+
+      {/* Floating Help Button */}
+      <button
+        onClick={() => setShowWelcomeGuide(true)}
+        className="fixed bottom-6 left-6 z-40 w-12 h-12 rounded-full bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 shadow-lg hover:shadow-xl flex items-center justify-center transition-all duration-300 hover:scale-110 group"
+      >
+        <HelpCircle className="w-6 h-6 text-white" />
+        {/* Pulse animation */}
+        <span className="absolute inset-0 rounded-full bg-blue-400 animate-ping opacity-25"></span>
+      </button>
 
       {/* Quick Actions Floating Button */}
       <div className="fixed bottom-6 right-6 z-40">
