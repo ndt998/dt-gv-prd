@@ -594,6 +594,41 @@ const goalProgressData = [
   { id: 4, title: 'Báo cáo hoàn thành', current: 8, target: 10, color: 'bg-amber-500', icon: <FileCheck className="w-4 h-4" /> },
 ]
 
+// Performance KPI comparison data
+const kpiComparisonData = [
+  { id: 1, label: 'Tỉ lệ hoàn thành', current: 94, previous: 89, trend: 'up', unit: '%' },
+  { id: 2, label: 'Giờ giảng trung bình', current: 24.5, previous: 22.8, trend: 'up', unit: 'h/tuần' },
+  { id: 3, label: 'Sĩ số trung bình', current: 42, previous: 38, trend: 'up', unit: 'SV/lớp' },
+  { id: 4, label: 'Tỉ lệ chuyên cần', current: 96.2, previous: 94.5, trend: 'up', unit: '%' },
+]
+
+// Weekly comparison data
+const weeklyComparisonData = [
+  { day: 'T2', thisWeek: 185, lastWeek: 172 },
+  { day: 'T3', thisWeek: 195, lastWeek: 188 },
+  { day: 'T4', thisWeek: 178, lastWeek: 165 },
+  { day: 'T5', thisWeek: 202, lastWeek: 195 },
+  { day: 'T6', thisWeek: 188, lastWeek: 178 },
+  { day: 'T7', thisWeek: 145, lastWeek: 140 },
+  { day: 'CN', thisWeek: 42, lastWeek: 38 },
+]
+
+// Top performers data
+const topPerformersData = [
+  { id: 1, name: 'Khoa CNTT', value: 98.5, change: '+2.3', avatar: 'CNTT' },
+  { id: 2, name: 'Khoa Kinh tế', value: 95.2, change: '+1.8', avatar: 'KT' },
+  { id: 3, name: 'Khoa Kỹ thuật', value: 93.7, change: '+1.2', avatar: 'KTH' },
+  { id: 4, name: 'Khoa Ngoại ngữ', value: 91.4, change: '+0.9', avatar: 'NN' },
+]
+
+// Quick stats for mini dashboard
+const quickStatsData = [
+  { id: 1, label: 'Lớp hôm nay', value: 12, icon: <GraduationCap className="w-4 h-4" />, color: 'text-emerald-600', bg: 'bg-emerald-100 dark:bg-emerald-900/30' },
+  { id: 2, label: 'Giảng viên dạy', value: 28, icon: <Users className="w-4 h-4" />, color: 'text-blue-600', bg: 'bg-blue-100 dark:bg-blue-900/30' },
+  { id: 3, label: 'Giờ giảng', value: 86, icon: <Clock className="w-4 h-4" />, color: 'text-purple-600', bg: 'bg-purple-100 dark:bg-purple-900/30' },
+  { id: 4, label: 'Phòng sử dụng', value: 15, icon: <Building2 className="w-4 h-4" />, color: 'text-amber-600', bg: 'bg-amber-100 dark:bg-amber-900/30' },
+]
+
 export default function HomePage() {
   const [activeMenu, setActiveMenu] = useState<string | null>(null)
   const [currentTime, setCurrentTime] = useState(new Date())
@@ -1511,6 +1546,156 @@ export default function HomePage() {
                         </div>
                       </CardContent>
                     </Card>
+
+                    {/* Analytics Dashboard Section */}
+                    <div className="grid lg:grid-cols-3 gap-6 mt-6">
+                      {/* KPI Comparison Cards */}
+                      <Card className="border-0 shadow-md bg-white dark:bg-gray-900 lg:col-span-2">
+                        <CardHeader className="pb-3">
+                          <div className="flex items-center justify-between">
+                            <CardTitle className="flex items-center gap-2">
+                              <TrendingUp className="w-5 h-5 text-emerald-500" />
+                              So sánh hiệu suất
+                            </CardTitle>
+                            <div className="flex items-center gap-2 text-xs">
+                              <span className="flex items-center gap-1">
+                                <span className="w-3 h-3 rounded-full bg-emerald-500" />
+                                Hiện tại
+                              </span>
+                              <span className="flex items-center gap-1">
+                                <span className="w-3 h-3 rounded-full bg-gray-300 dark:bg-gray-600" />
+                                Tháng trước
+                              </span>
+                            </div>
+                          </div>
+                        </CardHeader>
+                        <CardContent>
+                          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                            {kpiComparisonData.map((kpi, index) => (
+                              <div 
+                                key={kpi.id}
+                                className="p-4 rounded-xl bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-800 dark:to-gray-900 hover:shadow-md transition-all animate-in fade-in"
+                                style={{ animationDelay: `${index * 100}ms` }}
+                              >
+                                <p className="text-xs text-gray-500 dark:text-gray-400 mb-1">{kpi.label}</p>
+                                <div className="flex items-end justify-between">
+                                  <div>
+                                    <span className="text-2xl font-bold text-gray-900 dark:text-white">{kpi.current}</span>
+                                    <span className="text-sm text-gray-500 dark:text-gray-400 ml-1">{kpi.unit}</span>
+                                  </div>
+                                  <div className="flex items-center gap-1 text-emerald-500 text-xs font-medium">
+                                    <ArrowUpRight className="w-3 h-3" />
+                                    {kpi.previous}
+                                  </div>
+                                </div>
+                                <div className="mt-3 h-2 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
+                                  <div 
+                                    className="h-full bg-gradient-to-r from-emerald-400 to-emerald-600 rounded-full transition-all duration-1000"
+                                    style={{ width: `${kpi.current}%` }}
+                                  />
+                                </div>
+                              </div>
+                            ))}
+                          </div>
+                          
+                          {/* Weekly Comparison Mini Chart */}
+                          <div className="mt-6 pt-6 border-t border-gray-200 dark:border-gray-700">
+                            <div className="flex items-center justify-between mb-4">
+                              <h4 className="text-sm font-semibold text-gray-700 dark:text-gray-300">Giờ giảng theo tuần</h4>
+                              <Badge variant="outline" className="text-emerald-600 border-emerald-200">+5.8% so với tuần trước</Badge>
+                            </div>
+                            <div className="flex items-end gap-2 h-32">
+                              {weeklyComparisonData.map((item, index) => (
+                                <div key={index} className="flex-1 flex flex-col items-center gap-1">
+                                  <div className="relative w-full flex flex-col items-center gap-0.5">
+                                    <div 
+                                      className="w-full bg-gray-200 dark:bg-gray-700 rounded-t-sm transition-all hover:opacity-80"
+                                      style={{ height: `${(item.lastWeek / 210) * 80}px` }}
+                                      title={`Tuần trước: ${item.lastWeek} giờ`}
+                                    />
+                                    <div 
+                                      className="w-full bg-gradient-to-t from-emerald-400 to-emerald-600 rounded-t-sm transition-all hover:opacity-80"
+                                      style={{ height: `${(item.thisWeek / 210) * 80}px` }}
+                                      title={`Tuần này: ${item.thisWeek} giờ`}
+                                    />
+                                  </div>
+                                  <span className="text-xs text-gray-500 dark:text-gray-400">{item.day}</span>
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+                        </CardContent>
+                      </Card>
+
+                      {/* Top Performers & Quick Stats */}
+                      <div className="space-y-6">
+                        {/* Quick Stats Grid */}
+                        <Card className="border-0 shadow-md bg-gradient-to-br from-emerald-500 to-teal-600 text-white">
+                          <CardHeader className="pb-2">
+                            <CardTitle className="text-base flex items-center gap-2">
+                              <Activity className="w-4 h-4" />
+                              Thống kê hôm nay
+                            </CardTitle>
+                          </CardHeader>
+                          <CardContent>
+                            <div className="grid grid-cols-2 gap-3">
+                              {quickStatsData.map((stat, index) => (
+                                <div 
+                                  key={stat.id}
+                                  className="p-3 rounded-xl bg-white/10 backdrop-blur-sm hover:bg-white/20 transition-all animate-in fade-in"
+                                  style={{ animationDelay: `${index * 50}ms` }}
+                                >
+                                  <div className="flex items-center gap-2 mb-1">
+                                    {stat.icon}
+                                    <span className="text-xs text-emerald-100">{stat.label}</span>
+                                  </div>
+                                  <span className="text-2xl font-bold">{stat.value}</span>
+                                </div>
+                              ))}
+                            </div>
+                          </CardContent>
+                        </Card>
+
+                        {/* Top Performers */}
+                        <Card className="border-0 shadow-md bg-white dark:bg-gray-900">
+                          <CardHeader className="pb-2">
+                            <CardTitle className="text-base flex items-center gap-2">
+                              <Award className="w-4 h-4 text-emerald-500" />
+                              Top khoa hiệu quả
+                            </CardTitle>
+                          </CardHeader>
+                          <CardContent>
+                            <div className="space-y-3">
+                              {topPerformersData.map((performer, index) => (
+                                <div 
+                                  key={performer.id}
+                                  className="flex items-center gap-3 p-2 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 transition-all animate-in slide-in-from-right"
+                                  style={{ animationDelay: `${index * 50}ms` }}
+                                >
+                                  <div className={cn(
+                                    "w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold text-white",
+                                    index === 0 && "bg-gradient-to-br from-amber-400 to-amber-600",
+                                    index === 1 && "bg-gradient-to-br from-gray-300 to-gray-500",
+                                    index === 2 && "bg-gradient-to-br from-amber-600 to-amber-800",
+                                    index === 3 && "bg-gradient-to-br from-emerald-400 to-emerald-600"
+                                  )}>
+                                    {index + 1}
+                                  </div>
+                                  <div className="flex-1">
+                                    <p className="text-sm font-medium text-gray-900 dark:text-white">{performer.name}</p>
+                                    <div className="flex items-center gap-2">
+                                      <Progress value={performer.value} className="h-1.5 flex-1" />
+                                      <span className="text-xs text-emerald-600 dark:text-emerald-400">{performer.change}%</span>
+                                    </div>
+                                  </div>
+                                  <span className="text-sm font-bold text-gray-700 dark:text-gray-300">{performer.value}%</span>
+                                </div>
+                              ))}
+                            </div>
+                          </CardContent>
+                        </Card>
+                      </div>
+                    </div>
 
                     {/* New Row: Calendar, Weather, Activity Timeline, Documents */}
                     <div className="grid lg:grid-cols-4 gap-6 mt-6">
