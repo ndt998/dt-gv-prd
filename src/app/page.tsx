@@ -125,7 +125,14 @@ import {
   Database,
   Server,
   Cpu,
-  HardDrive
+  HardDrive,
+  MessageSquare,
+  Star,
+  MessageCircle,
+  Megaphone,
+  Briefcase,
+  Heart,
+  Send
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { ThemeToggle } from '@/components/theme-toggle'
@@ -333,6 +340,72 @@ const systemMetrics = [
   { label: 'RAM', value: '68%', icon: <Server className="w-4 h-4" />, color: 'text-amber-500' },
   { label: 'Storage', value: '35%', icon: <HardDrive className="w-4 h-4" />, color: 'text-blue-500' },
   { label: 'Network', value: '12 MB/s', icon: <Activity className="w-4 h-4" />, color: 'text-purple-500' }
+]
+
+// Teacher directory data
+const teacherData = [
+  { id: 'GV001', name: 'Nguyễn Văn A', email: 'nguyenvana@prd.edu.vn', phone: '0901234567', department: 'CNTT', position: 'Trưởng khoa', classes: 4, rating: 4.8, avatar: 'NA' },
+  { id: 'GV002', name: 'Trần Thị B', email: 'tranthib@prd.edu.vn', phone: '0902345678', department: 'CNTT', position: 'Giảng viên', classes: 3, rating: 4.6, avatar: 'TB' },
+  { id: 'GV003', name: 'Lê Văn C', email: 'levanc@prd.edu.vn', phone: '0903456789', department: 'Kinh tế', position: 'Phó khoa', classes: 2, rating: 4.9, avatar: 'LC' },
+  { id: 'GV004', name: 'Phạm Thị D', email: 'phamthid@prd.edu.vn', phone: '0904567890', department: 'Ngoại ngữ', position: 'Giảng viên', classes: 3, rating: 4.7, avatar: 'PD' },
+  { id: 'GV005', name: 'Hoàng Văn E', email: 'hoangvane@prd.edu.vn', phone: '0905678901', department: 'Kỹ thuật', position: 'Giảng viên', classes: 2, rating: 4.5, avatar: 'HE' },
+  { id: 'GV006', name: 'Vũ Thị F', email: 'vuthif@prd.edu.vn', phone: '0906789012', department: 'Kinh tế', position: 'Giảng viên', classes: 2, rating: 4.8, avatar: 'VF' },
+]
+
+// FAQ data
+const faqData = [
+  { 
+    id: 1, 
+    question: 'Làm thế nào để đăng ký lớp học mới?', 
+    answer: 'Bạn có thể đăng ký lớp học mới bằng cách truy cập menu "Tình hình mở lớp" và nhấn nút "Thêm lớp mới". Điền đầy đủ thông tin và gửi yêu cầu để được phê duyệt.',
+    category: 'Đăng ký'
+  },
+  { 
+    id: 2, 
+    question: 'Cách xuất báo cáo giờ giảng?', 
+    answer: 'Vào mục "Thống kê giờ giảng", chọn khoảng thời gian và nhấn nút "Xuất báo cáo". Bạn có thể chọn định dạng PDF hoặc Excel.',
+    category: 'Báo cáo'
+  },
+  { 
+    id: 3, 
+    question: 'Làm sao để xem thời khóa biểu?', 
+    answer: 'Truy cập "Gantt Chart TKB" để xem thời khóa biểu dạng biểu đồ. Bạn có thể lọc theo khoa, giảng viên hoặc phòng học.',
+    category: 'Lịch học'
+  },
+  { 
+    id: 4, 
+    question: 'Cách cập nhật thông tin cá nhân?', 
+    answer: 'Nhấn vào avatar của bạn ở góc trên bên phải, chọn "Thông tin cá nhân" và cập nhật các thông tin cần thiết.',
+    category: 'Tài khoản'
+  },
+  { 
+    id: 5, 
+    question: 'Làm thế nào để liên hệ hỗ trợ?', 
+    answer: 'Bạn có thể gửi email đến support@prd.edu.vn hoặc gọi hotline 1900-xxxx trong giờ hành chính. Đội ngũ hỗ trợ sẽ phản hồi trong 24h.',
+    category: 'Hỗ trợ'
+  },
+  { 
+    id: 6, 
+    question: 'Cách đổi mật khẩu đăng nhập?', 
+    answer: 'Vào "Cài đặt" > "Bảo mật" > "Đổi mật khẩu". Nhập mật khẩu cũ và mật khẩu mới, sau đó nhấn "Xác nhận".',
+    category: 'Tài khoản'
+  },
+]
+
+// Calendar events data
+const calendarEvents = [
+  { id: 1, title: 'Hội nghị giảng viên', date: '2026-04-18', time: '09:00', type: 'meeting', color: 'bg-blue-500' },
+  { id: 2, title: 'Hạn nộp báo cáo tháng', date: '2026-04-20', time: '17:00', type: 'deadline', color: 'bg-red-500' },
+  { id: 3, title: 'Đào tạo hệ thống mới', date: '2026-04-22', time: '14:00', type: 'training', color: 'bg-emerald-500' },
+  { id: 4, title: 'Kiểm tra cơ sở vật chất', date: '2026-04-25', time: '08:00', type: 'inspection', color: 'bg-amber-500' },
+  { id: 5, title: 'Họp Ban giám hiệu', date: '2026-04-28', time: '10:00', type: 'meeting', color: 'bg-purple-500' },
+]
+
+// Announcements data
+const announcements = [
+  { id: 1, title: 'Cập nhật hệ thống quản lý đào tạo phiên bản 2.0', content: 'Hệ thống đã được nâng cấp với nhiều tính năng mới bao gồm biểu đồ tương tác, bảng dữ liệu nâng cao và giao diện tối.', date: '2026-04-16', priority: 'high' },
+  { id: 2, title: 'Lịch nghỉ lễ 30/4 - 1/5', content: 'Thông báo lịch nghỉ lễ Giải phóng và Quốc tế Lao động từ ngày 30/4 đến 1/5. Các lớp học sẽ được bù vào tuần sau.', date: '2026-04-15', priority: 'normal' },
+  { id: 3, title: 'Đăng ký đề tài NCKH năm 2026', content: 'Mở đợt đăng ký đề tài nghiên cứu khoa học năm 2026. Hạn chót nộp đề xuất: 15/5/2026.', date: '2026-04-14', priority: 'normal' },
 ]
 
 export default function HomePage() {
@@ -778,7 +851,7 @@ export default function HomePage() {
 
                 {/* Tabs for different views */}
                 <Tabs value={activeTab} onValueChange={setActiveTab} className="mb-8">
-                  <TabsList className="grid w-full grid-cols-4 lg:w-auto lg:inline-grid">
+                  <TabsList className="grid w-full grid-cols-6 lg:w-auto lg:inline-grid">
                     <TabsTrigger value="overview" className="gap-2">
                       <LayoutGrid className="w-4 h-4" />
                       <span className="hidden sm:inline">Tổng quan</span>
@@ -790,6 +863,14 @@ export default function HomePage() {
                     <TabsTrigger value="classes" className="gap-2">
                       <GraduationCap className="w-4 h-4" />
                       <span className="hidden sm:inline">Lớp học</span>
+                    </TabsTrigger>
+                    <TabsTrigger value="directory" className="gap-2">
+                      <Users className="w-4 h-4" />
+                      <span className="hidden sm:inline">Giảng viên</span>
+                    </TabsTrigger>
+                    <TabsTrigger value="help" className="gap-2">
+                      <HelpCircle className="w-4 h-4" />
+                      <span className="hidden sm:inline">Trợ giúp</span>
                     </TabsTrigger>
                     <TabsTrigger value="system" className="gap-2">
                       <Server className="w-4 h-4" />
@@ -1376,6 +1457,307 @@ export default function HomePage() {
                           </div>
                         </CardContent>
                       </Card>
+                    </div>
+                  </TabsContent>
+
+                  {/* Directory Tab */}
+                  <TabsContent value="directory" className="mt-6 space-y-6">
+                    <div className="grid lg:grid-cols-3 gap-6">
+                      {/* Teacher Directory */}
+                      <div className="lg:col-span-2">
+                        <Card className="border-0 shadow-md">
+                          <CardHeader>
+                            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                              <div>
+                                <CardTitle className="flex items-center gap-2">
+                                  <Users className="w-5 h-5 text-emerald-500" />
+                                  Danh sách giảng viên
+                                </CardTitle>
+                                <CardDescription>Thông tin chi tiết các giảng viên trong hệ thống</CardDescription>
+                              </div>
+                              <Button size="sm" className="gap-2 w-full sm:w-auto">
+                                <Plus className="w-4 h-4" />
+                                Thêm giảng viên
+                              </Button>
+                            </div>
+                          </CardHeader>
+                          <CardContent>
+                            <div className="rounded-lg border overflow-hidden">
+                              <Table>
+                                <TableHeader>
+                                  <TableRow className="bg-gray-50 dark:bg-gray-800">
+                                    <TableHead className="font-semibold">Giảng viên</TableHead>
+                                    <TableHead className="font-semibold">Khoa</TableHead>
+                                    <TableHead className="font-semibold">Chức vụ</TableHead>
+                                    <TableHead className="font-semibold">Lớp</TableHead>
+                                    <TableHead className="font-semibold">Đánh giá</TableHead>
+                                    <TableHead className="font-semibold text-right">Thao tác</TableHead>
+                                  </TableRow>
+                                </TableHeader>
+                                <TableBody>
+                                  {teacherData.map((teacher, index) => (
+                                    <TableRow key={teacher.id} className="animate-in fade-in" style={{ animationDelay: `${index * 50}ms` }}>
+                                      <TableCell>
+                                        <div className="flex items-center gap-3">
+                                          <Avatar className="h-9 w-9">
+                                            <AvatarFallback className="bg-emerald-100 text-emerald-700 text-xs font-semibold">
+                                              {teacher.avatar}
+                                            </AvatarFallback>
+                                          </Avatar>
+                                          <div>
+                                            <p className="font-medium">{teacher.name}</p>
+                                            <p className="text-xs text-gray-500">{teacher.email}</p>
+                                          </div>
+                                        </div>
+                                      </TableCell>
+                                      <TableCell>
+                                        <Badge variant="outline" className="text-xs">{teacher.department}</Badge>
+                                      </TableCell>
+                                      <TableCell className="text-sm">{teacher.position}</TableCell>
+                                      <TableCell>
+                                        <div className="flex items-center gap-1">
+                                          <GraduationCap className="w-3 h-3 text-gray-400" />
+                                          {teacher.classes}
+                                        </div>
+                                      </TableCell>
+                                      <TableCell>
+                                        <div className="flex items-center gap-1">
+                                          <Star className="w-3 h-3 text-amber-500 fill-amber-500" />
+                                          <span className="font-medium">{teacher.rating}</span>
+                                        </div>
+                                      </TableCell>
+                                      <TableCell className="text-right">
+                                        <DropdownMenu>
+                                          <DropdownMenuTrigger asChild>
+                                            <Button variant="ghost" size="icon" className="h-8 w-8">
+                                              <MoreHorizontal className="w-4 h-4" />
+                                            </Button>
+                                          </DropdownMenuTrigger>
+                                          <DropdownMenuContent align="end">
+                                            <DropdownMenuItem>
+                                              <Eye className="w-4 h-4 mr-2" />
+                                              Xem chi tiết
+                                            </DropdownMenuItem>
+                                            <DropdownMenuItem>
+                                              <Mail className="w-4 h-4 mr-2" />
+                                              Gửi email
+                                            </DropdownMenuItem>
+                                            <DropdownMenuItem>
+                                              <Phone className="w-4 h-4 mr-2" />
+                                              Gọi điện
+                                            </DropdownMenuItem>
+                                            <DropdownMenuSeparator />
+                                            <DropdownMenuItem className="text-red-600">
+                                              <Trash2 className="w-4 h-4 mr-2" />
+                                              Xóa
+                                            </DropdownMenuItem>
+                                          </DropdownMenuContent>
+                                        </DropdownMenu>
+                                      </TableCell>
+                                    </TableRow>
+                                  ))}
+                                </TableBody>
+                              </Table>
+                            </div>
+                          </CardContent>
+                        </Card>
+                      </div>
+
+                      {/* Right Column */}
+                      <div className="space-y-6">
+                        {/* Calendar Events */}
+                        <Card className="border-0 shadow-md">
+                          <CardHeader>
+                            <CardTitle className="flex items-center gap-2">
+                              <CalendarDays className="w-5 h-5 text-emerald-500" />
+                              Lịch sắp tới
+                            </CardTitle>
+                            <CardDescription>Các sự kiện và cuộc họp trong tuần</CardDescription>
+                          </CardHeader>
+                          <CardContent className="space-y-3">
+                            {calendarEvents.map((event, index) => (
+                              <div 
+                                key={event.id} 
+                                className="flex items-start gap-3 p-3 rounded-lg bg-gray-50 dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors animate-in fade-in"
+                                style={{ animationDelay: `${index * 50}ms` }}
+                              >
+                                <div className={cn("w-2 h-full min-h-[40px] rounded-full", event.color)} />
+                                <div className="flex-1">
+                                  <p className="font-medium text-sm">{event.title}</p>
+                                  <div className="flex items-center gap-2 mt-1 text-xs text-gray-500">
+                                    <span>{event.date}</span>
+                                    <span>•</span>
+                                    <span>{event.time}</span>
+                                  </div>
+                                </div>
+                              </div>
+                            ))}
+                          </CardContent>
+                        </Card>
+
+                        {/* Announcements */}
+                        <Card className="border-0 shadow-md">
+                          <CardHeader>
+                            <CardTitle className="flex items-center gap-2">
+                              <Megaphone className="w-5 h-5 text-emerald-500" />
+                              Thông báo
+                            </CardTitle>
+                            <CardDescription>Các thông báo quan trọng từ Ban giám hiệu</CardDescription>
+                          </CardHeader>
+                          <CardContent className="space-y-3">
+                            {announcements.map((ann, index) => (
+                              <div 
+                                key={ann.id} 
+                                className={cn(
+                                  "p-3 rounded-lg border transition-all hover:shadow-sm cursor-pointer animate-in fade-in",
+                                  ann.priority === 'high' 
+                                    ? "bg-red-50 dark:bg-red-900/10 border-red-200 dark:border-red-800" 
+                                    : "bg-gray-50 dark:bg-gray-800 border-gray-200 dark:border-gray-700"
+                                )}
+                                style={{ animationDelay: `${index * 50}ms` }}
+                              >
+                                <div className="flex items-start gap-2">
+                                  {ann.priority === 'high' && (
+                                    <AlertCircle className="w-4 h-4 text-red-500 mt-0.5 flex-shrink-0" />
+                                  )}
+                                  <div>
+                                    <p className="font-medium text-sm">{ann.title}</p>
+                                    <p className="text-xs text-gray-500 mt-1 line-clamp-2">{ann.content}</p>
+                                    <p className="text-xs text-gray-400 mt-2">{ann.date}</p>
+                                  </div>
+                                </div>
+                              </div>
+                            ))}
+                          </CardContent>
+                        </Card>
+                      </div>
+                    </div>
+                  </TabsContent>
+
+                  {/* Help Tab */}
+                  <TabsContent value="help" className="mt-6 space-y-6">
+                    <div className="grid lg:grid-cols-3 gap-6">
+                      {/* FAQ Section */}
+                      <div className="lg:col-span-2">
+                        <Card className="border-0 shadow-md">
+                          <CardHeader>
+                            <CardTitle className="flex items-center gap-2">
+                              <MessageCircle className="w-5 h-5 text-emerald-500" />
+                              Câu hỏi thường gặp
+                            </CardTitle>
+                            <CardDescription>Tìm câu trả lời cho các thắc mắc phổ biến</CardDescription>
+                          </CardHeader>
+                          <CardContent className="space-y-4">
+                            {faqData.map((faq, index) => (
+                              <details 
+                                key={faq.id} 
+                                className="group rounded-lg border border-gray-200 dark:border-gray-700 overflow-hidden animate-in fade-in"
+                                style={{ animationDelay: `${index * 50}ms` }}
+                              >
+                                <summary className="flex items-center justify-between p-4 cursor-pointer bg-gray-50 dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
+                                  <div className="flex items-center gap-3">
+                                    <Badge variant="outline" className="text-xs bg-emerald-50 dark:bg-emerald-900/20 text-emerald-600 dark:text-emerald-400 border-emerald-200 dark:border-emerald-800">
+                                      {faq.category}
+                                    </Badge>
+                                    <span className="font-medium text-sm">{faq.question}</span>
+                                  </div>
+                                  <ChevronDown className="w-4 h-4 text-gray-400 group-open:rotate-180 transition-transform" />
+                                </summary>
+                                <div className="p-4 bg-white dark:bg-gray-900 border-t border-gray-200 dark:border-gray-700">
+                                  <p className="text-sm text-gray-600 dark:text-gray-400">{faq.answer}</p>
+                                </div>
+                              </details>
+                            ))}
+                          </CardContent>
+                        </Card>
+                      </div>
+
+                      {/* Right Column */}
+                      <div className="space-y-6">
+                        {/* Quick Help */}
+                        <Card className="border-0 shadow-md">
+                          <CardHeader>
+                            <CardTitle className="flex items-center gap-2">
+                              <Zap className="w-5 h-5 text-emerald-500" />
+                              Hỗ trợ nhanh
+                            </CardTitle>
+                          </CardHeader>
+                          <CardContent className="space-y-3">
+                            <Button variant="outline" className="w-full justify-start gap-3 h-auto py-3">
+                              <div className="p-2 rounded-lg bg-blue-100 dark:bg-blue-900/30">
+                                <BookOpen className="w-4 h-4 text-blue-600 dark:text-blue-400" />
+                              </div>
+                              <div className="text-left">
+                                <p className="font-medium text-sm">Hướng dẫn sử dụng</p>
+                                <p className="text-xs text-gray-500">Xem tài liệu hướng dẫn chi tiết</p>
+                              </div>
+                            </Button>
+                            <Button variant="outline" className="w-full justify-start gap-3 h-auto py-3">
+                              <div className="p-2 rounded-lg bg-purple-100 dark:bg-purple-900/30">
+                                <Briefcase className="w-4 h-4 text-purple-600 dark:text-purple-400" />
+                              </div>
+                              <div className="text-left">
+                                <p className="font-medium text-sm">Video hướng dẫn</p>
+                                <p className="text-xs text-gray-500">Xem các video tutorial</p>
+                              </div>
+                            </Button>
+                            <Button variant="outline" className="w-full justify-start gap-3 h-auto py-3">
+                              <div className="p-2 rounded-lg bg-amber-100 dark:bg-amber-900/30">
+                                <MessageSquare className="w-4 h-4 text-amber-600 dark:text-amber-400" />
+                              </div>
+                              <div className="text-left">
+                                <p className="font-medium text-sm">Diễn đàn hỗ trợ</p>
+                                <p className="text-xs text-gray-500">Thảo luận với cộng đồng</p>
+                              </div>
+                            </Button>
+                          </CardContent>
+                        </Card>
+
+                        {/* Contact Support */}
+                        <Card className="border-0 shadow-md bg-gradient-to-br from-emerald-500 to-teal-600 text-white">
+                          <CardContent className="p-6">
+                            <div className="flex items-center gap-2 mb-4">
+                              <Heart className="w-5 h-5" />
+                              <span className="font-semibold">Cần hỗ trợ?</span>
+                            </div>
+                            <p className="text-emerald-100 text-sm mb-4">
+                              Đội ngũ hỗ trợ luôn sẵn sàng giúp đỡ bạn 24/7
+                            </p>
+                            <div className="space-y-3">
+                              <Button variant="secondary" size="sm" className="w-full gap-2 bg-white/20 hover:bg-white/30 text-white border-white/30">
+                                <Mail className="w-4 h-4" />
+                                support@prd.edu.vn
+                              </Button>
+                              <Button variant="secondary" size="sm" className="w-full gap-2 bg-white/20 hover:bg-white/30 text-white border-white/30">
+                                <Phone className="w-4 h-4" />
+                                1900-xxxx
+                              </Button>
+                            </div>
+                          </CardContent>
+                        </Card>
+
+                        {/* Keyboard Shortcuts */}
+                        <Card className="border-0 shadow-md">
+                          <CardHeader>
+                            <CardTitle className="text-base flex items-center gap-2">
+                              <Settings className="w-5 h-5 text-emerald-500" />
+                              Phím tắt
+                            </CardTitle>
+                          </CardHeader>
+                          <CardContent className="space-y-2">
+                            {[
+                              { key: 'Ctrl + K', action: 'Mở tìm kiếm' },
+                              { key: 'Ctrl + 1-4', action: 'Mở menu nhanh' },
+                              { key: 'ESC', action: 'Đóng/Quay lại' },
+                            ].map((shortcut, index) => (
+                              <div key={index} className="flex items-center justify-between py-2">
+                                <span className="text-sm text-gray-600 dark:text-gray-400">{shortcut.action}</span>
+                                <kbd className="px-2 py-1 text-xs bg-gray-100 dark:bg-gray-800 rounded font-mono">{shortcut.key}</kbd>
+                              </div>
+                            ))}
+                          </CardContent>
+                        </Card>
+                      </div>
                     </div>
                   </TabsContent>
                 </Tabs>
