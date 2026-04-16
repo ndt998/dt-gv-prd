@@ -566,6 +566,34 @@ const newsTickerItems = [
   { id: 5, text: '🏆 Trường đạt top 10 trường đại học chất lượng đào tạo 2026', type: 'success', priority: 'normal' },
 ]
 
+// Extended notifications for notification center
+const allNotifications = [
+  { id: 1, type: 'success', title: 'Cập nhật hệ thống Gantt Chart', description: 'Đã thêm tính năng lọc theo khoa và giảng viên', time: '2 giờ trước', read: false, category: 'system' },
+  { id: 2, type: 'warning', title: 'Nhắc nhở: Báo cáo tháng 11', description: 'Hạn chót nộp báo cáo: 30/11/2024', time: 'Hôm qua', read: false, category: 'reminder' },
+  { id: 3, type: 'info', title: 'Hội thảo đào tạo', description: 'Cuộc họp vào 10:00 sáng thứ Sáu', time: '2 ngày trước', read: true, category: 'meeting' },
+  { id: 4, type: 'success', title: 'Duyệt đề xuất mở lớp', description: 'Đề xuất mở lớp Machine Learning đã được phê duyệt', time: '3 ngày trước', read: true, category: 'approval' },
+  { id: 5, type: 'info', title: 'Cập nhật hồ sơ giảng viên', description: 'Thông tin giảng viên Nguyễn Văn A đã được cập nhật', time: '4 ngày trước', read: true, category: 'update' },
+  { id: 6, type: 'warning', title: 'Cảnh báo dung lượng', description: 'Dung lượng lưu trữ đang ở mức 85%', time: '5 ngày trước', read: false, category: 'system' },
+  { id: 7, type: 'success', title: 'Sao lưu thành công', description: 'Sao lưu dữ liệu hàng ngày hoàn tất', time: '6 ngày trước', read: true, category: 'system' },
+  { id: 8, type: 'info', title: 'Lịch giảng dạy mới', description: 'Lịch giảng dạy tuần tới đã được cập nhật', time: '1 tuần trước', read: true, category: 'schedule' },
+]
+
+// Export options data
+const exportOptions = [
+  { id: 'pdf', label: 'PDF Document', icon: <FileText className="w-5 h-5" />, description: 'Xuất báo cáo định dạng PDF', color: 'bg-red-500' },
+  { id: 'excel', label: 'Excel Spreadsheet', icon: <BarChart3 className="w-5 h-5" />, description: 'Xuất dữ liệu sang Excel', color: 'bg-green-500' },
+  { id: 'csv', label: 'CSV File', icon: <FileText className="w-5 h-5" />, description: 'Xuất dữ liệu định dạng CSV', color: 'bg-blue-500' },
+  { id: 'print', label: 'Print Report', icon: <Printer className="w-5 h-5" />, description: 'In báo cáo trực tiếp', color: 'bg-purple-500' },
+]
+
+// Goal progress data
+const goalProgressData = [
+  { id: 1, title: 'Mở lớp mới', current: 45, target: 50, color: 'bg-emerald-500', icon: <GraduationCap className="w-4 h-4" /> },
+  { id: 2, title: 'Giờ giảng dạy', current: 1150, target: 1400, color: 'bg-blue-500', icon: <Clock className="w-4 h-4" /> },
+  { id: 3, title: 'Đề xuất NCKH', current: 12, target: 15, color: 'bg-purple-500', icon: <Target className="w-4 h-4" /> },
+  { id: 4, title: 'Báo cáo hoàn thành', current: 8, target: 10, color: 'bg-amber-500', icon: <FileCheck className="w-4 h-4" /> },
+]
+
 export default function HomePage() {
   const [activeMenu, setActiveMenu] = useState<string | null>(null)
   const [currentTime, setCurrentTime] = useState(new Date())
@@ -582,6 +610,10 @@ export default function HomePage() {
   const [expandedStats, setExpandedStats] = useState(false)
   const [selectedDepartment, setSelectedDepartment] = useState('all')
   const [activeTab, setActiveTab] = useState('overview')
+  const [showExport, setShowExport] = useState(false)
+  const [showNotificationCenter, setShowNotificationCenter] = useState(false)
+  const [showQuickActions, setShowQuickActions] = useState(false)
+  const [notificationFilter, setNotificationFilter] = useState('all')
 
   useEffect(() => {
     const timer = setInterval(() => setCurrentTime(new Date()), 1000)
@@ -908,7 +940,7 @@ export default function HomePage() {
               {/* Notifications */}
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <Button variant="ghost" size="icon" className="relative h-9 w-9 hover:bg-gray-100 dark:hover:bg-gray-800">
+                  <Button variant="ghost" size="icon" className="relative h-9 w-9 hover:bg-gray-100 dark:hover:bg-gray-800" onClick={() => setShowNotificationCenter(true)}>
                     <Bell className="w-4 h-4" />
                     <span className="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full animate-pulse" />
                   </Button>
@@ -1428,6 +1460,57 @@ export default function HomePage() {
                         </CardContent>
                       </Card>
                     </div>
+
+                    {/* Goals Progress Dashboard */}
+                    <Card className="border-0 shadow-md bg-white dark:bg-gray-900 mt-6">
+                      <CardHeader className="pb-3">
+                        <div className="flex items-center justify-between">
+                          <CardTitle className="flex items-center gap-2">
+                            <Target className="w-5 h-5 text-emerald-500" />
+                            Tiến độ mục tiêu tháng 4
+                          </CardTitle>
+                          <Badge className="bg-emerald-100 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-400 border-0">
+                            85% hoàn thành
+                          </Badge>
+                        </div>
+                        <CardDescription>Theo dõi tiến độ các mục tiêu đào tạo trong tháng</CardDescription>
+                      </CardHeader>
+                      <CardContent>
+                        <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                          {goalProgressData.map((goal, index) => {
+                            const percentage = Math.round((goal.current / goal.target) * 100)
+                            return (
+                              <div 
+                                key={goal.id}
+                                className="p-4 rounded-xl bg-gray-50 dark:bg-gray-800 hover:shadow-md transition-all group animate-in fade-in"
+                                style={{ animationDelay: `${index * 100}ms` }}
+                              >
+                                <div className="flex items-center justify-between mb-3">
+                                  <div className={cn("p-2 rounded-lg text-white", goal.color)}>
+                                    {goal.icon}
+                                  </div>
+                                  <span className={cn(
+                                    "text-lg font-bold",
+                                    percentage >= 90 ? "text-emerald-600 dark:text-emerald-400" :
+                                    percentage >= 70 ? "text-blue-600 dark:text-blue-400" :
+                                    "text-amber-600 dark:text-amber-400"
+                                  )}>
+                                    {percentage}%
+                                  </span>
+                                </div>
+                                <p className="text-sm font-medium text-gray-900 dark:text-white mb-2">{goal.title}</p>
+                                <div className="relative">
+                                  <Progress value={percentage} className="h-2" />
+                                </div>
+                                <p className="text-xs text-gray-500 dark:text-gray-400 mt-2">
+                                  {goal.current} / {goal.target}
+                                </p>
+                              </div>
+                            )
+                          })}
+                        </div>
+                      </CardContent>
+                    </Card>
 
                     {/* New Row: Calendar, Weather, Activity Timeline, Documents */}
                     <div className="grid lg:grid-cols-4 gap-6 mt-6">
@@ -2644,6 +2727,204 @@ export default function HomePage() {
           </Card>
         </div>
       )}
+
+      {/* Export Modal */}
+      {showExport && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm animate-in fade-in" onClick={() => setShowExport(false)}>
+          <Card className="w-full max-w-md mx-4 shadow-2xl border-0 animate-in zoom-in-95" onClick={e => e.stopPropagation()}>
+            <CardHeader className="pb-4">
+              <div className="flex items-center justify-between">
+                <CardTitle className="flex items-center gap-2">
+                  <Download className="w-5 h-5 text-emerald-500" />
+                  Xuất dữ liệu
+                </CardTitle>
+                <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => setShowExport(false)}>
+                  <X className="w-4 h-4" />
+                </Button>
+              </div>
+              <CardDescription>Chọn định dạng xuất dữ liệu</CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-3">
+              {exportOptions.map((option, index) => (
+                <button
+                  key={option.id}
+                  className="w-full flex items-center gap-4 p-4 rounded-xl border border-gray-200 dark:border-gray-700 hover:border-emerald-300 dark:hover:border-emerald-700 hover:bg-emerald-50/50 dark:hover:bg-emerald-900/10 transition-all group animate-in slide-in-from-left"
+                  style={{ animationDelay: `${index * 50}ms` }}
+                  onClick={() => {
+                    toast.success(`Đang xuất ${option.label}...`, {
+                      description: 'File sẽ được tải xuống trong giây lát.',
+                      icon: option.icon,
+                    })
+                    setShowExport(false)
+                  }}
+                >
+                  <div className={cn("p-3 rounded-lg text-white group-hover:scale-110 transition-transform", option.color)}>
+                    {option.icon}
+                  </div>
+                  <div className="text-left flex-1">
+                    <p className="font-medium text-gray-900 dark:text-white group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors">{option.label}</p>
+                    <p className="text-sm text-gray-500">{option.description}</p>
+                  </div>
+                  <ChevronRight className="w-5 h-5 text-gray-400 group-hover:text-emerald-500 transition-colors" />
+                </button>
+              ))}
+              <div className="pt-4 border-t mt-4">
+                <label className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2 block">Tùy chọn xuất</label>
+                <div className="space-y-2">
+                  <label className="flex items-center gap-2 text-sm">
+                    <input type="checkbox" defaultChecked className="accent-emerald-500" />
+                    <span>Bao gồm biểu đồ</span>
+                  </label>
+                  <label className="flex items-center gap-2 text-sm">
+                    <input type="checkbox" className="accent-emerald-500" />
+                    <span>Chỉ dữ liệu tháng hiện tại</span>
+                  </label>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+      )}
+
+      {/* Notification Center Panel */}
+      {showNotificationCenter && (
+        <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-end bg-black/50 backdrop-blur-sm animate-in fade-in" onClick={() => setShowNotificationCenter(false)}>
+          <Card className="w-full sm:w-96 h-[80vh] sm:h-auto sm:max-h-[80vh] shadow-2xl border-0 rounded-l-2xl sm:rounded-2xl animate-in slide-in-from-right sm:zoom-in-95" onClick={e => e.stopPropagation()}>
+            <CardHeader className="pb-3 border-b">
+              <div className="flex items-center justify-between">
+                <CardTitle className="flex items-center gap-2">
+                  <Bell className="w-5 h-5 text-emerald-500" />
+                  Trung tâm thông báo
+                </CardTitle>
+                <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => setShowNotificationCenter(false)}>
+                  <X className="w-4 h-4" />
+                </Button>
+              </div>
+              <div className="flex items-center gap-2 mt-2">
+                {['all', 'unread', 'system', 'reminder'].map((filter) => (
+                  <button
+                    key={filter}
+                    onClick={() => setNotificationFilter(filter)}
+                    className={cn(
+                      "px-3 py-1 text-xs rounded-full transition-all",
+                      notificationFilter === filter
+                        ? "bg-emerald-500 text-white"
+                        : "bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-700"
+                    )}
+                  >
+                    {filter === 'all' ? 'Tất cả' : filter === 'unread' ? 'Chưa đọc' : filter === 'system' ? 'Hệ thống' : 'Nhắc nhở'}
+                  </button>
+                ))}
+              </div>
+            </CardHeader>
+            <CardContent className="p-0 overflow-y-auto max-h-[60vh]">
+              <ScrollArea className="h-full">
+                <div className="p-4 space-y-3">
+                  {allNotifications
+                    .filter(n => notificationFilter === 'all' || 
+                                 (notificationFilter === 'unread' && !n.read) ||
+                                 (notificationFilter === n.category))
+                    .map((notif, index) => (
+                    <div 
+                      key={notif.id}
+                      className={cn(
+                        "p-4 rounded-xl border transition-all hover:shadow-md cursor-pointer animate-in fade-in",
+                        !notif.read && "bg-emerald-50/50 dark:bg-emerald-900/10 border-emerald-200 dark:border-emerald-800",
+                        notif.read && "bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700"
+                      )}
+                      style={{ animationDelay: `${index * 50}ms` }}
+                    >
+                      <div className="flex items-start gap-3">
+                        <div className={cn(
+                          "p-2 rounded-lg",
+                          notif.type === 'success' && "bg-emerald-100 dark:bg-emerald-900/30 text-emerald-600",
+                          notif.type === 'warning' && "bg-amber-100 dark:bg-amber-900/30 text-amber-600",
+                          notif.type === 'info' && "bg-blue-100 dark:bg-blue-900/30 text-blue-600"
+                        )}>
+                          {notif.type === 'success' && <CheckCircle2 className="w-4 h-4" />}
+                          {notif.type === 'warning' && <AlertCircle className="w-4 h-4" />}
+                          {notif.type === 'info' && <Info className="w-4 h-4" />}
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center gap-2">
+                            <p className="font-medium text-sm text-gray-900 dark:text-white">{notif.title}</p>
+                            {!notif.read && (
+                              <span className="w-2 h-2 bg-emerald-500 rounded-full flex-shrink-0" />
+                            )}
+                          </div>
+                          <p className="text-xs text-gray-500 dark:text-gray-400 mt-1 line-clamp-2">{notif.description}</p>
+                          <p className="text-xs text-gray-400 dark:text-gray-500 mt-2">{notif.time}</p>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </ScrollArea>
+            </CardContent>
+            <div className="p-4 border-t">
+              <Button 
+                variant="outline" 
+                className="w-full"
+                onClick={() => {
+                  toast.success('Đã đánh dấu tất cả là đã đọc')
+                  setShowNotificationCenter(false)
+                }}
+              >
+                Đánh dấu tất cả đã đọc
+              </Button>
+            </div>
+          </Card>
+        </div>
+      )}
+
+      {/* Quick Actions Floating Button */}
+      <div className="fixed bottom-6 right-6 z-40">
+        <div className="relative">
+          {/* Quick Actions Menu */}
+          {showQuickActions && (
+            <div className="absolute bottom-16 right-0 flex flex-col gap-2 animate-in slide-in-from-bottom-4 duration-200">
+              {[
+                { icon: <Plus className="w-5 h-5" />, label: 'Thêm mới', color: 'bg-emerald-500', action: () => toast.success('Mở form thêm mới') },
+                { icon: <Download className="w-5 h-5" />, label: 'Xuất dữ liệu', color: 'bg-blue-500', action: () => setShowExport(true) },
+                { icon: <RefreshCw className="w-5 h-5" />, label: 'Làm mới', color: 'bg-purple-500', action: () => toast.success('Đã làm mới dữ liệu') },
+                { icon: <Bell className="w-5 h-5" />, label: 'Thông báo', color: 'bg-amber-500', action: () => setShowNotificationCenter(true) },
+              ].map((action, index) => (
+                <button
+                  key={index}
+                  className="flex items-center gap-3 px-4 py-3 rounded-xl bg-white dark:bg-gray-800 shadow-lg border border-gray-200 dark:border-gray-700 hover:scale-105 transition-all group"
+                  style={{ animationDelay: `${index * 50}ms` }}
+                  onClick={() => {
+                    action.action()
+                    setShowQuickActions(false)
+                  }}
+                >
+                  <div className={cn("p-2 rounded-lg text-white", action.color)}>
+                    {action.icon}
+                  </div>
+                  <span className="text-sm font-medium text-gray-700 dark:text-gray-300">{action.label}</span>
+                </button>
+              ))}
+            </div>
+          )}
+          
+          {/* Main FAB Button */}
+          <button
+            onClick={() => setShowQuickActions(!showQuickActions)}
+            className={cn(
+              "w-14 h-14 rounded-full shadow-xl flex items-center justify-center transition-all duration-300",
+              showQuickActions 
+                ? "bg-gray-700 dark:bg-gray-600 rotate-45" 
+                : "bg-gradient-to-r from-emerald-500 to-teal-600 hover:scale-110 hover:shadow-2xl"
+            )}
+          >
+            {showQuickActions ? (
+              <X className="w-6 h-6 text-white" />
+            ) : (
+              <Sparkles className="w-6 h-6 text-white animate-pulse" />
+            )}
+          </button>
+        </div>
+      </div>
     </div>
     </TooltipProvider>
   )
