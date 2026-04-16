@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect, useCallback, useRef } from 'react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
@@ -132,10 +132,112 @@ import {
   Megaphone,
   Briefcase,
   Heart,
-  Send
+  Send,
+  Rocket,
+  Shield,
+  Globe,
+  Maximize2,
+  Minimize2
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { ThemeToggle } from '@/components/theme-toggle'
+import { toast } from 'sonner'
+
+// Animated Counter Hook
+function useAnimatedCounter(end: number, duration: number = 2000) {
+  const [count, setCount] = useState(0)
+  const [hasStarted, setHasStarted] = useState(false)
+  const ref = useRef<HTMLDivElement>(null)
+  const hasStartedRef = useRef(false)
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting && !hasStartedRef.current) {
+          hasStartedRef.current = true
+          setHasStarted(true)
+        }
+      },
+      { threshold: 0.1 }
+    )
+
+    if (ref.current) {
+      observer.observe(ref.current)
+    }
+
+    return () => observer.disconnect()
+  }, [])
+
+  useEffect(() => {
+    if (!hasStarted) return
+
+    let startTime: number
+    let animationFrame: number
+
+    const animate = (currentTime: number) => {
+      if (!startTime) startTime = currentTime
+      const progress = Math.min((currentTime - startTime) / duration, 1)
+      
+      // Easing function for smooth animation
+      const easeOutQuart = 1 - Math.pow(1 - progress, 4)
+      setCount(Math.floor(easeOutQuart * end))
+
+      if (progress < 1) {
+        animationFrame = requestAnimationFrame(animate)
+      }
+    }
+
+    animationFrame = requestAnimationFrame(animate)
+
+    return () => cancelAnimationFrame(animationFrame)
+  }, [hasStarted, end, duration])
+
+  return { count, ref }
+}
+
+// Animated Stat Card Component
+function AnimatedStatCard({ stat, index }: { stat: typeof stats[0], index: number }) {
+  const numericValue = parseInt(stat.value.replace(/[^0-9]/g, ''))
+  const { count, ref } = useAnimatedCounter(numericValue, 2000)
+  const suffix = stat.value.includes('%') ? '%' : stat.value.includes(',') ? '' : ''
+  
+  return (
+    <Card 
+      ref={ref}
+      className="group hover:shadow-xl transition-all duration-300 hover:-translate-y-2 border-0 shadow-lg overflow-hidden glass-card animate-in slide-in-from-bottom"
+      style={{ animationDelay: `${index * 100}ms` }}
+    >
+      <div className="absolute inset-0 bg-gradient-to-br from-emerald-500/5 to-teal-500/5 dark:from-emerald-500/10 dark:to-teal-500/10 opacity-0 group-hover:opacity-100 transition-opacity" />
+      <CardContent className="p-5 relative">
+        <div className="flex items-start justify-between mb-3">
+          <div className="p-3 rounded-xl bg-gradient-to-br from-emerald-50 to-teal-100 dark:from-emerald-900/30 dark:to-teal-900/30 text-emerald-600 dark:text-emerald-400 group-hover:scale-110 group-hover:rotate-3 transition-all duration-300 shadow-sm">
+            {stat.icon}
+          </div>
+          <div className="flex items-center gap-1">
+            {stat.trend === 'up' ? (
+              <ArrowUpRight className="w-3 h-3 text-emerald-500" />
+            ) : stat.trend === 'down' ? (
+              <ArrowDownRight className="w-3 h-3 text-red-500" />
+            ) : (
+              <Minus className="w-3 h-3 text-gray-500" />
+            )}
+            <Badge variant="secondary" className="bg-emerald-50 dark:bg-emerald-900/30 text-emerald-600 dark:text-emerald-400 border-0 font-semibold">
+              {stat.change}
+            </Badge>
+          </div>
+        </div>
+        <p className="text-sm text-gray-500 dark:text-gray-400 font-medium">{stat.label}</p>
+        <p className="text-3xl font-bold text-gray-900 dark:text-white mt-1 tabular-nums">
+          {count.toLocaleString()}{suffix}
+        </p>
+        <div className="relative mt-3">
+          <Progress value={stat.progress} className="h-2" />
+        </div>
+        <p className="text-xs text-gray-400 dark:text-gray-500 mt-2">{stat.description}</p>
+      </CardContent>
+    </Card>
+  )
+}
 
 // Chart configurations
 const chartConfig = {
@@ -425,6 +527,21 @@ export default function HomePage() {
     return () => clearInterval(timer)
   }, [])
 
+  // Welcome toast on first load
+  useEffect(() => {
+    const hasSeenWelcome = sessionStorage.getItem('hasSeenWelcome')
+    if (!hasSeenWelcome) {
+      setTimeout(() => {
+        toast.success('Chào mừng đến với Hệ thống Phòng Đào Tạo!', {
+          description: 'Bạn có thể sử dụng Ctrl+K để tìm kiếm nhanh.',
+          icon: <Sparkles className="w-4 h-4" />,
+          duration: 5000,
+        })
+        sessionStorage.setItem('hasSeenWelcome', 'true')
+      }, 1000)
+    }
+  }, [])
+
   // Keyboard shortcuts
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -452,6 +569,10 @@ export default function HomePage() {
     setIsLoading(true)
     setActiveMenu(item.id)
     setMobileMenuOpen(false)
+    toast.info(`Đang mở ${item.title}`, {
+      description: item.description,
+      icon: item.icon,
+    })
     setTimeout(() => setIsLoading(false), 300)
   }, [])
 
@@ -491,7 +612,16 @@ export default function HomePage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-100 dark:from-gray-950 dark:via-gray-900 dark:to-gray-950 flex">
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-100 dark:from-gray-950 dark:via-gray-900 dark:to-gray-950 flex relative overflow-hidden">
+      {/* Floating Gradient Orbs Background */}
+      <div className="fixed inset-0 overflow-hidden pointer-events-none z-0">
+        <div className="absolute -top-40 -right-40 w-80 h-80 bg-emerald-400/20 dark:bg-emerald-500/10 rounded-full blur-3xl float-animation" />
+        <div className="absolute top-1/2 -left-20 w-60 h-60 bg-teal-400/20 dark:bg-teal-500/10 rounded-full blur-3xl float-animation" style={{ animationDelay: '2s' }} />
+        <div className="absolute -bottom-20 right-1/3 w-72 h-72 bg-cyan-400/15 dark:bg-cyan-500/10 rounded-full blur-3xl float-animation" style={{ animationDelay: '4s' }} />
+        <div className="absolute top-1/4 left-1/4 w-40 h-40 bg-purple-400/10 dark:bg-purple-500/5 rounded-full blur-2xl float-animation" style={{ animationDelay: '1s' }} />
+        <div className="absolute bottom-1/4 right-1/4 w-48 h-48 bg-amber-400/10 dark:bg-amber-500/5 rounded-full blur-2xl float-animation" style={{ animationDelay: '3s' }} />
+      </div>
+
       {/* Mobile Menu Overlay */}
       {mobileMenuOpen && (
         <div 
@@ -623,9 +753,9 @@ export default function HomePage() {
       </aside>
 
       {/* Main Content */}
-      <main className="flex-1 flex flex-col min-h-screen">
-        {/* Header */}
-        <header className="sticky top-0 z-30 bg-white/80 dark:bg-gray-900/80 backdrop-blur-md border-b border-gray-200 dark:border-gray-800 shadow-sm">
+      <main className="flex-1 flex flex-col min-h-screen relative z-10">
+        {/* Header with Glassmorphism */}
+        <header className="sticky top-0 z-30 glass border-b border-gray-200/50 dark:border-gray-700/50 shadow-lg">
           <div className="px-4 lg:px-8 py-3 flex items-center justify-between">
             <div className="flex items-center gap-4">
               <button 
@@ -788,25 +918,26 @@ export default function HomePage() {
                         
                         <div className="flex gap-2">
                           {quickActions.map((action, index) => (
-                            <Dialog key={index}>
-                              <DialogTrigger asChild>
-                                <Button
-                                  size="sm"
-                                  className={cn("text-white shadow-md transition-all hover:scale-110", action.color)}
-                                  title={action.label}
-                                >
-                                  {action.icon}
-                                </Button>
-                              </DialogTrigger>
-                              <DialogContent>
-                                <DialogHeader>
-                                  <DialogTitle>{action.label}</DialogTitle>
-                                  <DialogDescription>
-                                    Tính năng đang được phát triển. Vui lòng quay lại sau.
-                                  </DialogDescription>
-                                </DialogHeader>
-                              </DialogContent>
-                            </Dialog>
+                            <Button
+                              key={index}
+                              size="sm"
+                              className={cn("text-white shadow-lg transition-all hover:scale-110 hover:shadow-xl", action.color)}
+                              title={action.label}
+                              onClick={() => {
+                                toast.success(action.label, {
+                                  description: index === 0 ? 'Đang mở form thêm lớp mới...' :
+                                               index === 1 ? 'Đang chuẩn bị xuất báo cáo...' :
+                                               index === 2 ? 'Đang làm mới dữ liệu hệ thống...' :
+                                               'Đang mở bộ lọc nâng cao...',
+                                  icon: index === 0 ? <Plus className="w-4 h-4" /> :
+                                        index === 1 ? <Download className="w-4 h-4" /> :
+                                        index === 2 ? <RefreshCw className="w-4 h-4 animate-spin" /> :
+                                        <Filter className="w-4 h-4" />,
+                                })
+                              }}
+                            >
+                              {action.icon}
+                            </Button>
                           ))}
                         </div>
                       </div>
@@ -814,38 +945,10 @@ export default function HomePage() {
                   </CardContent>
                 </Card>
 
-                {/* Stats Grid */}
+                {/* Stats Grid with Animated Counters */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
                   {stats.map((stat, index) => (
-                    <Card 
-                      key={index} 
-                      className="group hover:shadow-lg transition-all duration-300 hover:-translate-y-1 border-0 shadow-md overflow-hidden bg-white dark:bg-gray-900 animate-in slide-in-from-bottom"
-                      style={{ animationDelay: `${index * 100}ms` }}
-                    >
-                      <CardContent className="p-5">
-                        <div className="flex items-start justify-between mb-3">
-                          <div className="p-3 rounded-xl bg-gradient-to-br from-emerald-50 to-teal-100 dark:from-emerald-900/30 dark:to-teal-900/30 text-emerald-600 dark:text-emerald-400 group-hover:scale-110 transition-transform">
-                            {stat.icon}
-                          </div>
-                          <div className="flex items-center gap-1">
-                            {stat.trend === 'up' ? (
-                              <ArrowUpRight className="w-3 h-3 text-emerald-500" />
-                            ) : stat.trend === 'down' ? (
-                              <ArrowDownRight className="w-3 h-3 text-red-500" />
-                            ) : (
-                              <Minus className="w-3 h-3 text-gray-500" />
-                            )}
-                            <Badge variant="secondary" className="bg-emerald-50 dark:bg-emerald-900/30 text-emerald-600 dark:text-emerald-400 border-0">
-                              {stat.change}
-                            </Badge>
-                          </div>
-                        </div>
-                        <p className="text-sm text-gray-500 dark:text-gray-400 font-medium">{stat.label}</p>
-                        <p className="text-3xl font-bold text-gray-900 dark:text-white mt-1">{stat.value}</p>
-                        <Progress value={stat.progress} className="h-1.5 mt-3" />
-                        <p className="text-xs text-gray-400 dark:text-gray-500 mt-2">{stat.description}</p>
-                      </CardContent>
-                    </Card>
+                    <AnimatedStatCard key={index} stat={stat} index={index} />
                   ))}
                 </div>
 
