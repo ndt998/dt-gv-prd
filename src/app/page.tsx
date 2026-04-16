@@ -518,6 +518,8 @@ export default function HomePage() {
   const [isLoading, setIsLoading] = useState(false)
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid')
   const [showSearch, setShowSearch] = useState(false)
+  const [showShortcuts, setShowShortcuts] = useState(false)
+  const [showFeedback, setShowFeedback] = useState(false)
   const [expandedStats, setExpandedStats] = useState(false)
   const [selectedDepartment, setSelectedDepartment] = useState('all')
   const [activeTab, setActiveTab] = useState('overview')
@@ -556,8 +558,14 @@ export default function HomePage() {
         e.preventDefault()
         setShowSearch(true)
       }
+      if (e.key === 'F1' || (e.ctrlKey && e.key === '/')) {
+        e.preventDefault()
+        setShowShortcuts(true)
+      }
       if (e.key === 'Escape') {
         setShowSearch(false)
+        setShowShortcuts(false)
+        setShowFeedback(false)
         setActiveMenu(null)
       }
     }
@@ -725,16 +733,59 @@ export default function HomePage() {
           ))}
         </nav>
 
-        {/* Quick Stats Mini */}
+        {/* Quick Stats Mini with Sparkline */}
         <div className="p-4 border-t border-white/10">
           <div className="grid grid-cols-2 gap-2 text-center">
-            <div className="bg-white/10 rounded-lg p-2 hover:bg-white/20 transition-colors cursor-pointer">
-              <div className="text-lg font-bold">156</div>
+            <div className="bg-white/10 rounded-lg p-2 hover:bg-white/20 transition-colors cursor-pointer group">
+              <div className="text-lg font-bold group-hover:scale-110 transition-transform">156</div>
               <div className="text-xs text-emerald-200">Lớp học</div>
+              {/* Mini Sparkline */}
+              <svg viewBox="0 0 50 15" className="w-full h-3 mt-1">
+                <polyline
+                  fill="none"
+                  stroke="rgba(255,255,255,0.5)"
+                  strokeWidth="1.5"
+                  points="0,12 8,8 16,10 24,6 32,8 40,4 48,2"
+                />
+              </svg>
             </div>
-            <div className="bg-white/10 rounded-lg p-2 hover:bg-white/20 transition-colors cursor-pointer">
-              <div className="text-lg font-bold">89</div>
+            <div className="bg-white/10 rounded-lg p-2 hover:bg-white/20 transition-colors cursor-pointer group">
+              <div className="text-lg font-bold group-hover:scale-110 transition-transform">89</div>
               <div className="text-xs text-emerald-200">Giảng viên</div>
+              {/* Mini Sparkline */}
+              <svg viewBox="0 0 50 15" className="w-full h-3 mt-1">
+                <polyline
+                  fill="none"
+                  stroke="rgba(255,255,255,0.5)"
+                  strokeWidth="1.5"
+                  points="0,10 8,8 16,6 24,8 32,4 40,6 48,3"
+                />
+              </svg>
+            </div>
+          </div>
+          {/* Weekly Overview Mini Chart */}
+          <div className="mt-3 bg-white/5 rounded-lg p-3">
+            <div className="flex items-center justify-between mb-2">
+              <span className="text-xs text-emerald-200">Tuần này</span>
+              <span className="text-xs font-semibold text-white">+12%</span>
+            </div>
+            <div className="flex items-end gap-1 h-8">
+              {[40, 65, 45, 80, 55, 70, 35].map((h, i) => (
+                <div
+                  key={i}
+                  className="flex-1 bg-white/30 rounded-sm transition-all hover:bg-white/50"
+                  style={{ height: `${h}%` }}
+                />
+              ))}
+            </div>
+            <div className="flex justify-between mt-1 text-[8px] text-emerald-300/70">
+              <span>T2</span>
+              <span>T3</span>
+              <span>T4</span>
+              <span>T5</span>
+              <span>T6</span>
+              <span>T7</span>
+              <span>CN</span>
             </div>
           </div>
         </div>
@@ -815,6 +866,28 @@ export default function HomePage() {
                   </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
+
+              {/* Feedback Button */}
+              <Button 
+                variant="ghost" 
+                size="icon"
+                className="hidden sm:flex h-9 w-9 hover:bg-gray-100 dark:hover:bg-gray-800"
+                onClick={() => setShowFeedback(true)}
+                title="Gửi phản hồi"
+              >
+                <MessageSquare className="w-4 h-4" />
+              </Button>
+
+              {/* Help Button */}
+              <Button 
+                variant="ghost" 
+                size="icon"
+                className="hidden sm:flex h-9 w-9 hover:bg-gray-100 dark:hover:bg-gray-800"
+                onClick={() => setShowShortcuts(true)}
+                title="Phím tắt (F1)"
+              >
+                <HelpCircle className="w-4 h-4" />
+              </Button>
 
               {/* Theme Toggle */}
               <ThemeToggle />
@@ -1984,6 +2057,123 @@ export default function HomePage() {
                   ))}
                 </div>
               )}
+            </CardContent>
+          </Card>
+        </div>
+      )}
+
+      {/* Keyboard Shortcuts Modal */}
+      {showShortcuts && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm animate-in fade-in" onClick={() => setShowShortcuts(false)}>
+          <Card className="w-full max-w-lg mx-4 shadow-2xl border-0 animate-in zoom-in-95" onClick={e => e.stopPropagation()}>
+            <CardHeader className="pb-4">
+              <div className="flex items-center justify-between">
+                <CardTitle className="flex items-center gap-2">
+                  <Zap className="w-5 h-5 text-emerald-500" />
+                  Phím tắt
+                </CardTitle>
+                <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => setShowShortcuts(false)}>
+                  <X className="w-4 h-4" />
+                </Button>
+              </div>
+              <CardDescription>Sử dụng các phím tắt để làm việc nhanh hơn</CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-3">
+              {[
+                { keys: ['Ctrl', 'K'], action: 'Mở tìm kiếm nhanh', icon: <Search className="w-4 h-4" /> },
+                { keys: ['Ctrl', '1'], action: 'Mở Gantt Chart TKB', icon: <Calendar className="w-4 h-4" /> },
+                { keys: ['Ctrl', '2'], action: 'Mở Thống kê giờ giảng', icon: <BarChart3 className="w-4 h-4" /> },
+                { keys: ['Ctrl', '3'], action: 'Mở Báo cáo tiến độ', icon: <FileText className="w-4 h-4" /> },
+                { keys: ['Ctrl', '4'], action: 'Mở Tình hình mở lớp', icon: <Users className="w-4 h-4" /> },
+                { keys: ['F1'], action: 'Hiển thị trợ giúp', icon: <HelpCircle className="w-4 h-4" /> },
+                { keys: ['ESC'], action: 'Đóng dialog/quay lại', icon: <X className="w-4 h-4" /> },
+              ].map((shortcut, index) => (
+                <div key={index} className="flex items-center justify-between p-3 rounded-lg bg-gray-50 dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors animate-in slide-in-from-left" style={{ animationDelay: `${index * 50}ms` }}>
+                  <div className="flex items-center gap-3">
+                    <div className="p-2 rounded-lg bg-emerald-100 dark:bg-emerald-900/30 text-emerald-600 dark:text-emerald-400">
+                      {shortcut.icon}
+                    </div>
+                    <span className="text-sm font-medium">{shortcut.action}</span>
+                  </div>
+                  <div className="flex items-center gap-1">
+                    {shortcut.keys.map((key, keyIndex) => (
+                      <span key={keyIndex}>
+                        <kbd className="px-2 py-1 text-xs font-semibold bg-white dark:bg-gray-900 rounded border border-gray-200 dark:border-gray-700 shadow-sm">
+                          {key}
+                        </kbd>
+                        {keyIndex < shortcut.keys.length - 1 && <span className="mx-0.5 text-gray-400">+</span>}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              ))}
+              <div className="pt-4 flex justify-end gap-2">
+                <Button variant="outline" size="sm" onClick={() => setShowShortcuts(false)}>
+                  Đóng
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+      )}
+
+      {/* Feedback Modal */}
+      {showFeedback && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm animate-in fade-in" onClick={() => setShowFeedback(false)}>
+          <Card className="w-full max-w-md mx-4 shadow-2xl border-0 animate-in zoom-in-95" onClick={e => e.stopPropagation()}>
+            <CardHeader className="pb-4">
+              <div className="flex items-center justify-between">
+                <CardTitle className="flex items-center gap-2">
+                  <MessageSquare className="w-5 h-5 text-emerald-500" />
+                  Gửi phản hồi
+                </CardTitle>
+                <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => setShowFeedback(false)}>
+                  <X className="w-4 h-4" />
+                </Button>
+              </div>
+              <CardDescription>Chia sẻ ý kiến của bạn để chúng tôi cải thiện hệ thống</CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="space-y-2">
+                <label className="text-sm font-medium">Loại phản hồi</label>
+                <Select defaultValue="suggestion">
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="suggestion">💡 Đề xuất tính năng</SelectItem>
+                    <SelectItem value="bug">🐛 Báo cáo lỗi</SelectItem>
+                    <SelectItem value="question">❓ Câu hỏi</SelectItem>
+                    <SelectItem value="other">📝 Khác</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="space-y-2">
+                <label className="text-sm font-medium">Nội dung</label>
+                <textarea 
+                  className="w-full min-h-[100px] p-3 text-sm rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-emerald-500 resize-none"
+                  placeholder="Nhập nội dung phản hồi của bạn..."
+                />
+              </div>
+              <div className="flex justify-end gap-2">
+                <Button variant="outline" size="sm" onClick={() => setShowFeedback(false)}>
+                  Hủy
+                </Button>
+                <Button 
+                  size="sm" 
+                  className="bg-emerald-500 hover:bg-emerald-600"
+                  onClick={() => {
+                    toast.success('Cảm ơn phản hồi của bạn!', {
+                      description: 'Chúng tôi sẽ xem xét và phản hồi sớm nhất.',
+                      icon: <Heart className="w-4 h-4" />,
+                    })
+                    setShowFeedback(false)
+                  }}
+                >
+                  <Send className="w-4 h-4 mr-2" />
+                  Gửi
+                </Button>
+              </div>
             </CardContent>
           </Card>
         </div>
