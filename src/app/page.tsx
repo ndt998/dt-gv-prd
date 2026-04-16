@@ -649,6 +649,9 @@ export default function HomePage() {
   const [showNotificationCenter, setShowNotificationCenter] = useState(false)
   const [showQuickActions, setShowQuickActions] = useState(false)
   const [notificationFilter, setNotificationFilter] = useState('all')
+  const [classSearchResults, setClassSearchResults] = useState<Array<{id: string, code: string, name: string}>>([])
+  const [isSearchingClasses, setIsSearchingClasses] = useState(false)
+  const [showClassSearchResults, setShowClassSearchResults] = useState(false)
 
   useEffect(() => {
     const timer = setInterval(() => setCurrentTime(new Date()), 1000)
@@ -710,6 +713,47 @@ export default function HomePage() {
     })
     setTimeout(() => setIsLoading(false), 300)
   }, [])
+
+  // Search classes by class code
+  const searchClassesByCode = useCallback(async (query: string) => {
+    if (!query || query.length < 1) {
+      setClassSearchResults([])
+      setShowClassSearchResults(false)
+      return
+    }
+    
+    setIsSearchingClasses(true)
+    setShowClassSearchResults(true)
+    
+    try {
+      const response = await fetch(`/api/admin/classes?search=${encodeURIComponent(query)}`)
+      if (response.ok) {
+        const data = await response.json()
+        setClassSearchResults(data.classes || [])
+      } else {
+        setClassSearchResults([])
+      }
+    } catch (error) {
+      console.error('Error searching classes:', error)
+      setClassSearchResults([])
+    } finally {
+      setIsSearchingClasses(false)
+    }
+  }, [])
+
+  // Debounced search effect
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      if (searchQuery) {
+        searchClassesByCode(searchQuery)
+      } else {
+        setClassSearchResults([])
+        setShowClassSearchResults(false)
+      }
+    }, 300)
+
+    return () => clearTimeout(timer)
+  }, [searchQuery, searchClassesByCode])
 
   const formatTime = (date: Date) => {
     return date.toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit', second: '2-digit' })
@@ -796,16 +840,68 @@ export default function HomePage() {
         </button>
 
         {/* Search in Sidebar */}
-        <div className="px-4 py-3">
+        <div className="px-4 py-3 relative">
           <div className="relative">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-emerald-200" />
             <Input
-              placeholder="Tìm kiếm..."
+              placeholder="Tìm mã lớp (VD: 1/2026)..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
+              onFocus={() => searchQuery && setShowClassSearchResults(true)}
+              onBlur={() => setTimeout(() => setShowClassSearchResults(false), 200)}
               className="pl-9 bg-white/10 border-white/20 text-white placeholder:text-emerald-200 focus:bg-white/20 focus:border-white/40 transition-all"
             />
+            {isSearchingClasses && (
+              <Loader2 className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-emerald-200 animate-spin" />
+            )}
           </div>
+          
+          {/* Class Search Results Dropdown */}
+          {showClassSearchResults && (searchQuery || classSearchResults.length > 0) && (
+            <div className="absolute left-4 right-4 top-full mt-1 bg-white dark:bg-gray-900 rounded-lg shadow-xl border border-gray-200 dark:border-gray-700 max-h-60 overflow-y-auto z-50">
+              {isSearchingClasses ? (
+                <div className="p-4 text-center text-gray-500">
+                  <Loader2 className="w-5 h-5 animate-spin mx-auto mb-2" />
+                  <span className="text-sm">Đang tìm kiếm...</span>
+                </div>
+              ) : classSearchResults.length > 0 ? (
+                <div className="py-2">
+                  <div className="px-3 py-1.5 text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase">
+                    Kết quả tìm kiếm
+                  </div>
+                  {classSearchResults.map((cls) => (
+                    <button
+                      key={cls.id}
+                      className="w-full flex items-center gap-3 px-3 py-2 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors text-left"
+                      onClick={() => {
+                        toast.success(`Đã chọn lớp: ${cls.code}`, {
+                          description: cls.name,
+                          icon: <GraduationCap className="w-4 h-4" />,
+                        })
+                        setSearchQuery('')
+                        setClassSearchResults([])
+                        setShowClassSearchResults(false)
+                      }}
+                    >
+                      <div className="p-2 rounded-lg bg-emerald-100 dark:bg-emerald-900/30 text-emerald-600 dark:text-emerald-400">
+                        <GraduationCap className="w-4 h-4" />
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <p className="font-medium text-gray-900 dark:text-white text-sm">{cls.code}</p>
+                        <p className="text-xs text-gray-500 dark:text-gray-400 truncate">{cls.name}</p>
+                      </div>
+                      <ChevronRight className="w-4 h-4 text-gray-400" />
+                    </button>
+                  ))}
+                </div>
+              ) : searchQuery ? (
+                <div className="p-4 text-center text-gray-500">
+                  <Search className="w-5 h-5 mx-auto mb-2 opacity-50" />
+                  <span className="text-sm">Không tìm thấy lớp với mã "{searchQuery}"</span>
+                </div>
+              ) : null}
+            </div>
+          )}
         </div>
 
         {/* Navigation Menu */}
@@ -928,6 +1024,23 @@ export default function HomePage() {
               {formatDate(currentTime)}
             </div>
           </div>
+        </div>
+
+        {/* Admin Button */}
+        <div className="p-4 border-t border-white/10">
+          <a
+            href="/admin/login"
+            className="w-full flex items-center gap-3 px-4 py-3 rounded-xl bg-white/10 hover:bg-white/20 text-white transition-all duration-300 group"
+          >
+            <div className="flex-shrink-0 p-2 rounded-lg bg-white/10 group-hover:bg-white/20 transition-colors">
+              <Shield className="w-5 h-5" />
+            </div>
+            <div className="flex-1 text-left">
+              <span className="font-semibold">Quản trị viên</span>
+              <p className="text-xs text-emerald-200">Đăng nhập admin</p>
+            </div>
+            <ChevronRight className="w-4 h-4 opacity-50 group-hover:opacity-100" />
+          </a>
         </div>
       </aside>
 
@@ -1099,28 +1212,11 @@ export default function HomePage() {
         <div className="bg-gradient-to-r from-emerald-600 via-teal-600 to-cyan-600 dark:from-emerald-700 dark:via-teal-700 dark:to-cyan-700 py-2 overflow-hidden">
           <div className="flex items-center gap-3 px-4">
             <div className="flex items-center gap-2 bg-white/20 px-3 py-1 rounded-full backdrop-blur-sm flex-shrink-0">
-              <Newspaper className="w-4 h-4 text-white animate-pulse" />
+              <Newspaper className="w-4 h-4 text-white" />
               <span className="text-white text-sm font-semibold whitespace-nowrap">Tin mới</span>
             </div>
-            <div className="relative flex-1 overflow-hidden">
-              <div className="flex gap-12 animate-marquee whitespace-nowrap">
-                {[...newsTickerItems, ...newsTickerItems].map((item, index) => (
-                  <div key={`${item.id}-${index}`} className="flex items-center gap-2 text-white/90 text-sm">
-                    <span className={cn(
-                      "inline-block w-2 h-2 rounded-full flex-shrink-0",
-                      item.type === 'info' && "bg-blue-300",
-                      item.type === 'success' && "bg-emerald-300",
-                      item.type === 'warning' && "bg-amber-300"
-                    )} />
-                    <span>{item.text}</span>
-                    {item.priority === 'high' && (
-                      <Badge className="bg-red-500/80 text-white text-[10px] px-1.5 py-0 h-4 border-0 animate-pulse">
-                        Quan trọng
-                      </Badge>
-                    )}
-                  </div>
-                ))}
-              </div>
+            <div className="flex-1 text-center py-1">
+              <span className="text-white/70 text-sm italic">Chưa có thông báo mới</span>
             </div>
           </div>
         </div>
@@ -1494,207 +1590,6 @@ export default function HomePage() {
                           </div>
                         </CardContent>
                       </Card>
-                    </div>
-
-                    {/* Goals Progress Dashboard */}
-                    <Card className="border-0 shadow-md bg-white dark:bg-gray-900 mt-6">
-                      <CardHeader className="pb-3">
-                        <div className="flex items-center justify-between">
-                          <CardTitle className="flex items-center gap-2">
-                            <Target className="w-5 h-5 text-emerald-500" />
-                            Tiến độ mục tiêu tháng 4
-                          </CardTitle>
-                          <Badge className="bg-emerald-100 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-400 border-0">
-                            85% hoàn thành
-                          </Badge>
-                        </div>
-                        <CardDescription>Theo dõi tiến độ các mục tiêu đào tạo trong tháng</CardDescription>
-                      </CardHeader>
-                      <CardContent>
-                        <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                          {goalProgressData.map((goal, index) => {
-                            const percentage = Math.round((goal.current / goal.target) * 100)
-                            return (
-                              <div 
-                                key={goal.id}
-                                className="p-4 rounded-xl bg-gray-50 dark:bg-gray-800 hover:shadow-md transition-all group animate-in fade-in"
-                                style={{ animationDelay: `${index * 100}ms` }}
-                              >
-                                <div className="flex items-center justify-between mb-3">
-                                  <div className={cn("p-2 rounded-lg text-white", goal.color)}>
-                                    {goal.icon}
-                                  </div>
-                                  <span className={cn(
-                                    "text-lg font-bold",
-                                    percentage >= 90 ? "text-emerald-600 dark:text-emerald-400" :
-                                    percentage >= 70 ? "text-blue-600 dark:text-blue-400" :
-                                    "text-amber-600 dark:text-amber-400"
-                                  )}>
-                                    {percentage}%
-                                  </span>
-                                </div>
-                                <p className="text-sm font-medium text-gray-900 dark:text-white mb-2">{goal.title}</p>
-                                <div className="relative">
-                                  <Progress value={percentage} className="h-2" />
-                                </div>
-                                <p className="text-xs text-gray-500 dark:text-gray-400 mt-2">
-                                  {goal.current} / {goal.target}
-                                </p>
-                              </div>
-                            )
-                          })}
-                        </div>
-                      </CardContent>
-                    </Card>
-
-                    {/* Analytics Dashboard Section */}
-                    <div className="grid lg:grid-cols-3 gap-6 mt-6">
-                      {/* KPI Comparison Cards */}
-                      <Card className="border-0 shadow-md bg-white dark:bg-gray-900 lg:col-span-2">
-                        <CardHeader className="pb-3">
-                          <div className="flex items-center justify-between">
-                            <CardTitle className="flex items-center gap-2">
-                              <TrendingUp className="w-5 h-5 text-emerald-500" />
-                              So sánh hiệu suất
-                            </CardTitle>
-                            <div className="flex items-center gap-2 text-xs">
-                              <span className="flex items-center gap-1">
-                                <span className="w-3 h-3 rounded-full bg-emerald-500" />
-                                Hiện tại
-                              </span>
-                              <span className="flex items-center gap-1">
-                                <span className="w-3 h-3 rounded-full bg-gray-300 dark:bg-gray-600" />
-                                Tháng trước
-                              </span>
-                            </div>
-                          </div>
-                        </CardHeader>
-                        <CardContent>
-                          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                            {kpiComparisonData.map((kpi, index) => (
-                              <div 
-                                key={kpi.id}
-                                className="p-4 rounded-xl bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-800 dark:to-gray-900 hover:shadow-md transition-all animate-in fade-in"
-                                style={{ animationDelay: `${index * 100}ms` }}
-                              >
-                                <p className="text-xs text-gray-500 dark:text-gray-400 mb-1">{kpi.label}</p>
-                                <div className="flex items-end justify-between">
-                                  <div>
-                                    <span className="text-2xl font-bold text-gray-900 dark:text-white">{kpi.current}</span>
-                                    <span className="text-sm text-gray-500 dark:text-gray-400 ml-1">{kpi.unit}</span>
-                                  </div>
-                                  <div className="flex items-center gap-1 text-emerald-500 text-xs font-medium">
-                                    <ArrowUpRight className="w-3 h-3" />
-                                    {kpi.previous}
-                                  </div>
-                                </div>
-                                <div className="mt-3 h-2 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
-                                  <div 
-                                    className="h-full bg-gradient-to-r from-emerald-400 to-emerald-600 rounded-full transition-all duration-1000"
-                                    style={{ width: `${kpi.current}%` }}
-                                  />
-                                </div>
-                              </div>
-                            ))}
-                          </div>
-                          
-                          {/* Weekly Comparison Mini Chart */}
-                          <div className="mt-6 pt-6 border-t border-gray-200 dark:border-gray-700">
-                            <div className="flex items-center justify-between mb-4">
-                              <h4 className="text-sm font-semibold text-gray-700 dark:text-gray-300">Giờ giảng theo tuần</h4>
-                              <Badge variant="outline" className="text-emerald-600 border-emerald-200">+5.8% so với tuần trước</Badge>
-                            </div>
-                            <div className="flex items-end gap-2 h-32">
-                              {weeklyComparisonData.map((item, index) => (
-                                <div key={index} className="flex-1 flex flex-col items-center gap-1">
-                                  <div className="relative w-full flex flex-col items-center gap-0.5">
-                                    <div 
-                                      className="w-full bg-gray-200 dark:bg-gray-700 rounded-t-sm transition-all hover:opacity-80"
-                                      style={{ height: `${(item.lastWeek / 210) * 80}px` }}
-                                      title={`Tuần trước: ${item.lastWeek} giờ`}
-                                    />
-                                    <div 
-                                      className="w-full bg-gradient-to-t from-emerald-400 to-emerald-600 rounded-t-sm transition-all hover:opacity-80"
-                                      style={{ height: `${(item.thisWeek / 210) * 80}px` }}
-                                      title={`Tuần này: ${item.thisWeek} giờ`}
-                                    />
-                                  </div>
-                                  <span className="text-xs text-gray-500 dark:text-gray-400">{item.day}</span>
-                                </div>
-                              ))}
-                            </div>
-                          </div>
-                        </CardContent>
-                      </Card>
-
-                      {/* Top Performers & Quick Stats */}
-                      <div className="space-y-6">
-                        {/* Quick Stats Grid */}
-                        <Card className="border-0 shadow-md bg-gradient-to-br from-emerald-500 to-teal-600 text-white">
-                          <CardHeader className="pb-2">
-                            <CardTitle className="text-base flex items-center gap-2">
-                              <Activity className="w-4 h-4" />
-                              Thống kê hôm nay
-                            </CardTitle>
-                          </CardHeader>
-                          <CardContent>
-                            <div className="grid grid-cols-2 gap-3">
-                              {quickStatsData.map((stat, index) => (
-                                <div 
-                                  key={stat.id}
-                                  className="p-3 rounded-xl bg-white/10 backdrop-blur-sm hover:bg-white/20 transition-all animate-in fade-in"
-                                  style={{ animationDelay: `${index * 50}ms` }}
-                                >
-                                  <div className="flex items-center gap-2 mb-1">
-                                    {stat.icon}
-                                    <span className="text-xs text-emerald-100">{stat.label}</span>
-                                  </div>
-                                  <span className="text-2xl font-bold">{stat.value}</span>
-                                </div>
-                              ))}
-                            </div>
-                          </CardContent>
-                        </Card>
-
-                        {/* Top Performers */}
-                        <Card className="border-0 shadow-md bg-white dark:bg-gray-900">
-                          <CardHeader className="pb-2">
-                            <CardTitle className="text-base flex items-center gap-2">
-                              <Award className="w-4 h-4 text-emerald-500" />
-                              Top khoa hiệu quả
-                            </CardTitle>
-                          </CardHeader>
-                          <CardContent>
-                            <div className="space-y-3">
-                              {topPerformersData.map((performer, index) => (
-                                <div 
-                                  key={performer.id}
-                                  className="flex items-center gap-3 p-2 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 transition-all animate-in slide-in-from-right"
-                                  style={{ animationDelay: `${index * 50}ms` }}
-                                >
-                                  <div className={cn(
-                                    "w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold text-white",
-                                    index === 0 && "bg-gradient-to-br from-amber-400 to-amber-600",
-                                    index === 1 && "bg-gradient-to-br from-gray-300 to-gray-500",
-                                    index === 2 && "bg-gradient-to-br from-amber-600 to-amber-800",
-                                    index === 3 && "bg-gradient-to-br from-emerald-400 to-emerald-600"
-                                  )}>
-                                    {index + 1}
-                                  </div>
-                                  <div className="flex-1">
-                                    <p className="text-sm font-medium text-gray-900 dark:text-white">{performer.name}</p>
-                                    <div className="flex items-center gap-2">
-                                      <Progress value={performer.value} className="h-1.5 flex-1" />
-                                      <span className="text-xs text-emerald-600 dark:text-emerald-400">{performer.change}%</span>
-                                    </div>
-                                  </div>
-                                  <span className="text-sm font-bold text-gray-700 dark:text-gray-300">{performer.value}%</span>
-                                </div>
-                              ))}
-                            </div>
-                          </CardContent>
-                        </Card>
-                      </div>
                     </div>
 
                     {/* New Row: Calendar, Weather, Activity Timeline, Documents */}
