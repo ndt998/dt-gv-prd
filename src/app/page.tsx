@@ -637,6 +637,7 @@ export default function HomePage() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const [searchQuery, setSearchQuery] = useState('')
   const [isLoading, setIsLoading] = useState(false)
+  const [loadingProgress, setLoadingProgress] = useState(0)
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid')
   const [showSearch, setShowSearch] = useState(false)
   const [showShortcuts, setShowShortcuts] = useState(false)
@@ -667,6 +668,24 @@ export default function HomePage() {
     const timer = setInterval(() => setCurrentTime(new Date()), 1000)
     return () => clearInterval(timer)
   }, [])
+
+  // Loading progress animation
+  useEffect(() => {
+    if (isLoading || iframeLoading) {
+      setLoadingProgress(0)
+      const interval = setInterval(() => {
+        setLoadingProgress(prev => {
+          if (prev >= 90) return prev
+          return prev + Math.random() * 15
+        })
+      }, 200)
+      return () => clearInterval(interval)
+    } else {
+      setLoadingProgress(100)
+      const timeout = setTimeout(() => setLoadingProgress(0), 500)
+      return () => clearTimeout(timeout)
+    }
+  }, [isLoading, iframeLoading])
 
   // Welcome Guide on first load
   useEffect(() => {
@@ -822,6 +841,16 @@ export default function HomePage() {
   return (
     <TooltipProvider delayDuration={300}>
     <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-100 dark:from-gray-950 dark:via-gray-900 dark:to-gray-950 flex relative overflow-hidden">
+      {/* Top Loading Progress Bar */}
+      {(isLoading || iframeLoading) && (
+        <div className="fixed top-0 left-0 right-0 h-1 z-[100] bg-gray-200 dark:bg-gray-800">
+          <div 
+            className="h-full bg-gradient-to-r from-emerald-500 via-teal-500 to-cyan-500 animate-pulse transition-all duration-300"
+            style={{ width: `${loadingProgress}%` }}
+          />
+        </div>
+      )}
+      
       {/* Floating Gradient Orbs Background */}
       <div className="fixed inset-0 overflow-hidden pointer-events-none z-0">
         <div className="absolute -top-40 -right-40 w-80 h-80 bg-emerald-400/20 dark:bg-emerald-500/10 rounded-full blur-3xl float-animation" />
@@ -3417,6 +3446,33 @@ export default function HomePage() {
                 onClick={() => window.open(iframeUrl, '_blank')}
               >
                 <ExternalLink className="w-4 h-4" />
+              </Button>
+              <Button
+                variant="ghost"
+                size="sm"
+                className="text-white hover:bg-white/20"
+                onClick={() => {
+                  navigator.clipboard.writeText(iframeUrl)
+                  toast.success('Đã sao chép link!', { icon: <Copy className="w-4 h-4" /> })
+                }}
+              >
+                <Copy className="w-4 h-4" />
+              </Button>
+              <Button
+                variant="ghost"
+                size="sm"
+                className="text-white hover:bg-white/20"
+                onClick={() => {
+                  const printWindow = window.open(iframeUrl, '_blank')
+                  if (printWindow) {
+                    printWindow.onload = () => {
+                      printWindow.print()
+                    }
+                  }
+                  toast.success('Đang chuẩn bị in...', { icon: <Printer className="w-4 h-4" /> })
+                }}
+              >
+                <Printer className="w-4 h-4" />
               </Button>
               <Separator orientation="vertical" className="h-6 bg-white/20 mx-1" />
               <Button
