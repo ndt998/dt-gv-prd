@@ -656,6 +656,9 @@ export default function HomePage() {
   const [showClassSearchResults, setShowClassSearchResults] = useState(false)
   const [showWelcomeGuide, setShowWelcomeGuide] = useState(false)
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false)
+  const [showIframe, setShowIframe] = useState(false)
+  const [iframeUrl, setIframeUrl] = useState('')
+  const [iframeTitle, setIframeTitle] = useState('')
 
   useEffect(() => {
     const timer = setInterval(() => setCurrentTime(new Date()), 1000)
@@ -696,6 +699,7 @@ export default function HomePage() {
         setShowFeedback(false)
         setShowProfile(false)
         setActiveMenu(null)
+        setShowIframe(false)
       }
     }
     window.addEventListener('keydown', handleKeyDown)
@@ -706,12 +710,16 @@ export default function HomePage() {
     setIsLoading(true)
     setActiveMenu(item.id)
     setMobileMenuOpen(false)
+    
+    // Show iframe for all menu items
+    setIframeUrl(item.link)
+    setIframeTitle(item.title)
+    setShowIframe(true)
+    
     toast.success(`Đang mở ${item.title}`, {
-      description: 'Đang chuyển đến Google Apps Script...',
+      description: 'Đang tải Google Apps Script...',
       icon: item.icon,
     })
-    // Open the Google Apps Script URL in a new tab
-    window.open(item.link, '_blank')
     setTimeout(() => setIsLoading(false), 300)
   }, [])
 
@@ -926,6 +934,23 @@ export default function HomePage() {
             )}
           </div>
         )}
+
+        {/* Collapse/Expand Button */}
+        <div className={cn(
+          "flex items-center transition-all duration-300",
+          sidebarCollapsed ? "justify-center p-2" : "justify-end px-4 py-2"
+        )}>
+          <button
+            onClick={() => setSidebarCollapsed(!sidebarCollapsed)}
+            className="p-2 rounded-lg bg-white/10 hover:bg-white/20 transition-all duration-200 group"
+          >
+            {sidebarCollapsed ? (
+              <ChevronsRight className="w-5 h-5 text-white group-hover:scale-110 transition-transform" />
+            ) : (
+              <ChevronsLeft className="w-5 h-5 text-white group-hover:scale-110 transition-transform" />
+            )}
+          </button>
+        </div>
 
         {/* Navigation Menu */}
         <nav className={cn(
@@ -3280,6 +3305,54 @@ export default function HomePage() {
           </button>
         </div>
       </div>
+
+      {/* Google Apps Script Iframe Overlay */}
+      {showIframe && (
+        <div className="fixed inset-0 z-[60] bg-white dark:bg-gray-950 animate-in fade-in duration-200">
+          {/* Header Bar */}
+          <div className="fixed top-0 left-0 right-0 h-14 bg-gradient-to-r from-emerald-600 to-teal-700 dark:from-emerald-800 dark:to-teal-900 shadow-lg z-10 flex items-center justify-between px-4">
+            <div className="flex items-center gap-3">
+              <div className="w-8 h-8 bg-white/20 rounded-lg flex items-center justify-center">
+                <Globe className="w-5 h-5 text-white" />
+              </div>
+              <div>
+                <h2 className="text-white font-semibold text-sm">{iframeTitle}</h2>
+                <p className="text-emerald-200 text-xs">Google Apps Script</p>
+              </div>
+            </div>
+            <div className="flex items-center gap-2">
+              <Button
+                variant="ghost"
+                size="sm"
+                className="text-white hover:bg-white/20"
+                onClick={() => window.open(iframeUrl, '_blank')}
+              >
+                <ExternalLink className="w-4 h-4 mr-2" />
+                Mở tab mới
+              </Button>
+              <Button
+                variant="ghost"
+                size="sm"
+                className="text-white hover:bg-white/20"
+                onClick={() => setShowIframe(false)}
+              >
+                <X className="w-4 h-4 mr-2" />
+                Đóng
+              </Button>
+            </div>
+          </div>
+          
+          {/* Iframe Content */}
+          <iframe 
+            src={iframeUrl}
+            width="100%"
+            height="100%"
+            allowFullScreen
+            className="pt-14"
+            style={{ border: 'none' }}
+          />
+        </div>
+      )}
     </div>
     </TooltipProvider>
   )
