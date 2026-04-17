@@ -15,35 +15,63 @@ Work Log:
 
 Stage Summary:
 - ✅ Trang đang hoạt động bình thường, không có lỗi
-- ✅ File README-HDSD.txt đã tạo với hướng dẫn chi tiết:
-  1. Giới thiệu chung
-  2. Yêu cầu hệ thống
-  3. Cấu trúc dự án
-  4. Hướng dẫn chạy local
-  5. Deploy lên GitHub Pages
-  6. Deploy lên Vercel (khuyến nghị)
-  7. Deploy lên server riêng
-  8. Hướng dẫn sử dụng
-  9. Tài khoản mặc định (admin/admin123)
-  10. Xử lý sự cố thường gặp
-  11. Liên hệ hỗ trợ
+- ✅ File README-HDSD.txt đã tạo với hướng dẫn chi tiết
 - ✅ Cron job ID: 100818 đã được tạo
 
-## Project Status
+---
+Task ID: 2
+Agent: Cron Review Agent
+Task: Review và phát triển tính năng mới (15-min cron job)
+
+Work Log:
+- Đọc worklog.md để hiểu tiến độ dự án
+- Kiểm tra dev server log - server hoạt động tốt
+- Chạy lint check - PASSED (không có lỗi)
+- Thêm nút Copy Link trong iframe overlay
+- Thêm nút Print trong iframe overlay
+- Thêm Top Loading Progress Bar với animation
+- Thêm loadingProgress state và useEffect hook
+- Fix warning Cross origin request trong next.config.ts
+- Thêm allowedDevOrigins config
+
+Stage Summary:
+- ✅ Không có bug nghiêm trọng
+- ✅ Thêm tính năng mới:
+  1. **Copy Link button** - Cho phép sao chép URL Google Apps Script
+  2. **Print button** - Cho phép in nội dung iframe
+  3. **Top Loading Progress Bar** - Hiển thị tiến trình tải với animation đẹp
+  4. **Fixed cross-origin warning** - Thêm allowedDevOrigins trong config
+
+## Project Status (Updated)
 
 ### Current Features
 - ✅ Trang chủ với dashboard thống kê
 - ✅ Sidebar có thể thu nhỏ/mở rộng (<< / >>)
 - ✅ Tìm kiếm lớp theo mã lớp
-- ✅ IFRAME Google Apps Script
+- ✅ IFRAME Google Apps Script với các nút:
+  - Refresh
+  - Fullscreen
+  - Open in new tab
+  - **Copy Link (NEW)**
+  - **Print (NEW)**
 - ✅ Dark/Light mode
 - ✅ Trang admin login
 - ✅ Trang admin panel quản lý sheets và classes
+- ✅ **Top Loading Progress Bar (NEW)**
+
+### Technical Improvements
+- ✅ Fixed cross-origin warning in next.config.ts
+- ✅ Loading progress animation với useEffect hook
 
 ### Known Issues
-- ⚠️ Cross origin warning trong dev log (không ảnh hưởng chức năng)
 - ⚠️ Google Apps Script có thể chặn iframe tùy cấu hình
+- ⚠️ Print functionality phụ thuộc vào nội dung iframe
 
 ### Next Steps
-- Có thể thêm tính năng mới như đã đề xuất trong cron job
+- Có thể thêm:
+  1. Notification sound option
+  2. Data export to CSV/Excel
+  3. PWA support
+  4. Breadcrumb navigation
+  5. More chart visualizations
 
