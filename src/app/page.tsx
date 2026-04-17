@@ -157,8 +157,8 @@ import {
   ArrowRight,
   Loader2,
   AlertTriangle,
-  DoubleChevronLeft,
-  DoubleChevronRight
+  ChevronsLeft,
+  ChevronsRight
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { ThemeToggle } from '@/components/theme-toggle'
@@ -1137,9 +1137,9 @@ export default function HomePage() {
                 )}
               >
                 {sidebarCollapsed ? (
-                  <DoubleChevronRight className="w-4 h-4" />
+                  <ChevronsRight className="w-4 h-4" />
                 ) : (
-                  <DoubleChevronLeft className="w-4 h-4" />
+                  <ChevronsLeft className="w-4 h-4" />
                 )}
               </button>
             </TooltipTrigger>
