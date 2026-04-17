@@ -659,6 +659,9 @@ export default function HomePage() {
   const [showIframe, setShowIframe] = useState(false)
   const [iframeUrl, setIframeUrl] = useState('')
   const [iframeTitle, setIframeTitle] = useState('')
+  const [iframeLoading, setIframeLoading] = useState(true)
+  const [iframeKey, setIframeKey] = useState(0)
+  const [iframeFullscreen, setIframeFullscreen] = useState(false)
 
   useEffect(() => {
     const timer = setInterval(() => setCurrentTime(new Date()), 1000)
@@ -714,6 +717,7 @@ export default function HomePage() {
     // Show iframe for all menu items
     setIframeUrl(item.link)
     setIframeTitle(item.title)
+    setIframeLoading(true)
     setShowIframe(true)
     
     toast.success(`Đang mở ${item.title}`, {
@@ -721,6 +725,22 @@ export default function HomePage() {
       icon: item.icon,
     })
     setTimeout(() => setIsLoading(false), 300)
+  }, [])
+
+  const handleIframeLoad = useCallback(() => {
+    setIframeLoading(false)
+  }, [])
+
+  const handleRefreshIframe = useCallback(() => {
+    setIframeLoading(true)
+    setIframeKey(prev => prev + 1)
+    toast.success('Đang làm mới...', {
+      icon: <RefreshCw className="w-4 h-4" />,
+    })
+  }, [])
+
+  const toggleIframeFullscreen = useCallback(() => {
+    setIframeFullscreen(prev => !prev)
   }, [])
 
   // Search classes by class code
@@ -3308,9 +3328,15 @@ export default function HomePage() {
 
       {/* Google Apps Script Iframe Overlay */}
       {showIframe && (
-        <div className="fixed inset-0 z-[60] bg-white dark:bg-gray-950 animate-in fade-in duration-200">
+        <div className={cn(
+          "fixed bg-white dark:bg-gray-950 animate-in fade-in duration-200",
+          iframeFullscreen ? "inset-0 z-[70]" : "inset-0 z-[60]"
+        )}>
           {/* Header Bar */}
-          <div className="fixed top-0 left-0 right-0 h-14 bg-gradient-to-r from-emerald-600 to-teal-700 dark:from-emerald-800 dark:to-teal-900 shadow-lg z-10 flex items-center justify-between px-4">
+          <div className={cn(
+            "fixed top-0 left-0 right-0 h-14 bg-gradient-to-r from-emerald-600 to-teal-700 dark:from-emerald-800 dark:to-teal-900 shadow-lg z-10 flex items-center justify-between px-4",
+            iframeFullscreen && "z-[71]"
+          )}>
             <div className="flex items-center gap-3">
               <div className="w-8 h-8 bg-white/20 rounded-lg flex items-center justify-center">
                 <Globe className="w-5 h-5 text-white" />
@@ -3320,36 +3346,74 @@ export default function HomePage() {
                 <p className="text-emerald-200 text-xs">Google Apps Script</p>
               </div>
             </div>
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-1">
+              <Button
+                variant="ghost"
+                size="sm"
+                className="text-white hover:bg-white/20"
+                onClick={handleRefreshIframe}
+                disabled={iframeLoading}
+              >
+                <RefreshCw className={cn("w-4 h-4", iframeLoading && "animate-spin")} />
+              </Button>
+              <Button
+                variant="ghost"
+                size="sm"
+                className="text-white hover:bg-white/20"
+                onClick={toggleIframeFullscreen}
+              >
+                {iframeFullscreen ? <Minimize2 className="w-4 h-4" /> : <Maximize2 className="w-4 h-4" />}
+              </Button>
               <Button
                 variant="ghost"
                 size="sm"
                 className="text-white hover:bg-white/20"
                 onClick={() => window.open(iframeUrl, '_blank')}
               >
-                <ExternalLink className="w-4 h-4 mr-2" />
-                Mở tab mới
+                <ExternalLink className="w-4 h-4" />
               </Button>
+              <Separator orientation="vertical" className="h-6 bg-white/20 mx-1" />
               <Button
                 variant="ghost"
                 size="sm"
                 className="text-white hover:bg-white/20"
-                onClick={() => setShowIframe(false)}
+                onClick={() => {
+                  setShowIframe(false)
+                  setIframeFullscreen(false)
+                }}
               >
-                <X className="w-4 h-4 mr-2" />
+                <X className="w-4 h-4 mr-1" />
                 Đóng
               </Button>
             </div>
           </div>
           
+          {/* Loading Overlay */}
+          {iframeLoading && (
+            <div className="fixed inset-0 z-20 bg-white/80 dark:bg-gray-950/80 backdrop-blur-sm flex items-center justify-center pt-14">
+              <div className="flex flex-col items-center gap-4">
+                <div className="relative">
+                  <div className="w-16 h-16 border-4 border-emerald-200 dark:border-emerald-800 rounded-full animate-pulse" />
+                  <div className="absolute inset-0 w-16 h-16 border-4 border-emerald-500 border-t-transparent rounded-full animate-spin" />
+                </div>
+                <div className="text-center">
+                  <p className="text-lg font-semibold text-gray-700 dark:text-gray-200">Đang tải nội dung...</p>
+                  <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">Vui lòng đợi trong giây lát</p>
+                </div>
+              </div>
+            </div>
+          )}
+          
           {/* Iframe Content */}
           <iframe 
+            key={iframeKey}
             src={iframeUrl}
             width="100%"
             height="100%"
             allowFullScreen
             className="pt-14"
             style={{ border: 'none' }}
+            onLoad={handleIframeLoad}
           />
         </div>
       )}

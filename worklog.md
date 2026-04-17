@@ -1243,3 +1243,98 @@ Next Phase Recommendations:
 - Test iframe functionality with actual Google Apps Script
 - Add loading indicator for iframe content
 - Consider adding refresh button for iframe content
+
+---
+Task ID: 15
+Agent: Main Agent (Cron Review Phase 15)
+Task: Iframe Enhancements and CSS Styling Improvements
+
+Work Log:
+- Reviewed worklog to understand current project status
+- Performed code review and QA assessment
+- Identified areas for improvement in iframe overlay functionality
+- Added iframe loading state with animated spinner
+- Added refresh button to iframe header
+- Added fullscreen toggle button to iframe
+- Enhanced CSS with new animations and effects
+
+Major implementations:
+
+1. **Iframe Loading State**:
+   - Added `iframeLoading` and `iframeKey` state variables
+   - Loading overlay with animated spinner (dual-ring animation)
+   - "Đang tải nội dung..." text with subtitle
+   - Backdrop blur effect during loading
+   - `onLoad` handler to detect when iframe content is ready
+
+2. **Iframe Refresh Button**:
+   - Added refresh button in header bar
+   - Uses `iframeKey` to force iframe reload
+   - Disabled state while loading
+   - Animated spinner on button when loading
+   - Toast notification on refresh action
+
+3. **Iframe Fullscreen Toggle**:
+   - Added `iframeFullscreen` state variable
+   - Toggle button with Maximize2/Minimize2 icons
+   - Z-index increases when fullscreen
+   - Resets fullscreen when closing iframe
+
+4. **Enhanced Iframe Header**:
+   - Cleaner button layout with icon-only buttons
+   - Separator between action buttons and close button
+   - Consistent hover states
+   - Better responsive design
+
+5. **New CSS Animations**:
+   - Float animation for background orbs (15s infinite)
+   - Menu item hover shimmer effect
+   - Ripple effect for button interactions
+   - Gradient border animation
+   - Glow on hover effect
+   - Scale hover effect
+   - Improved text selection colors
+   - Better focus states for accessibility
+
+6. **CSS Improvements**:
+   - Added .float-animation class for background elements
+   - Added .menu-item-hover for sidebar items
+   - Added .ripple for click feedback
+   - Added .gradient-border for animated borders
+   - Added .glow-hover for glow effects
+   - Added .scale-hover for subtle scaling
+   - Enhanced focus-visible states
+
+Stage Summary:
+- Iframe overlay now has proper loading states
+- Fullscreen toggle allows better viewing experience
+- Refresh button enables reloading content
+- All changes pass lint
+- CSS animations enhance visual appeal
+- Dev server was not running during this session (browser testing skipped)
+
+Files Modified:
+- src/app/page.tsx - Added iframe loading state, refresh button, fullscreen toggle
+- src/app/globals.css - Added new animations and hover effects
+
+Current Features:
+- Modern glassmorphism UI
+- **Iframe overlay with loading state**
+- **Iframe refresh and fullscreen toggle**
+- Collapsible sidebar with << / >> buttons
+- Animated stat counters
+- Toast notification system
+- Class code search functionality
+- Admin authentication system
+- Enhanced CSS animations
+- All previous features maintained
+
+Unresolved Issues:
+- Dev server connectivity issues during QA testing
+- Browser-based testing could not be performed
+
+Next Phase Recommendations:
+- Test all new features in browser
+- Verify iframe functionality with actual Google Apps Script
+- Add more interactive features to the dashboard
+- Consider adding keyboard shortcuts for iframe controls
