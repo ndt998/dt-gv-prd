@@ -57,16 +57,18 @@ export async function PUT(request: NextRequest) {
       )
     }
 
+    // Build update data with only provided fields
+    const updateData: Record<string, unknown> = {}
+    if (name !== undefined) updateData.name = name
+    if (description !== undefined) updateData.description = description
+    if (url !== undefined) updateData.url = url
+    if (category !== undefined) updateData.category = category
+    if (order !== undefined) updateData.order = order
+    if (isActive !== undefined) updateData.isActive = isActive
+
     const sheet = await db.googleSheetLink.update({
       where: { id },
-      data: {
-        name,
-        description,
-        url,
-        category,
-        order,
-        isActive
-      }
+      data: updateData
     })
 
     return NextResponse.json({ success: true, data: sheet })

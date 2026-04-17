@@ -156,7 +156,9 @@ import {
   Newspaper,
   ArrowRight,
   Loader2,
-  AlertTriangle
+  AlertTriangle,
+  DoubleChevronLeft,
+  DoubleChevronRight
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { ThemeToggle } from '@/components/theme-toggle'
@@ -337,7 +339,7 @@ const menuItems: MenuItem[] = [
     title: 'Gantt Chart TKB',
     description: 'Xem và quản lý thời khóa biểu theo biểu đồ Gantt',
     icon: <Calendar className="w-6 h-6" />,
-    link: 'LINK_GAS_GANTT_CHART',
+    link: 'https://script.google.com/macros/s/AKfycbylUhTwKcdq76gjvf5eKGOioVt3GMcFqnRFGzDNrgRHVIp75CUp15rBAYB0bopUHfKuaQ/exec',
     badge: 'Phổ biến',
     gradient: 'from-emerald-500 to-teal-600',
     shortcut: 'Ctrl+1'
@@ -347,7 +349,7 @@ const menuItems: MenuItem[] = [
     title: 'Thống kê giờ giảng',
     description: 'Báo cáo chi tiết về giờ giảng của giảng viên',
     icon: <BarChart3 className="w-6 h-6" />,
-    link: 'LINK_GAS_THONG_KE_GIO_GIANG',
+    link: 'https://script.google.com/macros/s/AKfycbylUhTwKcdq76gjvf5eKGOioVt3GMcFqnRFGzDNrgRHVIp75CUp15rBAYB0bopUHfKuaQ/exec',
     gradient: 'from-cyan-500 to-blue-600',
     shortcut: 'Ctrl+2'
   },
@@ -356,7 +358,7 @@ const menuItems: MenuItem[] = [
     title: 'Báo cáo tiến độ',
     description: 'Theo dõi tiến độ công việc và kế hoạch đào tạo',
     icon: <FileText className="w-6 h-6" />,
-    link: 'LINK_GAS_BAO_CAO_TIEN_DO',
+    link: 'https://script.google.com/macros/s/AKfycbylUhTwKcdq76gjvf5eKGOioVt3GMcFqnRFGzDNrgRHVIp75CUp15rBAYB0bopUHfKuaQ/exec',
     badge: 'Mới',
     gradient: 'from-amber-500 to-orange-600',
     shortcut: 'Ctrl+3'
@@ -366,7 +368,7 @@ const menuItems: MenuItem[] = [
     title: 'Tình hình mở lớp',
     description: 'Quản lý và theo dõi tình trạng các lớp học',
     icon: <Users className="w-6 h-6" />,
-    link: 'LINK_GAS_TINH_HINH_MO_LOP',
+    link: 'https://script.google.com/macros/s/AKfycbylUhTwKcdq76gjvf5eKGOioVt3GMcFqnRFGzDNrgRHVIp75CUp15rBAYB0bopUHfKuaQ/exec',
     gradient: 'from-purple-500 to-pink-600',
     shortcut: 'Ctrl+4'
   }
@@ -653,6 +655,7 @@ export default function HomePage() {
   const [isSearchingClasses, setIsSearchingClasses] = useState(false)
   const [showClassSearchResults, setShowClassSearchResults] = useState(false)
   const [showWelcomeGuide, setShowWelcomeGuide] = useState(false)
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(false)
 
   useEffect(() => {
     const timer = setInterval(() => setCurrentTime(new Date()), 1000)
@@ -703,10 +706,12 @@ export default function HomePage() {
     setIsLoading(true)
     setActiveMenu(item.id)
     setMobileMenuOpen(false)
-    toast.info(`Đang mở ${item.title}`, {
-      description: item.description,
+    toast.success(`Đang mở ${item.title}`, {
+      description: 'Đang chuyển đến Google Apps Script...',
       icon: item.icon,
     })
+    // Open the Google Apps Script URL in a new tab
+    window.open(item.link, '_blank')
     setTimeout(() => setIsLoading(false), 300)
   }, [])
 
@@ -808,14 +813,26 @@ export default function HomePage() {
 
       {/* Sidebar */}
       <aside className={cn(
-        "fixed lg:static inset-y-0 left-0 z-50 w-80 bg-gradient-to-b from-emerald-600 via-emerald-700 to-teal-800 dark:from-emerald-900 dark:via-emerald-950 dark:to-teal-950 text-white flex flex-col transition-all duration-300 ease-in-out shadow-2xl",
-        mobileMenuOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0"
-      )}>
+        "fixed lg:static inset-y-0 left-0 z-50 bg-gradient-to-b from-emerald-600 via-emerald-700 to-teal-800 dark:from-emerald-900 dark:via-emerald-950 dark:to-teal-950 text-white flex flex-col transition-all duration-300 ease-in-out shadow-2xl",
+        mobileMenuOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0",
+        sidebarCollapsed && "lg:w-20"
+      )}
+      style={{ width: sidebarCollapsed ? undefined : (mobileMenuOpen || !sidebarCollapsed ? undefined : undefined) }}
+      >
         {/* Logo Section */}
-        <div className="p-6 flex flex-col items-center border-b border-white/10">
+        <div className={cn(
+          "flex flex-col items-center border-b border-white/10 transition-all duration-300 ease-in-out",
+          sidebarCollapsed ? "p-3" : "p-6"
+        )}>
           <div className="relative group">
-            <div className="absolute inset-0 bg-white/20 rounded-full blur-xl animate-pulse group-hover:animate-none group-hover:bg-white/30 transition-all" />
-            <div className="relative w-28 h-28 bg-white rounded-full shadow-lg flex items-center justify-center overflow-hidden border-4 border-white/30 group-hover:border-white/50 transition-all group-hover:scale-105">
+            <div className={cn(
+              "absolute inset-0 bg-white/20 rounded-full blur-xl animate-pulse group-hover:animate-none group-hover:bg-white/30 transition-all",
+              sidebarCollapsed && "blur-lg"
+            )} />
+            <div className={cn(
+              "relative bg-white rounded-full shadow-lg flex items-center justify-center overflow-hidden border-4 border-white/30 group-hover:border-white/50 transition-all group-hover:scale-105",
+              sidebarCollapsed ? "w-12 h-12" : "w-28 h-28"
+            )}>
               <img 
                 src="/prd-logo.png" 
                 alt="Logo PRD" 
@@ -823,8 +840,12 @@ export default function HomePage() {
               />
             </div>
           </div>
-          <h1 className="mt-4 text-xl font-bold text-center">Phòng Đào Tạo</h1>
-          <p className="text-emerald-200 dark:text-emerald-300 text-sm mt-1">Hệ thống quản lý đào tạo</p>
+          {!sidebarCollapsed && (
+            <>
+              <h1 className="mt-4 text-xl font-bold text-center">Phòng Đào Tạo</h1>
+              <p className="text-emerald-200 dark:text-emerald-300 text-sm mt-1">Hệ thống quản lý đào tạo</p>
+            </>
+          )}
         </div>
 
         {/* Close Button - Mobile Only */}
@@ -836,218 +857,296 @@ export default function HomePage() {
         </button>
 
         {/* Search in Sidebar */}
-        <div className="px-4 py-3 relative">
-          <div className="relative">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-emerald-200" />
-            <Input
-              placeholder="Tìm mã lớp (VD: 1/2026)..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              onFocus={() => searchQuery && setShowClassSearchResults(true)}
-              onBlur={() => setTimeout(() => setShowClassSearchResults(false), 200)}
-              className="pl-9 bg-white/10 border-white/20 text-white placeholder:text-emerald-200 focus:bg-white/20 focus:border-white/40 transition-all"
-            />
-            {isSearchingClasses && (
-              <Loader2 className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-emerald-200 animate-spin" />
+        {!sidebarCollapsed && (
+          <div className="px-4 py-3 relative">
+            <div className="relative">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-emerald-200" />
+              <Input
+                placeholder="Tìm mã lớp (VD: 1/2026)..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                onFocus={() => searchQuery && setShowClassSearchResults(true)}
+                onBlur={() => setTimeout(() => setShowClassSearchResults(false), 200)}
+                className="pl-9 bg-white/10 border-white/20 text-white placeholder:text-emerald-200 focus:bg-white/20 focus:border-white/40 transition-all"
+              />
+              {isSearchingClasses && (
+                <Loader2 className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-emerald-200 animate-spin" />
+              )}
+            </div>
+            
+            {/* Class Search Results Dropdown */}
+            {showClassSearchResults && (searchQuery || classSearchResults.length > 0) && (
+              <div className="absolute left-4 right-4 top-full mt-1 bg-white dark:bg-gray-900 rounded-xl shadow-2xl border border-gray-200 dark:border-gray-700 max-h-60 overflow-y-auto z-50 overflow-hidden">
+                {isSearchingClasses ? (
+                  <div className="p-4 text-center text-gray-500">
+                    <Loader2 className="w-5 h-5 animate-spin mx-auto mb-2" />
+                    <span className="text-sm">Đang tìm kiếm...</span>
+                  </div>
+                ) : classSearchResults.length > 0 ? (
+                  <div className="py-2">
+                    <div className="px-3 py-1.5 text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase flex items-center gap-2">
+                      <Search className="w-3 h-3" />
+                      Kết quả tìm kiếm
+                    </div>
+                    {classSearchResults.map((cls, index) => (
+                      <button
+                        key={cls.id}
+                        className="w-full flex items-center gap-3 px-3 py-2.5 hover:bg-emerald-50 dark:hover:bg-emerald-900/20 transition-all text-left group animate-in slide-in-from-left"
+                        style={{ animationDelay: `${index * 50}ms` }}
+                        onClick={() => {
+                          toast.success(`Đã chọn lớp: ${cls.code}`, {
+                            description: cls.name,
+                            icon: <GraduationCap className="w-4 h-4" />,
+                          })
+                          setSearchQuery('')
+                          setClassSearchResults([])
+                          setShowClassSearchResults(false)
+                        }}
+                      >
+                        <div className="p-2.5 rounded-xl bg-gradient-to-br from-emerald-100 to-teal-100 dark:from-emerald-900/30 dark:to-teal-900/30 text-emerald-600 dark:text-emerald-400 group-hover:scale-110 transition-transform shadow-sm">
+                          <GraduationCap className="w-4 h-4" />
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <p className="font-semibold text-gray-900 dark:text-white text-sm group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors">{cls.code}</p>
+                          <p className="text-xs text-gray-500 dark:text-gray-400 truncate">{cls.name}</p>
+                        </div>
+                        <ChevronRight className="w-4 h-4 text-gray-300 group-hover:text-emerald-500 transition-colors" />
+                      </button>
+                    ))}
+                  </div>
+                ) : searchQuery ? (
+                  <div className="p-4 text-center text-gray-500">
+                    <div className="w-10 h-10 rounded-full bg-gray-100 dark:bg-gray-800 flex items-center justify-center mx-auto mb-2">
+                      <Search className="w-5 h-5 opacity-50" />
+                    </div>
+                    <span className="text-sm">Không tìm thấy lớp với mã "{searchQuery}"</span>
+                  </div>
+                ) : null}
+              </div>
             )}
           </div>
-          
-          {/* Class Search Results Dropdown */}
-          {showClassSearchResults && (searchQuery || classSearchResults.length > 0) && (
-            <div className="absolute left-4 right-4 top-full mt-1 bg-white dark:bg-gray-900 rounded-xl shadow-2xl border border-gray-200 dark:border-gray-700 max-h-60 overflow-y-auto z-50 overflow-hidden">
-              {isSearchingClasses ? (
-                <div className="p-4 text-center text-gray-500">
-                  <Loader2 className="w-5 h-5 animate-spin mx-auto mb-2" />
-                  <span className="text-sm">Đang tìm kiếm...</span>
-                </div>
-              ) : classSearchResults.length > 0 ? (
-                <div className="py-2">
-                  <div className="px-3 py-1.5 text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase flex items-center gap-2">
-                    <Search className="w-3 h-3" />
-                    Kết quả tìm kiếm
-                  </div>
-                  {classSearchResults.map((cls, index) => (
-                    <button
-                      key={cls.id}
-                      className="w-full flex items-center gap-3 px-3 py-2.5 hover:bg-emerald-50 dark:hover:bg-emerald-900/20 transition-all text-left group animate-in slide-in-from-left"
-                      style={{ animationDelay: `${index * 50}ms` }}
-                      onClick={() => {
-                        toast.success(`Đã chọn lớp: ${cls.code}`, {
-                          description: cls.name,
-                          icon: <GraduationCap className="w-4 h-4" />,
-                        })
-                        setSearchQuery('')
-                        setClassSearchResults([])
-                        setShowClassSearchResults(false)
-                      }}
-                    >
-                      <div className="p-2.5 rounded-xl bg-gradient-to-br from-emerald-100 to-teal-100 dark:from-emerald-900/30 dark:to-teal-900/30 text-emerald-600 dark:text-emerald-400 group-hover:scale-110 transition-transform shadow-sm">
-                        <GraduationCap className="w-4 h-4" />
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <p className="font-semibold text-gray-900 dark:text-white text-sm group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors">{cls.code}</p>
-                        <p className="text-xs text-gray-500 dark:text-gray-400 truncate">{cls.name}</p>
-                      </div>
-                      <ChevronRight className="w-4 h-4 text-gray-300 group-hover:text-emerald-500 transition-colors" />
-                    </button>
-                  ))}
-                </div>
-              ) : searchQuery ? (
-                <div className="p-4 text-center text-gray-500">
-                  <div className="w-10 h-10 rounded-full bg-gray-100 dark:bg-gray-800 flex items-center justify-center mx-auto mb-2">
-                    <Search className="w-5 h-5 opacity-50" />
-                  </div>
-                  <span className="text-sm">Không tìm thấy lớp với mã "{searchQuery}"</span>
-                </div>
-              ) : null}
-            </div>
-          )}
-        </div>
+        )}
 
         {/* Navigation Menu */}
-        <nav className="flex-1 p-4 space-y-2 overflow-y-auto">
-          <div className="text-xs font-semibold text-emerald-300 uppercase tracking-wider mb-3 px-2">
-            Chức năng chính
-          </div>
+        <nav className={cn(
+          "flex-1 space-y-2 overflow-y-auto transition-all duration-300",
+          sidebarCollapsed ? "p-2" : "p-4"
+        )}>
+          {!sidebarCollapsed && (
+            <div className="text-xs font-semibold text-emerald-300 uppercase tracking-wider mb-3 px-2">
+              Chức năng chính
+            </div>
+          )}
           
           {filteredMenuItems.map((item, index) => (
-            <button
-              key={item.id}
-              onClick={() => handleMenuClick(item)}
-              className={cn(
-                "w-full group relative flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-300 animate-in slide-in-from-left",
-                activeMenu === item.id 
-                  ? "bg-white text-emerald-700 shadow-lg transform scale-[1.02] dark:bg-emerald-100" 
-                  : "bg-white/10 hover:bg-white/20 text-white dark:text-emerald-100"
-              )}
-              style={{ animationDelay: `${index * 50}ms` }}
-            >
-              <div className={cn(
-                "flex-shrink-0 p-2 rounded-lg transition-colors",
-                activeMenu === item.id ? "bg-emerald-100 dark:bg-emerald-200" : "bg-white/10 group-hover:bg-white/20"
-              )}>
-                {item.icon}
-              </div>
-              <div className="flex-1 text-left">
-                <div className="flex items-center gap-2">
-                  <span className="font-semibold">{item.title}</span>
-                  {item.badge && (
-                    <Badge variant="secondary" className="text-[10px] px-1.5 py-0 h-4 bg-emerald-500 text-white border-0 animate-pulse">
-                      {item.badge}
-                    </Badge>
+            <Tooltip key={item.id}>
+              <TooltipTrigger asChild>
+                <button
+                  onClick={() => handleMenuClick(item)}
+                  className={cn(
+                    "w-full group relative flex items-center gap-3 rounded-xl transition-all duration-300 animate-in slide-in-from-left",
+                    activeMenu === item.id 
+                      ? "bg-white text-emerald-700 shadow-lg transform scale-[1.02] dark:bg-emerald-100" 
+                      : "bg-white/10 hover:bg-white/20 text-white dark:text-emerald-100",
+                    sidebarCollapsed ? "px-3 py-3 justify-center" : "px-4 py-3"
                   )}
-                </div>
-                <p className={cn(
-                  "text-xs mt-0.5 line-clamp-1",
-                  activeMenu === item.id ? "text-emerald-600 dark:text-emerald-700" : "text-emerald-200"
-                )}>
-                  {item.description}
-                </p>
-              </div>
-              <ChevronRight className={cn(
-                "w-4 h-4 transition-transform",
-                activeMenu === item.id ? "translate-x-1" : "opacity-50 group-hover:opacity-100"
-              )} />
-              {item.shortcut && (
-                <span className="absolute right-2 bottom-1 text-[10px] text-emerald-300 opacity-0 group-hover:opacity-100 transition-opacity">
-                  {item.shortcut}
-                </span>
+                  style={{ animationDelay: `${index * 50}ms` }}
+                >
+                  <div className={cn(
+                    "flex-shrink-0 p-2 rounded-lg transition-colors",
+                    activeMenu === item.id ? "bg-emerald-100 dark:bg-emerald-200" : "bg-white/10 group-hover:bg-white/20"
+                  )}>
+                    {item.icon}
+                  </div>
+                  {!sidebarCollapsed && (
+                    <>
+                      <div className="flex-1 text-left">
+                        <div className="flex items-center gap-2">
+                          <span className="font-semibold">{item.title}</span>
+                          {item.badge && (
+                            <Badge variant="secondary" className="text-[10px] px-1.5 py-0 h-4 bg-emerald-500 text-white border-0 animate-pulse">
+                              {item.badge}
+                            </Badge>
+                          )}
+                        </div>
+                        <p className={cn(
+                          "text-xs mt-0.5 line-clamp-1",
+                          activeMenu === item.id ? "text-emerald-600 dark:text-emerald-700" : "text-emerald-200"
+                        )}>
+                          {item.description}
+                        </p>
+                      </div>
+                      <ChevronRight className={cn(
+                        "w-4 h-4 transition-transform",
+                        activeMenu === item.id ? "translate-x-1" : "opacity-50 group-hover:opacity-100"
+                      )} />
+                    </>
+                  )}
+                  {!sidebarCollapsed && item.shortcut && (
+                    <span className="absolute right-2 bottom-1 text-[10px] text-emerald-300 opacity-0 group-hover:opacity-100 transition-opacity">
+                      {item.shortcut}
+                    </span>
+                  )}
+                </button>
+              </TooltipTrigger>
+              {sidebarCollapsed && (
+                <TooltipContent side="right">
+                  <p>{item.title}</p>
+                </TooltipContent>
               )}
-            </button>
+            </Tooltip>
           ))}
         </nav>
 
         {/* Quick Stats Mini with Sparkline */}
-        <div className="p-4 border-t border-white/10">
-          <div className="grid grid-cols-2 gap-2 text-center">
-            <div className="bg-white/10 rounded-lg p-2 hover:bg-white/20 transition-colors cursor-pointer group">
-              <div className="text-lg font-bold group-hover:scale-110 transition-transform">156</div>
-              <div className="text-xs text-emerald-200">Lớp học</div>
-              {/* Mini Sparkline */}
-              <svg viewBox="0 0 50 15" className="w-full h-3 mt-1">
-                <polyline
-                  fill="none"
-                  stroke="rgba(255,255,255,0.5)"
-                  strokeWidth="1.5"
-                  points="0,12 8,8 16,10 24,6 32,8 40,4 48,2"
-                />
-              </svg>
+        {!sidebarCollapsed && (
+          <div className="p-4 border-t border-white/10">
+            <div className="grid grid-cols-2 gap-2 text-center">
+              <div className="bg-white/10 rounded-lg p-2 hover:bg-white/20 transition-colors cursor-pointer group">
+                <div className="text-lg font-bold group-hover:scale-110 transition-transform">156</div>
+                <div className="text-xs text-emerald-200">Lớp học</div>
+                {/* Mini Sparkline */}
+                <svg viewBox="0 0 50 15" className="w-full h-3 mt-1">
+                  <polyline
+                    fill="none"
+                    stroke="rgba(255,255,255,0.5)"
+                    strokeWidth="1.5"
+                    points="0,12 8,8 16,10 24,6 32,8 40,4 48,2"
+                  />
+                </svg>
+              </div>
+              <div className="bg-white/10 rounded-lg p-2 hover:bg-white/20 transition-colors cursor-pointer group">
+                <div className="text-lg font-bold group-hover:scale-110 transition-transform">89</div>
+                <div className="text-xs text-emerald-200">Giảng viên</div>
+                {/* Mini Sparkline */}
+                <svg viewBox="0 0 50 15" className="w-full h-3 mt-1">
+                  <polyline
+                    fill="none"
+                    stroke="rgba(255,255,255,0.5)"
+                    strokeWidth="1.5"
+                    points="0,10 8,8 16,6 24,8 32,4 40,6 48,3"
+                  />
+                </svg>
+              </div>
             </div>
-            <div className="bg-white/10 rounded-lg p-2 hover:bg-white/20 transition-colors cursor-pointer group">
-              <div className="text-lg font-bold group-hover:scale-110 transition-transform">89</div>
-              <div className="text-xs text-emerald-200">Giảng viên</div>
-              {/* Mini Sparkline */}
-              <svg viewBox="0 0 50 15" className="w-full h-3 mt-1">
-                <polyline
-                  fill="none"
-                  stroke="rgba(255,255,255,0.5)"
-                  strokeWidth="1.5"
-                  points="0,10 8,8 16,6 24,8 32,4 40,6 48,3"
-                />
-              </svg>
+            {/* Weekly Overview Mini Chart */}
+            <div className="mt-3 bg-white/5 rounded-lg p-3">
+              <div className="flex items-center justify-between mb-2">
+                <span className="text-xs text-emerald-200">Tuần này</span>
+                <span className="text-xs font-semibold text-white">+12%</span>
+              </div>
+              <div className="flex items-end gap-1 h-8">
+                {[40, 65, 45, 80, 55, 70, 35].map((h, i) => (
+                  <div
+                    key={i}
+                    className="flex-1 bg-white/30 rounded-sm transition-all hover:bg-white/50"
+                    style={{ height: `${h}%` }}
+                  />
+                ))}
+              </div>
+              <div className="flex justify-between mt-1 text-[8px] text-emerald-300/70">
+                <span>T2</span>
+                <span>T3</span>
+                <span>T4</span>
+                <span>T5</span>
+                <span>T6</span>
+                <span>T7</span>
+                <span>CN</span>
+              </div>
             </div>
           </div>
-          {/* Weekly Overview Mini Chart */}
-          <div className="mt-3 bg-white/5 rounded-lg p-3">
-            <div className="flex items-center justify-between mb-2">
-              <span className="text-xs text-emerald-200">Tuần này</span>
-              <span className="text-xs font-semibold text-white">+12%</span>
-            </div>
-            <div className="flex items-end gap-1 h-8">
-              {[40, 65, 45, 80, 55, 70, 35].map((h, i) => (
-                <div
-                  key={i}
-                  className="flex-1 bg-white/30 rounded-sm transition-all hover:bg-white/50"
-                  style={{ height: `${h}%` }}
-                />
-              ))}
-            </div>
-            <div className="flex justify-between mt-1 text-[8px] text-emerald-300/70">
-              <span>T2</span>
-              <span>T3</span>
-              <span>T4</span>
-              <span>T5</span>
-              <span>T6</span>
-              <span>T7</span>
-              <span>CN</span>
-            </div>
-          </div>
-        </div>
+        )}
 
         {/* Time & Date Section */}
-        <div className="p-4 border-t border-white/10">
-          <div className="bg-white/10 rounded-xl p-4 text-center backdrop-blur-sm">
-            <div className="text-3xl font-bold font-mono tracking-wider">
-              {formatTime(currentTime)}
-            </div>
-            <div className="text-sm text-emerald-200 dark:text-emerald-300 mt-1">
-              {formatDate(currentTime)}
+        {!sidebarCollapsed && (
+          <div className="p-4 border-t border-white/10">
+            <div className="bg-white/10 rounded-xl p-4 text-center backdrop-blur-sm">
+              <div className="text-3xl font-bold font-mono tracking-wider">
+                {formatTime(currentTime)}
+              </div>
+              <div className="text-sm text-emerald-200 dark:text-emerald-300 mt-1">
+                {formatDate(currentTime)}
+              </div>
             </div>
           </div>
-        </div>
+        )}
 
         {/* Admin Button */}
-        <div className="p-4 border-t border-white/10">
-          <a
-            href="/admin/login"
-            className="w-full flex items-center gap-3 px-4 py-3 rounded-xl bg-white/10 hover:bg-gradient-to-r hover:from-emerald-400/30 hover:to-teal-400/30 text-white transition-all duration-300 group hover:scale-[1.02] hover:shadow-lg relative overflow-hidden"
-          >
-            {/* Pulsing indicator */}
-            <div className="absolute top-2 right-2">
-              <span className="relative flex h-2 w-2">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-                <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-300"></span>
-              </span>
-            </div>
-            <div className="flex-shrink-0 p-2 rounded-lg bg-white/10 group-hover:bg-white/20 transition-colors group-hover:rotate-12">
-              <Shield className="w-5 h-5" />
-            </div>
-            <div className="flex-1 text-left">
-              <span className="font-semibold">Quản trị viên</span>
-              <p className="text-xs text-emerald-200">Đăng nhập admin</p>
-            </div>
-            <ChevronRight className="w-4 h-4 opacity-50 group-hover:opacity-100 group-hover:translate-x-1 transition-all" />
-          </a>
+        <div className={cn(
+          "border-t border-white/10 relative",
+          sidebarCollapsed ? "p-2" : "p-4"
+        )}>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <a
+                href="/admin/login"
+                className={cn(
+                  "w-full flex items-center gap-3 rounded-xl bg-white/10 hover:bg-gradient-to-r hover:from-emerald-400/30 hover:to-teal-400/30 text-white transition-all duration-300 group hover:scale-[1.02] hover:shadow-lg relative overflow-hidden",
+                  sidebarCollapsed ? "px-2 py-2 justify-center" : "px-4 py-3"
+                )}
+              >
+                {/* Pulsing indicator */}
+                {!sidebarCollapsed && (
+                  <div className="absolute top-2 right-2">
+                    <span className="relative flex h-2 w-2">
+                      <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                      <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-300"></span>
+                    </span>
+                  </div>
+                )}
+                {sidebarCollapsed && (
+                  <div className="absolute top-1 right-1">
+                    <span className="relative flex h-1.5 w-1.5">
+                      <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                      <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-emerald-300"></span>
+                    </span>
+                  </div>
+                )}
+                <div className={cn(
+                  "flex-shrink-0 p-2 rounded-lg bg-white/10 group-hover:bg-white/20 transition-colors group-hover:rotate-12",
+                  sidebarCollapsed && "p-1.5"
+                )}>
+                  <Shield className={cn("w-5 h-5", sidebarCollapsed && "w-4 h-4")} />
+                </div>
+                {!sidebarCollapsed && (
+                  <>
+                    <div className="flex-1 text-left">
+                      <span className="font-semibold">Quản trị viên</span>
+                      <p className="text-xs text-emerald-200">Đăng nhập admin</p>
+                    </div>
+                    <ChevronRight className="w-4 h-4 opacity-50 group-hover:opacity-100 group-hover:translate-x-1 transition-all" />
+                  </>
+                )}
+              </a>
+            </TooltipTrigger>
+            {sidebarCollapsed && (
+              <TooltipContent side="right">
+                <p>Quản trị viên</p>
+              </TooltipContent>
+            )}
+          </Tooltip>
+          
+          {/* Collapse/Expand Button */}
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <button
+                onClick={() => setSidebarCollapsed(!sidebarCollapsed)}
+                className={cn(
+                  "absolute bottom-2 right-2 p-1.5 rounded-lg bg-white/10 hover:bg-white/20 text-white transition-all duration-300 hover:scale-110",
+                  sidebarCollapsed && "right-1/2 translate-x-1/2"
+                )}
+              >
+                {sidebarCollapsed ? (
+                  <DoubleChevronRight className="w-4 h-4" />
+                ) : (
+                  <DoubleChevronLeft className="w-4 h-4" />
+                )}
+              </button>
+            </TooltipTrigger>
+            <TooltipContent side={sidebarCollapsed ? "right" : "top"}>
+              <p>{sidebarCollapsed ? "Mở rộng" : "Thu nhỏ"}</p>
+            </TooltipContent>
+          </Tooltip>
         </div>
       </aside>
 

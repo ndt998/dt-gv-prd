@@ -26,7 +26,15 @@ export async function GET(request: NextRequest) {
         },
         orderBy: { createdAt: 'desc' }
       })
-      return NextResponse.json({ success: true, data: classes })
+      return NextResponse.json({ 
+        success: true, 
+        classes: classes.map(c => ({
+          id: c.id,
+          code: c.classCode,
+          name: c.name || c.classCode
+        })),
+        data: classes 
+      })
     }
 
     // Get all classes
@@ -96,16 +104,18 @@ export async function PUT(request: NextRequest) {
       )
     }
 
+    // Build update data with only provided fields
+    const updateData: Record<string, unknown> = {}
+    if (classCode !== undefined) updateData.classCode = classCode
+    if (name !== undefined) updateData.name = name
+    if (teacher !== undefined) updateData.teacher = teacher
+    if (schedule !== undefined) updateData.schedule = schedule
+    if (status !== undefined) updateData.status = status
+    if (sheetId !== undefined) updateData.sheetId = sheetId
+
     const updatedClass = await db.classData.update({
       where: { id },
-      data: {
-        classCode,
-        name,
-        teacher,
-        schedule,
-        status,
-        sheetId
-      }
+      data: updateData
     })
 
     return NextResponse.json({ success: true, data: updatedClass })

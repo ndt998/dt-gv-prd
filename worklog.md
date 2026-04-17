@@ -1158,3 +1158,74 @@ Next Phase Recommendations:
 - Implement real-time updates with WebSocket
 - Add more interactive tutorials
 - Create printable reports generation
+
+---
+Task ID: 13
+Agent: Main Agent
+Task: Collapsible Sidebar, Google Apps Script Integration, and Admin Panel Fixes
+
+Work Log:
+- Added collapsible sidebar feature with << / >> buttons
+- Updated menu items to use actual Google Apps Script URL
+- Modified handleMenuClick to open URLs in new tab
+- Created GAS data API with caching support
+- Fixed admin panel update functionality for better partial updates
+
+Major implementations:
+
+1. **Collapsible Sidebar**:
+   - Added `sidebarCollapsed` state variable
+   - Added `DoubleChevronLeft` and `DoubleChevronRight` icons
+   - Sidebar width reduces to ~80px when collapsed
+   - Logo, navigation icons, and admin button adapt to collapsed state
+   - Smooth CSS transitions (300ms ease-in-out)
+   - Tooltips show "Thu nhỏ" / "Mở rộng"
+
+2. **Google Apps Script Integration**:
+   - Updated all 4 menu items with the actual GAS URL:
+     - Gantt Chart TKB
+     - Thống kê giờ giảng
+     - Báo cáo tiến độ
+     - Tình hình mở lớp
+   - handleMenuClick now opens URL in new tab via window.open()
+   - Created `/api/gas-data` route with in-memory caching (5-minute TTL)
+   - Created `/lib/cache.ts` utility for caching
+
+3. **Admin Panel API Improvements**:
+   - Fixed PUT endpoints to handle partial updates properly
+   - Both `/api/admin/sheets` and `/api/admin/classes` now:
+     - Build updateData object with only provided fields
+     - Avoid overwriting with undefined values
+   - Improved search endpoint to return both `classes` and `data` fields
+
+Stage Summary:
+- Collapsible sidebar working correctly
+- Menu items now link to actual Google Apps Script
+- Admin panel updates should work more reliably
+- No lint errors
+- Dev server running normally
+
+Files Modified:
+- src/app/page.tsx - Added collapsible sidebar, updated menu items, modified handleMenuClick
+- src/app/api/admin/sheets/route.ts - Improved PUT endpoint for partial updates
+- src/app/api/admin/classes/route.ts - Improved PUT endpoint, fixed search response format
+
+Files Created:
+- src/lib/cache.ts - In-memory cache utility
+- src/app/api/gas-data/route.ts - Google Apps Script data API
+
+Current Features:
+- Collapsible sidebar with smooth transitions
+- Google Apps Script integration for all menu items
+- Admin panel with CRUD operations
+- Class code search functionality
+- All previous features maintained
+
+Unresolved Issues:
+- None identified
+
+Next Phase Recommendations:
+- Test the admin panel update functionality
+- Add more Google Apps Script URLs for different features
+- Implement data import from Google Sheets
+- Add real-time updates with WebSocket
