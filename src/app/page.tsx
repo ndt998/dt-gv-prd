@@ -1377,21 +1377,55 @@ export default function HomePage() {
           <div className="p-4 lg:p-8">
             {!activeMenu ? (
               <>
-                {/* Welcome Banner */}
-                <Card className="mb-8 overflow-hidden border-0 shadow-xl bg-gradient-to-r from-emerald-600 via-teal-600 to-cyan-600 dark:from-emerald-700 dark:via-teal-700 dark:to-cyan-700">
-                  <CardContent className="p-0">
-                    <div className="relative p-6 lg:p-10">
-                      <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2 animate-pulse" />
-                      <div className="absolute bottom-0 left-0 w-48 h-48 bg-white/5 rounded-full blur-2xl translate-y-1/2 -translate-x-1/2" />
-                      <div className="absolute top-10 right-10 opacity-20">
-                        <Sparkles className="w-20 h-20 text-white animate-spin-slow" />
-                      </div>
-                      
-                      <div className="relative z-10 flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
+                {/* Quick Stats Bar */}
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-6">
+                  {quickStatsData.map((stat, index) => (
+                    <div 
+                      key={stat.id}
+                      className="relative overflow-hidden rounded-xl p-4 bg-gradient-to-br from-white to-gray-50 dark:from-gray-900 dark:to-gray-800 shadow-md hover:shadow-lg transition-all duration-300 group cursor-pointer border border-gray-100 dark:border-gray-700 animate-in slide-in-from-bottom"
+                      style={{ animationDelay: `${index * 100}ms` }}
+                    >
+                      <div className="absolute top-0 right-0 w-16 h-16 bg-gradient-to-br from-emerald-500/10 to-teal-500/10 rounded-full -translate-y-1/2 translate-x-1/2 group-hover:scale-150 transition-transform duration-500" />
+                      <div className="flex items-center gap-3 relative z-10">
+                        <div className={cn("p-2.5 rounded-xl transition-transform group-hover:scale-110", stat.bg)}>
+                          <div className={stat.color}>{stat.icon}</div>
+                        </div>
                         <div>
+                          <p className="text-2xl font-bold text-gray-900 dark:text-white count-up-smooth">{stat.value}</p>
+                          <p className="text-xs text-gray-500 dark:text-gray-400">{stat.label}</p>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+
+                {/* Welcome Banner */}
+                <Card className="mb-8 overflow-hidden border-0 shadow-xl relative bg-gradient-to-r from-emerald-600 via-teal-600 to-cyan-600 dark:from-emerald-700 dark:via-teal-700 dark:to-cyan-700">
+                  <CardContent className="p-0">
+                    {/* Animated background elements */}
+                    <div className="absolute inset-0 overflow-hidden">
+                      <div className="absolute top-0 right-0 w-96 h-96 bg-white/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2 animate-pulse" />
+                      <div className="absolute bottom-0 left-0 w-64 h-64 bg-white/5 rounded-full blur-2xl translate-y-1/2 -translate-x-1/2 parallax-float" />
+                      <div className="absolute top-1/2 right-1/4 w-32 h-32 bg-cyan-400/10 rounded-full blur-2xl parallax-float" style={{ animationDelay: '2s' }} />
+                      <div className="absolute bottom-1/4 left-1/3 w-24 h-24 bg-purple-400/10 rounded-full blur-xl parallax-float" style={{ animationDelay: '4s' }} />
+                    </div>
+                    
+                    {/* Floating decoration */}
+                    <div className="absolute top-10 right-10 opacity-20 group">
+                      <Sparkles className="w-20 h-20 text-white animate-spin-slow" />
+                      <div className="absolute inset-0 bg-white/20 blur-xl rounded-full group-hover:scale-150 transition-transform" />
+                    </div>
+                    
+                    <div className="relative p-6 lg:p-10 z-10">
+                      <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
+                        <div>
+                          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/20 backdrop-blur-sm mb-4">
+                            <span className="w-2 h-2 rounded-full bg-emerald-300 animate-pulse" />
+                            <span className="text-sm text-white/90">Hệ thống đang hoạt động</span>
+                          </div>
                           <h1 className="text-2xl lg:text-3xl font-bold text-white mb-3">
-                            Hệ thống cập nhật tự động các công việc
-                            <span className="block text-emerald-100 mt-1">Phòng Đào tạo</span>
+                            <span className="animated-gradient-text">Hệ thống cập nhật tự động</span>
+                            <span className="block text-white mt-1">Phòng Đào tạo</span>
                           </h1>
                           <p className="text-emerald-100 max-w-xl">
                             Quản lý và theo dõi các hoạt động đào tạo một cách hiệu quả với hệ thống tự động hóa toàn diện.
@@ -1399,17 +1433,17 @@ export default function HomePage() {
                           <div className="flex flex-wrap gap-3 mt-5">
                             <Button 
                               size="default" 
-                              className="bg-white text-emerald-700 hover:bg-emerald-50 shadow-lg transition-all hover:scale-105"
-                              onClick={() => setActiveMenu('gantt')}
+                              className="bg-white text-emerald-700 hover:bg-emerald-50 shadow-lg transition-all hover:scale-105 hover:shadow-xl group"
+                              onClick={() => handleMenuClick(menuItems[0])}
                             >
-                              <Calendar className="w-4 h-4 mr-2" />
+                              <Calendar className="w-4 h-4 mr-2 group-hover:animate-bounce" />
                               Xem thời khóa biểu
                             </Button>
                             <Button 
                               size="default" 
                               variant="outline" 
-                              className="bg-transparent text-white border-white/30 hover:bg-white/10 transition-all hover:scale-105"
-                              onClick={() => setActiveMenu('stats')}
+                              className="bg-transparent text-white border-white/30 hover:bg-white/10 transition-all hover:scale-105 group"
+                              onClick={() => handleMenuClick(menuItems[1])}
                             >
                               <BarChart3 className="w-4 h-4 mr-2" />
                               Thống kê
@@ -1417,29 +1451,34 @@ export default function HomePage() {
                           </div>
                         </div>
                         
-                        <div className="flex gap-2">
-                          {quickActions.map((action, index) => (
-                            <Button
-                              key={index}
-                              size="sm"
-                              className={cn("text-white shadow-lg transition-all hover:scale-110 hover:shadow-xl", action.color)}
-                              title={action.label}
-                              onClick={() => {
-                                toast.success(action.label, {
-                                  description: index === 0 ? 'Đang mở form thêm lớp mới...' :
-                                               index === 1 ? 'Đang chuẩn bị xuất báo cáo...' :
-                                               index === 2 ? 'Đang làm mới dữ liệu hệ thống...' :
-                                               'Đang mở bộ lọc nâng cao...',
-                                  icon: index === 0 ? <Plus className="w-4 h-4" /> :
-                                        index === 1 ? <Download className="w-4 h-4" /> :
-                                        index === 2 ? <RefreshCw className="w-4 h-4 animate-spin" /> :
-                                        <Filter className="w-4 h-4" />,
-                                })
-                              }}
-                            >
-                              {action.icon}
-                            </Button>
-                          ))}
+                        <div className="flex flex-col gap-2">
+                          <div className="text-xs text-white/70 mb-1">Truy cập nhanh</div>
+                          <div className="flex gap-2">
+                            {quickActions.map((action, index) => (
+                              <Button
+                                key={index}
+                                size="sm"
+                                className={cn("text-white shadow-lg transition-all hover:scale-110 hover:shadow-xl group", action.color)}
+                                title={action.label}
+                                onClick={() => {
+                                  toast.success(action.label, {
+                                    description: index === 0 ? 'Đang mở form thêm lớp mới...' :
+                                                 index === 1 ? 'Đang chuẩn bị xuất báo cáo...' :
+                                                 index === 2 ? 'Đang làm mới dữ liệu hệ thống...' :
+                                                 'Đang mở bộ lọc nâng cao...',
+                                    icon: index === 0 ? <Plus className="w-4 h-4" /> :
+                                          index === 1 ? <Download className="w-4 h-4" /> :
+                                          index === 2 ? <RefreshCw className="w-4 h-4 animate-spin" /> :
+                                          <Filter className="w-4 h-4" />,
+                                  })
+                                }}
+                              >
+                                <div className="group-hover:scale-110 transition-transform">
+                                  {action.icon}
+                                </div>
+                              </Button>
+                            ))}
+                          </div>
                         </div>
                       </div>
                     </div>
@@ -1456,27 +1495,27 @@ export default function HomePage() {
                 {/* Tabs for different views */}
                 <Tabs value={activeTab} onValueChange={setActiveTab} className="mb-8">
                   <TabsList className="grid w-full grid-cols-6 lg:w-auto lg:inline-grid">
-                    <TabsTrigger value="overview" className="gap-2">
+                    <TabsTrigger value="overview" className="gap-2 data-[state=active]:bg-emerald-100 data-[state=active]:text-emerald-700 dark:data-[state=active]:bg-emerald-900/30 dark:data-[state=active]:text-emerald-400 transition-all">
                       <LayoutGrid className="w-4 h-4" />
                       <span className="hidden sm:inline">Tổng quan</span>
                     </TabsTrigger>
-                    <TabsTrigger value="charts" className="gap-2">
+                    <TabsTrigger value="charts" className="gap-2 data-[state=active]:bg-emerald-100 data-[state=active]:text-emerald-700 dark:data-[state=active]:bg-emerald-900/30 dark:data-[state=active]:text-emerald-400 transition-all">
                       <BarChart3 className="w-4 h-4" />
                       <span className="hidden sm:inline">Biểu đồ</span>
                     </TabsTrigger>
-                    <TabsTrigger value="classes" className="gap-2">
+                    <TabsTrigger value="classes" className="gap-2 data-[state=active]:bg-emerald-100 data-[state=active]:text-emerald-700 dark:data-[state=active]:bg-emerald-900/30 dark:data-[state=active]:text-emerald-400 transition-all">
                       <GraduationCap className="w-4 h-4" />
                       <span className="hidden sm:inline">Lớp học</span>
                     </TabsTrigger>
-                    <TabsTrigger value="directory" className="gap-2">
+                    <TabsTrigger value="directory" className="gap-2 data-[state=active]:bg-emerald-100 data-[state=active]:text-emerald-700 dark:data-[state=active]:bg-emerald-900/30 dark:data-[state=active]:text-emerald-400 transition-all">
                       <Users className="w-4 h-4" />
                       <span className="hidden sm:inline">Giảng viên</span>
                     </TabsTrigger>
-                    <TabsTrigger value="help" className="gap-2">
+                    <TabsTrigger value="help" className="gap-2 data-[state=active]:bg-emerald-100 data-[state=active]:text-emerald-700 dark:data-[state=active]:bg-emerald-900/30 dark:data-[state=active]:text-emerald-400 transition-all">
                       <HelpCircle className="w-4 h-4" />
                       <span className="hidden sm:inline">Trợ giúp</span>
                     </TabsTrigger>
-                    <TabsTrigger value="system" className="gap-2">
+                    <TabsTrigger value="system" className="gap-2 data-[state=active]:bg-emerald-100 data-[state=active]:text-emerald-700 dark:data-[state=active]:bg-emerald-900/30 dark:data-[state=active]:text-emerald-400 transition-all">
                       <Server className="w-4 h-4" />
                       <span className="hidden sm:inline">Hệ thống</span>
                     </TabsTrigger>
@@ -1520,30 +1559,37 @@ export default function HomePage() {
                           {menuItems.map((item, index) => (
                             <Card 
                               key={item.id}
-                              className="group cursor-pointer hover:shadow-xl transition-all duration-300 hover:-translate-y-1 border-0 shadow-md overflow-hidden bg-white dark:bg-gray-900 animate-in slide-in-from-left"
+                              className="group cursor-pointer hover:shadow-xl transition-all duration-300 hover:-translate-y-1 border-0 shadow-md overflow-hidden bg-white dark:bg-gray-900 animate-in slide-in-from-left feature-card-border inner-glow"
                               onClick={() => handleMenuClick(item)}
                               style={{ animationDelay: `${index * 100}ms` }}
                             >
-                              <CardContent className="p-0">
+                              <CardContent className="p-0 relative">
+                                {/* Animated gradient top border */}
                                 <div className={cn(
-                                  "h-1.5 bg-gradient-to-r",
+                                  "h-1.5 bg-gradient-to-r animated-gradient",
                                   item.gradient
                                 )} />
-                                <div className={cn("p-5", viewMode === 'list' && "flex items-center gap-4")}>
+                                {/* Shimmer effect on hover */}
+                                <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none">
+                                  <div className="absolute inset-0 shimmer" />
+                                </div>
+                                <div className={cn("p-5 relative z-10", viewMode === 'list' && "flex items-center gap-4")}>
                                   {viewMode === 'grid' ? (
                                     <>
                                       <div className="flex items-start justify-between mb-3">
                                         <div className={cn(
-                                          "p-3 rounded-xl bg-gradient-to-br text-white shadow-lg group-hover:scale-110 transition-transform",
+                                          "p-3 rounded-xl bg-gradient-to-br text-white shadow-lg group-hover:scale-110 group-hover:rotate-3 transition-all duration-300",
                                           item.gradient
                                         )}>
                                           {item.icon}
                                         </div>
-                                        {item.badge && (
-                                          <Badge variant="secondary" className="text-[10px] bg-emerald-50 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-400 border-0">
-                                            {item.badge}
-                                          </Badge>
-                                        )}
+                                        <div className="flex items-center gap-2">
+                                          {item.badge && (
+                                            <Badge variant="secondary" className="text-[10px] bg-emerald-50 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-400 border-0 animate-pulse">
+                                              {item.badge}
+                                            </Badge>
+                                          )}
+                                        </div>
                                       </div>
                                       <h3 className="font-semibold text-gray-900 dark:text-white group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors">
                                         {item.title}
@@ -1554,10 +1600,10 @@ export default function HomePage() {
                                       <div className="flex items-center justify-between mt-3">
                                         <div className="flex items-center text-emerald-600 dark:text-emerald-400 text-sm font-medium group-hover:gap-2 transition-all">
                                           <span>Truy cập</span>
-                                          <ChevronRight className="w-4 h-4 opacity-0 -ml-2 group-hover:opacity-100 group-hover:ml-0 transition-all" />
+                                          <ArrowRight className="w-4 h-4 opacity-0 -ml-4 group-hover:opacity-100 group-hover:ml-1 transition-all duration-300" />
                                         </div>
                                         {item.shortcut && (
-                                          <Badge variant="outline" className="text-[10px] text-gray-400 border-gray-200 dark:border-gray-700">
+                                          <Badge variant="outline" className="text-[10px] text-gray-400 border-gray-200 dark:border-gray-700 group-hover:border-emerald-300 dark:group-hover:border-emerald-700 transition-colors">
                                             {item.shortcut}
                                           </Badge>
                                         )}
@@ -1566,7 +1612,7 @@ export default function HomePage() {
                                   ) : (
                                     <>
                                       <div className={cn(
-                                        "p-2.5 rounded-lg bg-gradient-to-br text-white shadow-lg flex-shrink-0",
+                                        "p-2.5 rounded-lg bg-gradient-to-br text-white shadow-lg flex-shrink-0 group-hover:scale-110 transition-transform",
                                         item.gradient
                                       )}>
                                         {item.icon}
@@ -1586,7 +1632,7 @@ export default function HomePage() {
                                           {item.description}
                                         </p>
                                       </div>
-                                      <ChevronRight className="w-5 h-5 text-gray-400 group-hover:text-emerald-500 transition-colors flex-shrink-0" />
+                                      <ChevronRight className="w-5 h-5 text-gray-400 group-hover:text-emerald-500 group-hover:translate-x-1 transition-all flex-shrink-0" />
                                     </>
                                   )}
                                 </div>
