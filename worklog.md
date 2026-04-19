@@ -75,3 +75,71 @@ Stage Summary:
   4. Breadcrumb navigation
   5. More chart visualizations
 
+---
+Task ID: 3
+Agent: Main Agent
+Task: Chuyển đổi sang Static Site - Loại bỏ Authentication
+
+Work Log:
+- Đọc và phân tích cấu trúc dự án hiện tại
+- Cập nhật next.config.ts: đổi `output: "standalone"` thành `output: "export"`
+- Thêm `images: { unoptimized: true }` cho static export
+- Thêm `trailingSlash: true` cho static export
+- Viết lại hoàn toàn trang chủ (page.tsx):
+  - Xóa toàn bộ code cũ (stats, charts, tables, notifications, etc.)
+  - Tạo giao diện đơn giản với:
+    - Navigation bar gọn nhẹ với 4 menu items
+    - Khu vực iframe chính (sẽ cấu hình sau)
+    - Liên kết nhanh (Website trường + Thư viện)
+    - Lịch theo tháng hiện tại
+    - Đồng hồ hh:mm:ss với ngày tháng
+  - Footer mới: xóa nút liên hệ, mail, đổi copyright
+- Cập nhật các link Google Apps Script:
+  - Gantt Chart TKB: https://script.google.com/macros/s/AKfycbwBAGPYifJbBpITeTV05H3y7mcf3ysU8KYIA5aRLB41lOfJT03jJU_1qBFKK1rotYkd/exec
+  - Thống kê giờ giảng: Đang cập nhật
+  - Báo cáo tiến độ: https://script.google.com/macros/s/AKfycby8vKr9lT4nj-EAkBFJxx5WW8GHqRFQM3jG5plty9zzxItwkv9r0X-WZsxr3XPrQxug/exec
+  - Tình hình mở lớp: https://script.google.com/macros/s/AKfycbylUhTwKcdq76gjvf5eKGOioVt3GMcFqnRFGzDNrgRHVIp75CUp15rBAYB0bopUHfKuaQ/exec
+- Đổi text loading từ "Google Apps Script" sang "Đang mở [Tên nút]"
+- Iframe chiếm 100% màn hình khi mở Apps Script
+- Xóa sidebar phức tạp, thay bằng navigation bar đơn giản
+- Xóa tính năng đăng nhập admin/user
+- Chạy lint check - PASSED
+
+Stage Summary:
+- ✅ Đã cấu hình Static Export trong next.config.ts
+- ✅ Trang chủ đã được viết lại hoàn toàn
+- ✅ Navigation bar gọn nhẹ với 4 menu items
+- ✅ Footer đã cập nhật (xóa liên hệ, mail, đổi copyright)
+- ✅ Iframe fullscreen khi mở Apps Script
+- ✅ Text loading đã đổi (không còn "Google Apps Script")
+- ✅ Link Apps Script đã được cập nhật đúng theo yêu cầu
+- ✅ Lint passed
+
+## Project Status (Updated - Static Site)
+
+### Current Features
+- ✅ Static Site với Next.js Export
+- ✅ Trang chủ đơn giản:
+  - Iframe chính (chờ cấu hình)
+  - Liên kết nhanh (Website trường + Thư viện)
+  - Lịch theo tháng
+  - Đồng hồ hh:mm:ss
+- ✅ Navigation bar với 4 menu items
+- ✅ Iframe fullscreen cho Apps Script
+- ✅ Dark/Light mode
+- ❌ Đã xóa: Authentication, Admin Panel, Charts, Stats, Tables
+
+### Technical Changes
+- ✅ next.config.ts: output: "export"
+- ✅ images: { unoptimized: true }
+- ✅ trailingSlash: true
+- ✅ Simplified page.tsx (từ ~2000 dòng xuống ~400 dòng)
+
+### Known Issues
+- ⚠️ Google Apps Script có thể chặn iframe tùy cấu hình
+
+### Next Steps
+- Cấu hình iframe chính trên trang chủ khi user quyết định
+- Tạo README-HD Json.txt nếu cần
+- Tạo README-HD Appsscripts.txt nếu cần
+
