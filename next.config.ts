@@ -1,7 +1,7 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  /* Đã xóa dòng output: "export" ở đây */
+  output: "export", // Thêm lại dòng này để chạy chế độ trang tĩnh
   typescript: {
     ignoreBuildErrors: true,
   },
@@ -10,11 +10,6 @@ const nextConfig: NextConfig = {
     unoptimized: true,
   },
   trailingSlash: true,
-  allowedDevOrigins: [
-    'preview-chat-246566f8-3bed-4460-bfab-9c911144657d.space.z.ai',
-    '.space.z.ai',
-    'localhost',
-  ],
 };
 
 export default nextConfig;
