@@ -1,0 +1,199 @@
+# HƯỚNG DẪN CẤU HÌNH IFRAME VÀ LIÊN KẾT
+
+## 📁 Vị trí file cần chỉnh sửa
+
+File chính: `src/app/page.tsx`
+
+---
+
+## 1. CẤU HÌNH CÁC NÚT ĐIỀU HƯỚNG (Sidebar Menu)
+
+### Vị trí trong code:
+Tìm đoạn code bắt đầu bằng `const menuItems: MenuItem[] = [`
+
+### Cấu trúc mỗi mục:
+```typescript
+{
+  id: 'gantt',                    // ID duy nhất (không trùng lặp)
+  title: 'Gantt Chart TKB',       // Tiêu đề hiển thị
+  icon: <Calendar className="w-5 h-5" />,  // Icon (xem bảng icon bên dưới)
+  link: 'https://YOUR_LINK_HERE', // URL của Google Apps Script
+  description: 'Mô tả ngắn'       // Mô tả hiển thị dưới tiêu đề
+}
+```
+
+### Ví dụ - Thêm một mục mới:
+```typescript
+{
+  id: 'new-report',
+  title: 'Báo cáo mới',
+  icon: <FileText className="w-5 h-5" />,
+  link: 'https://script.google.com/macros/s/AKfycb.../exec',
+  description: 'Báo cáo tháng mới'
+}
+```
+
+### Cách đổi link:
+Chỉ cần thay đổi giá trị `link`:
+
+```typescript
+link: 'https://script.google.com/macros/s/AKfycbwBAGPYifJbBpITeTV05H3y7mcf3ysU8KYIA5aRLB41lOfJT03jJU_1qBFKK1rotYkd/exec'
+```
+
+### Để trống link (hiện thông báo "Đang cập nhật"):
+```typescript
+link: ''
+```
+
+---
+
+## 2. CÁC ICON KHẢ DỤNG
+
+| Icon | Component | Dùng cho |
+|------|-----------|----------|
+| 📅 | `<Calendar className="w-5 h-5" />` | Lịch, TKB |
+| 📊 | `<BarChart3 className="w-5 h-5" />` | Thống kê |
+| 📄 | `<FileText className="w-5 h-5" />` | Báo cáo |
+| 👥 | `<Users className="w-5 h-5" />` | Người dùng, lớp học |
+| 🏠 | `<Home className="w-5 h-5" />` | Trang chủ |
+| 🌐 | `<Globe className="w-5 h-5" />` | Website |
+| 📁 | `<FolderOpen className="w-5 h-5" />` | Thư mục, thư viện |
+| ⚙️ | `<Settings className="w-5 h-5" />` | Cài đặt |
+| 📈 | `<TrendingUp className="w-5 h-5" />` | Xu hướng |
+| 🔔 | `<Bell className="w-5 h-5" />` | Thông báo |
+
+### Cách thêm icon mới:
+1. Import icon ở đầu file:
+```typescript
+import { Calendar, BarChart3, FileText, Users, Settings } from 'lucide-react'
+```
+
+2. Sử dụng:
+```typescript
+icon: <Settings className="w-5 h-5" />
+```
+
+---
+
+## 3. CẤU HÌNH LIÊN KẾT NHANH (Quick Links)
+
+### Vị trí trong code:
+Tìm đoạn code bắt đầu bằng `const quickLinks = [`
+
+### Cấu trúc:
+```typescript
+{
+  title: 'Website trường',
+  url: 'https://www.prd.edu.vn',
+  icon: <Globe className="w-4 h-4" />
+}
+```
+
+### Ví dụ - Thêm liên kết mới:
+```typescript
+{
+  title: 'Hệ thống đăng ký',
+  url: 'https://dangky.prd.edu.vn',
+  icon: <ExternalLink className="w-4 h-4" />
+}
+```
+
+---
+
+## 4. IFRAME CHÍNH TRÊN TRANG CHỦ
+
+### Vị trí trong code:
+Tìm đoạn code có comment `/* Main Iframe Placeholder */`
+
+### Để chèn link iframe chính:
+Thay thế phần placeholder bằng iframe thực:
+
+```typescript
+<Card className="h-[400px] lg:h-[500px] mb-6 shadow-xl border-0 bg-white dark:bg-gray-800 overflow-hidden">
+  <CardContent className="p-0 h-full">
+    <iframe
+      src="https://YOUR_EMBED_LINK_HERE"
+      className="w-full h-full border-0"
+      title="Nội dung chính"
+      sandbox="allow-scripts allow-same-origin allow-forms allow-popups"
+    />
+  </CardContent>
+</Card>
+```
+
+---
+
+## 5. CẤU HÌNH GOOGLE APPS SCRIPT ĐỂ EMBED
+
+### Bước 1: Deploy Google Apps Script
+1. Mở Google Apps Script project
+2. Nhấn **Deploy** → **Test deployments** hoặc **New deployment**
+3. Chọn loại **Web app**
+4. Thiết lập:
+   - **Execute as**: Me
+   - **Who has access**: Anyone
+5. Nhấn **Deploy** và copy URL
+
+### Bước 2: Thêm URL vào code
+```typescript
+link: 'https://script.google.com/macros/s/AKfycb.../exec'
+```
+
+### Lưu ý quan trọng:
+- URL phải kết thúc bằng `/exec`
+- Phải có quyền truy cập **Anyone** mới có thể embed
+- Một số Google Apps Script có thể chặn iframe (X-Frame-Options)
+
+---
+
+## 6. TÓM TẮT NHANH
+
+| Tác vụ | Vị trí | Biến cần đổi |
+|--------|--------|--------------|
+| Đổi link menu | `menuItems` | `link: 'URL'` |
+| Đổi tên menu | `menuItems` | `title: 'Tên mới'` |
+| Đổi icon menu | `menuItems` | `icon: <Icon />` |
+| Thêm menu mới | `menuItems` | Thêm object mới vào array |
+| Đổi link nhanh | `quickLinks` | `url: 'URL'` |
+| Đổi iframe chính | Home view | `src="URL"` trong iframe |
+
+---
+
+## 7. VÍ DỤ HOÀN CHỈNH
+
+```typescript
+const menuItems: MenuItem[] = [
+  {
+    id: 'gantt',
+    title: 'Gantt Chart TKB',
+    icon: <Calendar className="w-5 h-5" />,
+    link: 'https://script.google.com/macros/s/AKfycbwBAGPYifJbBpITeTV05H3y7mcf3ysU8KYIA5aRLB41lOfJT03jJU_1qBFKK1rotYkd/exec',
+    description: 'Xem thời khóa biểu dạng Gantt'
+  },
+  {
+    id: 'stats',
+    title: 'Thống kê giờ giảng',
+    icon: <BarChart3 className="w-5 h-5" />,
+    link: '', // Để trống = "Đang cập nhật"
+    description: 'Báo cáo giờ giảng giảng viên'
+  },
+  {
+    id: 'progress',
+    title: 'Báo cáo tiến độ',
+    icon: <FileText className="w-5 h-5" />,
+    link: 'https://script.google.com/macros/s/AKfycby8vKr9lT4nj-EAkBFJxx5WW8GHqRFQM3jG5plty9zzxItwkv9r0X-WZsxr3XPrQxug/exec',
+    description: 'Theo dõi tiến độ công việc'
+  },
+  {
+    id: 'classes',
+    title: 'Tình hình mở lớp',
+    icon: <Users className="w-5 h-5" />,
+    link: 'https://script.google.com/macros/s/AKfycbylUhTwKcdq76gjvf5eKGOioVt3GMcFqnRFGzDNrgRHVIp75CUp15rBAYB0bopUHfKuaQ/exec',
+    description: 'Quản lý tình trạng lớp học'
+  }
+]
+```
+
+---
+
+**Cần hỗ trợ thêm?** Liên hệ quản trị viên hệ thống.

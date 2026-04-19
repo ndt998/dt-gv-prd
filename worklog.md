@@ -143,3 +143,74 @@ Stage Summary:
 - Tạo README-HD Json.txt nếu cần
 - Tạo README-HD Appsscripts.txt nếu cần
 
+---
+Task ID: 4
+Agent: Main Agent
+Task: Redesign với Sidebar + Iframe layout
+
+Work Log:
+- Viết lại hoàn toàn page.tsx với layout mới:
+  - Sidebar bên trái (như phiên bản trước)
+  - Main content area với iframe bên phải
+  - Sidebar có thể thu nhỏ/mở rộng (<< / >>)
+  - Mobile responsive với hamburger menu
+- Sidebar chứa:
+  - Logo PRD
+  - 4 nút điều hướng (Gantt Chart, Thống kê, Báo cáo, Tình hình mở lớp)
+  - Liên kết nhanh (Website trường, Thư viện số)
+  - Theme toggle (Dark/Light mode)
+- Main area hiển thị:
+  - Header bar với tiêu đề và clock
+  - Nếu click menu: hiển thị iframe fullscreen
+  - Nếu trang chủ: hiển thị placeholder + lịch + đồng hồ
+- Tạo file README_Iframe.txt:
+  - Hướng dẫn cấu hình menu items
+  - Hướng dẫn đổi link Google Apps Script
+  - Hướng dẫn thêm icon
+  - Hướng dẫn cấu hình quick links
+  - Hướng dẫn embed Google Apps Script
+- Tạo file README_HDSD_chitiet.txt:
+  - Hướng dẫn tổng quan hệ thống
+  - Cấu trúc thư mục
+  - Chạy dự án local
+  - Build và deploy
+  - Đổi logo chi tiết
+  - Đổi tên hệ thống
+  - Đổi màu sắc
+  - Deploy lên GitHub Pages
+  - Xử lý lỗi thường gặp
+
+Stage Summary:
+- ✅ Layout mới: Sidebar trái + Iframe phải
+- ✅ Sidebar có thể thu nhỏ/mở rộng
+- ✅ Mobile responsive
+- ✅ File README_Iframe.txt đã tạo
+- ✅ File README_HDSD_chitiet.txt đã tạo
+- ✅ Lint passed
+
+## Project Status (Updated - New Layout)
+
+### Current Features
+- ✅ Static Site với Next.js Export
+- ✅ Sidebar điều hướng bên trái (thu nhỏ/mở rộng được)
+- ✅ Iframe bên phải (fullscreen khi chọn menu)
+- ✅ 4 menu items với link Google Apps Script
+- ✅ Liên kết nhanh trong sidebar
+- ✅ Lịch theo tháng
+- ✅ Đồng hồ hh:mm:ss
+- ✅ Dark/Light mode
+- ✅ Mobile responsive
+- ❌ Đã xóa: Authentication, Admin Panel, Charts, Stats, Tables
+
+### Files Created
+- ✅ README_Iframe.txt - Hướng dẫn cấu hình iframe/link
+- ✅ README_HDSD_chitiet.txt - Hướng dẫn sử dụng chi tiết
+
+### Known Issues
+- ⚠️ Google Apps Script có thể chặn iframe tùy cấu hình
+
+### Next Steps
+- User có thể tự cấu hình iframe chính
+- User có thể đổi logo theo hướng dẫn
+- User có thể deploy lên GitHub Pages
+
