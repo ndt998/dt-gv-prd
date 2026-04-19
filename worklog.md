@@ -214,3 +214,78 @@ Stage Summary:
 - User có thể đổi logo theo hướng dẫn
 - User có thể deploy lên GitHub Pages
 
+---
+Task ID: 5
+Agent: Main Agent
+Task: Redesign theo mockup - Iframe khu vực đen + Đồng hồ/Lịch trong Sidebar
+
+Work Log:
+- Viết lại hoàn toàn page.tsx theo đúng mockup:
+  - Sidebar bên trái (xanh ngọc) với:
+    - Logo PRD ở trên
+    - Menu items (Trang chủ + 4 nút Apps Script)
+    - Liên kết nhanh
+    - **Đồng hồ** (nằm trên)
+    - **Lịch** (nằm dưới đồng hồ)
+    - Theme toggle và nút thu gọn
+  - Main content (nền đen):
+    - Iframe chính hiển thị tại đây
+    - Placeholder nếu chưa có link
+  - Footer gọn nhẹ
+- Iframe Overlay effect:
+  - Khi click menu (trừ Trang chủ): Iframe phóng lớn toàn màn hình
+  - Hiệu ứng overlay đè lên tất cả elements
+  - Có nút "Quay lại" và "Làm mới"
+  - Animation fade-in khi mở
+- Cập nhật README_Iframe.txt:
+  - Thêm hướng dẫn cấu hình iframe chính (mainIframeUrl)
+  - Xóa section trùng lặp
+  - Cập nhật numbering
+
+Stage Summary:
+- ✅ Layout đúng theo mockup
+- ✅ Iframe tại khu vực đen (main content)
+- ✅ Đồng hồ + Lịch trong sidebar
+- ✅ Iframe overlay toàn màn hình khi click menu
+- ✅ Animation overlay effect
+- ✅ README_Iframe.txt đã cập nhật
+- ✅ Lint passed
+
+## Project Status (Updated - Final Layout)
+
+### Current Layout
+```
+┌─────────────────────────────────────────────────────┐
+│ SIDEBAR (Xanh ngọc)  │  MAIN CONTENT (Đen)          │
+│ ┌─────────────────┐  │                               │
+│ │ Logo PRD        │  │   IFRAME CHÍNH               │
+│ ├─────────────────┤  │   (hoặc placeholder)         │
+│ │ Trang chủ       │  │                               │
+│ │ Gantt Chart     │  │                               │
+│ │ Thống kê        │  │                               │
+│ │ Báo cáo         │  │                               │
+│ │ Tình hình lớp   │  │                               │
+│ ├─────────────────┤  │                               │
+│ │ Liên kết nhanh  │  │                               │
+│ ├─────────────────┤  │                               │
+│ │ ĐỒNG HỒ         │  │                               │
+│ │ hh:mm:ss        │  │                               │
+│ │ Ngày tháng      │  │                               │
+│ ├─────────────────┤  │                               │
+│ │ LỊCH            │  │                               │
+│ │ (tháng hiện tại)│  │                               │
+│ └─────────────────┘  │                               │
+│ Theme Toggle         │                               │
+└─────────────────────────────────────────────────────┘
+│ FOOTER                                              │
+└─────────────────────────────────────────────────────┘
+```
+
+### Features
+- ✅ Iframe chính tại khu vực đen
+- ✅ Đồng hồ + Lịch trong sidebar
+- ✅ Iframe overlay toàn màn hình khi click menu
+- ✅ Animation fade-in cho overlay
+- ✅ Nút Quay lại + Làm mới
+- ✅ Mobile responsive
+

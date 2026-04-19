@@ -2,7 +2,6 @@
 
 import { useState, useEffect, useCallback } from 'react'
 import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import {
   Calendar,
   BarChart3,
@@ -30,7 +29,6 @@ interface MenuItem {
   title: string
   icon: React.ReactNode
   link: string
-  description: string
 }
 
 const menuItems: MenuItem[] = [
@@ -38,29 +36,25 @@ const menuItems: MenuItem[] = [
     id: 'gantt',
     title: 'Gantt Chart TKB',
     icon: <Calendar className="w-5 h-5" />,
-    link: 'https://script.google.com/macros/s/AKfycbwBAGPYifJbBpITeTV05H3y7mcf3ysU8KYIA5aRLB41lOfJT03jJU_1qBFKK1rotYkd/exec',
-    description: 'Xem thời khóa biểu dạng Gantt'
+    link: 'https://script.google.com/macros/s/AKfycbwBAGPYifJbBpITeTV05H3y7mcf3ysU8KYIA5aRLB41lOfJT03jJU_1qBFKK1rotYkd/exec'
   },
   {
     id: 'stats',
     title: 'Thống kê giờ giảng',
     icon: <BarChart3 className="w-5 h-5" />,
-    link: '', // Đang cập nhật
-    description: 'Báo cáo giờ giảng giảng viên'
+    link: '' // Đang cập nhật
   },
   {
     id: 'progress',
     title: 'Báo cáo tiến độ',
     icon: <FileText className="w-5 h-5" />,
-    link: 'https://script.google.com/macros/s/AKfycby8vKr9lT4nj-EAkBFJxx5WW8GHqRFQM3jG5plty9zzxItwkv9r0X-WZsxr3XPrQxug/exec',
-    description: 'Theo dõi tiến độ công việc'
+    link: 'https://script.google.com/macros/s/AKfycby8vKr9lT4nj-EAkBFJxx5WW8GHqRFQM3jG5plty9zzxItwkv9r0X-WZsxr3XPrQxug/exec'
   },
   {
     id: 'classes',
     title: 'Tình hình mở lớp',
     icon: <Users className="w-5 h-5" />,
-    link: 'https://script.google.com/macros/s/AKfycbylUhTwKcdq76gjvf5eKGOioVt3GMcFqnRFGzDNrgRHVIp75CUp15rBAYB0bopUHfKuaQ/exec',
-    description: 'Quản lý tình trạng lớp học'
+    link: 'https://script.google.com/macros/s/AKfycbylUhTwKcdq76gjvf5eKGOioVt3GMcFqnRFGzDNrgRHVIp75CUp15rBAYB0bopUHfKuaQ/exec'
   }
 ]
 
@@ -79,10 +73,8 @@ const quickLinks = [
 ]
 
 // Calendar helper functions
-const DAYS_IN_WEEK = 7
 const DAY_NAMES = ['CN', 'T2', 'T3', 'T4', 'T5', 'T6', 'T7']
-const MONTH_NAMES = ['Tháng 1', 'Tháng 2', 'Tháng 3', 'Tháng 4', 'Tháng 5', 'Tháng 6', 
-                     'Tháng 7', 'Tháng 8', 'Tháng 9', 'Tháng 10', 'Tháng 11', 'Tháng 12']
+const MONTH_NAMES = ['Th1', 'Th2', 'Th3', 'Th4', 'Th5', 'Th6', 'Th7', 'Th8', 'Th9', 'Th10', 'Th11', 'Th12']
 
 function getDaysInMonth(year: number, month: number) {
   return new Date(year, month + 1, 0).getDate()
@@ -97,10 +89,11 @@ export default function HomePage() {
   const [currentMonth, setCurrentMonth] = useState(new Date())
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false)
   const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false)
-  const [activeItem, setActiveItem] = useState<string | null>(null)
+  const [showIframeOverlay, setShowIframeOverlay] = useState(false)
   const [iframeUrl, setIframeUrl] = useState('')
   const [iframeTitle, setIframeTitle] = useState('')
   const [iframeLoading, setIframeLoading] = useState(false)
+  const [mainIframeUrl] = useState('') // URL cho iframe chính tại khu vực đen
 
   // Update clock every second
   useEffect(() => {
@@ -134,10 +127,10 @@ export default function HomePage() {
       return
     }
     
-    setActiveItem(item.id)
     setIframeUrl(item.link)
     setIframeTitle(item.title)
     setIframeLoading(true)
+    setShowIframeOverlay(true)
     setMobileSidebarOpen(false)
     
     toast.success(`Đang mở ${item.title}`, {
@@ -150,8 +143,8 @@ export default function HomePage() {
     setIframeLoading(false)
   }, [])
 
-  const handleHomeClick = useCallback(() => {
-    setActiveItem(null)
+  const handleCloseOverlay = useCallback(() => {
+    setShowIframeOverlay(false)
     setIframeUrl('')
     setIframeTitle('')
   }, [])
@@ -159,7 +152,6 @@ export default function HomePage() {
   const handleRefreshIframe = useCallback(() => {
     if (iframeUrl) {
       setIframeLoading(true)
-      // Force iframe reload
       const separator = iframeUrl.includes('?') ? '&' : '?'
       setIframeUrl(prev => prev.split('?')[0] + separator + 't=' + Date.now())
       toast.success('Đang làm mới...', {
@@ -178,12 +170,10 @@ export default function HomePage() {
     
     const days = []
     
-    // Empty cells before first day
     for (let i = 0; i < firstDay; i++) {
-      days.push(<div key={`empty-${i}`} className="h-6" />)
+      days.push(<div key={`empty-${i}`} className="h-5 w-5" />)
     }
     
-    // Days of month
     for (let day = 1; day <= daysInMonth; day++) {
       const isToday = 
         today.getDate() === day && 
@@ -194,10 +184,10 @@ export default function HomePage() {
         <div
           key={day}
           className={cn(
-            "h-6 w-6 flex items-center justify-center rounded-full text-xs transition-all cursor-default",
+            "h-5 w-5 flex items-center justify-center rounded-full text-[10px] transition-all",
             isToday 
-              ? "bg-emerald-500 text-white font-bold shadow-md" 
-              : "hover:bg-gray-100 dark:hover:bg-gray-700"
+              ? "bg-white text-emerald-600 font-bold shadow" 
+              : "text-white/80 hover:bg-white/10"
           )}
         >
           {day}
@@ -217,14 +207,14 @@ export default function HomePage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-100 dark:from-gray-950 dark:via-gray-900 dark:to-gray-950 flex flex-col">
+    <div className="min-h-screen bg-gray-900 flex flex-col overflow-hidden">
       {/* Mobile Menu Button */}
       <div className="lg:hidden fixed top-4 left-4 z-50">
         <Button
           variant="outline"
           size="icon"
           onClick={() => setMobileSidebarOpen(!mobileSidebarOpen)}
-          className="bg-white dark:bg-gray-800 shadow-lg"
+          className="bg-emerald-600 border-emerald-500 text-white hover:bg-emerald-700"
         >
           {mobileSidebarOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
         </Button>
@@ -233,311 +223,260 @@ export default function HomePage() {
       {/* Mobile Sidebar Overlay */}
       {mobileSidebarOpen && (
         <div 
-          className="fixed inset-0 bg-black/50 z-40 lg:hidden"
+          className="fixed inset-0 bg-black/70 z-40 lg:hidden"
           onClick={() => setMobileSidebarOpen(false)}
         />
       )}
 
-      {/* Sidebar */}
-      <aside className={cn(
-        "fixed lg:static inset-y-0 left-0 z-50 bg-gradient-to-b from-emerald-600 via-emerald-700 to-teal-800 dark:from-emerald-900 dark:via-emerald-950 dark:to-teal-950 text-white flex flex-col transition-all duration-300 ease-in-out shadow-2xl",
-        mobileSidebarOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0",
-        sidebarCollapsed ? "lg:w-20" : "lg:w-72"
-      )}>
-        {/* Logo Section */}
-        <div className={cn(
-          "flex flex-col items-center border-b border-white/10 transition-all duration-300",
-          sidebarCollapsed ? "p-3" : "p-6"
+      {/* Main Layout: Sidebar + Content */}
+      <div className="flex flex-1 overflow-hidden">
+        {/* Sidebar */}
+        <aside className={cn(
+          "fixed lg:static inset-y-0 left-0 z-50 bg-gradient-to-b from-emerald-600 via-emerald-700 to-teal-800 text-white flex flex-col transition-all duration-300 ease-in-out shadow-2xl overflow-hidden",
+          mobileSidebarOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0",
+          sidebarCollapsed ? "lg:w-20" : "lg:w-72 w-72"
         )}>
-          <div className="relative group">
-            <div className="absolute inset-0 bg-white/20 rounded-full blur-xl animate-pulse" />
-            <div className={cn(
-              "relative bg-white rounded-full shadow-lg flex items-center justify-center overflow-hidden border-4 border-white/30 group-hover:border-white/50 transition-all group-hover:scale-105",
-              sidebarCollapsed ? "w-12 h-12" : "w-24 h-24"
-            )}>
-              <img 
-                src="/prd-logo.png" 
-                alt="Logo PRD" 
-                className="w-full h-full object-cover"
-              />
-            </div>
-          </div>
-          {!sidebarCollapsed && (
-            <>
-              <h1 className="mt-4 text-lg font-bold text-center">Phòng Đào Tạo</h1>
-              <p className="text-emerald-200 text-xs mt-1 text-center">Trường Chính sách công và PTNT</p>
-            </>
-          )}
-        </div>
-
-        {/* Navigation Menu */}
-        <nav className="flex-1 p-3 space-y-2 overflow-y-auto">
-          {/* Home Button */}
-          <button
-            onClick={handleHomeClick}
-            className={cn(
-              "w-full flex items-center gap-3 px-3 py-3 rounded-xl transition-all group",
-              !activeItem 
-                ? "bg-white/20 text-white" 
-                : "hover:bg-white/10 text-emerald-100 hover:text-white"
-            )}
-          >
-            <Home className="w-5 h-5 flex-shrink-0" />
-            {!sidebarCollapsed && (
-              <span className="font-medium">Trang chủ</span>
-            )}
-          </button>
-
+          {/* Logo Section */}
           <div className={cn(
-            "border-t border-white/10",
-            sidebarCollapsed ? "my-2" : "my-3"
-          )} />
+            "flex flex-col items-center border-b border-white/10 transition-all duration-300 flex-shrink-0",
+            sidebarCollapsed ? "p-3" : "p-4"
+          )}>
+            <div className="relative group">
+              <div className="absolute inset-0 bg-white/20 rounded-full blur-xl" />
+              <div className={cn(
+                "relative bg-white rounded-full shadow-lg flex items-center justify-center overflow-hidden border-2 border-white/30 group-hover:border-white/50 transition-all",
+                sidebarCollapsed ? "w-12 h-12" : "w-16 h-16"
+              )}>
+                <img 
+                  src="/prd-logo.png" 
+                  alt="Logo PRD" 
+                  className="w-full h-full object-cover"
+                />
+              </div>
+            </div>
+            {!sidebarCollapsed && (
+              <>
+                <h1 className="mt-2 text-sm font-bold text-center">Phòng Đào Tạo</h1>
+                <p className="text-emerald-200 text-[10px] text-center">Trường CPC & PTNT</p>
+              </>
+            )}
+          </div>
 
-          {/* Menu Items */}
-          {menuItems.map((item) => (
+          {/* Navigation Menu */}
+          <nav className="p-2 space-y-1 overflow-y-auto flex-shrink-0">
+            {/* Home Button */}
             <button
-              key={item.id}
-              onClick={() => handleMenuClick(item)}
+              onClick={() => {
+                setShowIframeOverlay(false)
+                setMobileSidebarOpen(false)
+              }}
               className={cn(
-                "w-full flex items-center gap-3 px-3 py-3 rounded-xl transition-all group",
-                activeItem === item.id 
-                  ? "bg-white/20 text-white shadow-lg" 
+                "w-full flex items-center gap-2 px-3 py-2 rounded-lg transition-all",
+                !showIframeOverlay 
+                  ? "bg-white/20 text-white" 
                   : "hover:bg-white/10 text-emerald-100 hover:text-white"
               )}
             >
-              <div className="flex-shrink-0">
-                {item.icon}
-              </div>
-              {!sidebarCollapsed && (
-                <div className="text-left overflow-hidden">
-                  <p className="font-medium truncate">{item.title}</p>
-                  <p className="text-xs text-emerald-200 truncate">{item.description}</p>
+              <Home className="w-4 h-4 flex-shrink-0" />
+              {!sidebarCollapsed && <span className="text-sm font-medium">Trang chủ</span>}
+            </button>
+
+            {/* Menu Items */}
+            {menuItems.map((item) => (
+              <button
+                key={item.id}
+                onClick={() => handleMenuClick(item)}
+                className="w-full flex items-center gap-2 px-3 py-2 rounded-lg transition-all hover:bg-white/10 text-emerald-100 hover:text-white"
+              >
+                <div className="flex-shrink-0">{item.icon}</div>
+                {!sidebarCollapsed && <span className="text-sm">{item.title}</span>}
+              </button>
+            ))}
+          </nav>
+
+          {/* Quick Links */}
+          {!sidebarCollapsed && (
+            <div className="p-2 border-t border-white/10 flex-shrink-0">
+              <p className="text-[10px] text-emerald-200 mb-1 px-2">Liên kết nhanh</p>
+              {quickLinks.map((link, index) => (
+                <a
+                  key={index}
+                  href={link.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center gap-2 px-3 py-1.5 rounded-lg hover:bg-white/10 transition-all text-emerald-100 hover:text-white text-xs"
+                >
+                  {link.icon}
+                  <span>{link.title}</span>
+                  <ExternalLink className="w-3 h-3 ml-auto" />
+                </a>
+              ))}
+            </div>
+          )}
+
+          {/* Clock Section - Above Calendar */}
+          <div className="flex-shrink-0 border-t border-white/10 p-2">
+            {!sidebarCollapsed && (
+              <div className="bg-white/10 rounded-lg p-2">
+                <div className="flex items-center justify-center gap-1.5 mb-1">
+                  <Clock className="w-3 h-3 text-emerald-200" />
+                  <span className="text-[10px] text-emerald-200">Đồng hồ</span>
                 </div>
+                <div className="text-xl font-bold text-center tabular-nums tracking-wider">
+                  {formatTime(currentTime)}
+                </div>
+                <div className="text-[10px] text-emerald-200 text-center mt-1">
+                  {formatDate(currentTime)}
+                </div>
+              </div>
+            )}
+          </div>
+
+          {/* Calendar Section - Below Clock */}
+          <div className="flex-shrink-0 p-2">
+            {!sidebarCollapsed && (
+              <div className="bg-white/10 rounded-lg p-2">
+                <div className="flex items-center justify-between mb-1">
+                  <span className="text-[10px] font-medium flex items-center gap-1">
+                    <Calendar className="w-3 h-3" />
+                    {MONTH_NAMES[currentMonth.getMonth()]} {currentMonth.getFullYear()}
+                  </span>
+                  <div className="flex gap-0.5">
+                    <button onClick={prevMonth} className="p-0.5 hover:bg-white/10 rounded">
+                      <ChevronLeft className="w-3 h-3" />
+                    </button>
+                    <button onClick={nextMonth} className="p-0.5 hover:bg-white/10 rounded">
+                      <ChevronRight className="w-3 h-3" />
+                    </button>
+                  </div>
+                </div>
+                {/* Day headers */}
+                <div className="grid grid-cols-7 gap-0.5 mb-0.5">
+                  {DAY_NAMES.map((day) => (
+                    <div 
+                      key={day} 
+                      className="h-4 w-5 flex items-center justify-center text-[8px] text-emerald-200"
+                    >
+                      {day}
+                    </div>
+                  ))}
+                </div>
+                {/* Calendar grid */}
+                <div className="grid grid-cols-7 gap-0.5">
+                  {renderCalendar()}
+                </div>
+              </div>
+            )}
+          </div>
+
+          {/* Collapse Button & Theme Toggle */}
+          <div className="mt-auto border-t border-white/10 flex items-center justify-between p-2 flex-shrink-0">
+            <ThemeToggle />
+            <button
+              onClick={() => setSidebarCollapsed(!sidebarCollapsed)}
+              className="hidden lg:flex items-center justify-center p-1.5 hover:bg-white/10 rounded transition-all"
+            >
+              {sidebarCollapsed ? (
+                <ChevronRight className="w-4 h-4" />
+              ) : (
+                <ChevronLeft className="w-4 h-4" />
               )}
             </button>
-          ))}
-        </nav>
-
-        {/* Quick Links */}
-        {!sidebarCollapsed && (
-          <div className="p-3 border-t border-white/10">
-            <p className="text-xs text-emerald-200 mb-2 px-2">Liên kết nhanh</p>
-            {quickLinks.map((link, index) => (
-              <a
-                key={index}
-                href={link.url}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-white/10 transition-all text-emerald-100 hover:text-white text-sm"
-              >
-                {link.icon}
-                <span>{link.title}</span>
-                <ExternalLink className="w-3 h-3 ml-auto" />
-              </a>
-            ))}
           </div>
-        )}
+        </aside>
 
-        {/* Collapse Button - Desktop Only */}
-        <button
-          onClick={() => setSidebarCollapsed(!sidebarCollapsed)}
-          className="hidden lg:flex items-center justify-center p-3 border-t border-white/10 hover:bg-white/10 transition-all"
-        >
-          {sidebarCollapsed ? (
-            <ChevronRight className="w-5 h-5" />
-          ) : (
-            <ChevronLeft className="w-5 h-5" />
-          )}
-        </button>
-
-        {/* Theme Toggle */}
-        <div className="p-3 border-t border-white/10 flex justify-center">
-          <ThemeToggle />
-        </div>
-      </aside>
-
-      {/* Main Content Area */}
-      <main className="flex-1 flex flex-col min-w-0">
-        {/* Top Header Bar */}
-        <header className="bg-white/80 dark:bg-gray-900/80 backdrop-blur-md border-b border-gray-200 dark:border-gray-800 px-4 lg:px-6 py-3">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-4 ml-10 lg:ml-0">
-              {activeItem ? (
-                <div className="flex items-center gap-3">
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={handleHomeClick}
-                    className="gap-2"
-                  >
-                    <ArrowLeft className="w-4 h-4" />
-                    Quay lại
-                  </Button>
-                  <div className="h-6 w-px bg-gray-200 dark:bg-gray-700" />
-                  <h1 className="text-lg font-semibold text-gray-900 dark:text-white">
-                    {iframeTitle}
-                  </h1>
-                </div>
-              ) : (
-                <h1 className="text-lg font-semibold text-gray-900 dark:text-white">
-                  Hệ Thống Phòng Đào Tạo
-                </h1>
-              )}
-            </div>
-
-            {activeItem && (
-              <div className="flex items-center gap-3">
-                {iframeLoading && (
-                  <div className="flex items-center gap-2 text-emerald-600">
-                    <div className="w-4 h-4 border-2 border-emerald-500 border-t-transparent rounded-full animate-spin" />
-                    <span className="text-sm hidden sm:block">Đang mở {iframeTitle}...</span>
-                  </div>
-                )}
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={handleRefreshIframe}
-                  disabled={iframeLoading}
-                  className="gap-2"
-                >
-                  <RefreshCw className={cn("w-4 h-4", iframeLoading && "animate-spin")} />
-                  <span className="hidden sm:block">Làm mới</span>
-                </Button>
-              </div>
-            )}
-
-            {/* Clock Display */}
-            {!activeItem && (
-              <div className="hidden md:flex items-center gap-4">
-                <div className="text-right">
-                  <p className="text-xl font-bold text-gray-900 dark:text-white tabular-nums">
-                    {formatTime(currentTime)}
-                  </p>
-                  <p className="text-xs text-gray-500 dark:text-gray-400">
-                    {formatDate(currentTime)}
-                  </p>
-                </div>
-              </div>
-            )}
-          </div>
-        </header>
-
-        {/* Loading Progress Bar */}
-        {iframeLoading && activeItem && (
-          <div className="h-1 bg-gray-200 dark:bg-gray-700">
-            <div className="h-full bg-gradient-to-r from-emerald-400 to-teal-500 animate-pulse" style={{ width: '60%' }} />
-          </div>
-        )}
-
-        {/* Content Area */}
-        <div className="flex-1 overflow-hidden">
-          {activeItem ? (
-            /* Iframe View - Full Height */
+        {/* Main Content Area - Black background for iframe */}
+        <main className="flex-1 bg-gray-900 relative overflow-hidden">
+          {/* Main Iframe Area */}
+          {mainIframeUrl ? (
             <iframe
-              src={iframeUrl}
+              src={mainIframeUrl}
               className="w-full h-full border-0"
-              onLoad={handleIframeLoad}
-              title={iframeTitle}
+              title="Nội dung chính"
               sandbox="allow-scripts allow-same-origin allow-forms allow-popups"
             />
           ) : (
-            /* Home View */
-            <div className="p-4 lg:p-6 h-full overflow-y-auto">
-              {/* Main Iframe Placeholder */}
-              <Card className="h-[400px] lg:h-[500px] mb-6 shadow-xl border-0 bg-white dark:bg-gray-800 overflow-hidden">
-                <CardContent className="p-0 h-full">
-                  <div className="h-full flex items-center justify-center bg-gradient-to-br from-emerald-50 to-teal-50 dark:from-gray-700 dark:to-gray-600">
-                    <div className="text-center p-8">
-                      <div className="w-20 h-20 mx-auto mb-4 rounded-full bg-gradient-to-br from-emerald-100 to-teal-200 dark:from-emerald-800 dark:to-teal-700 flex items-center justify-center">
-                        <Globe className="w-10 h-10 text-emerald-600 dark:text-emerald-300" />
-                      </div>
-                      <h2 className="text-xl font-bold text-gray-700 dark:text-gray-200 mb-2">
-                        Khu vực hiển thị nội dung
-                      </h2>
-                      <p className="text-gray-500 dark:text-gray-400 text-sm">
-                        Iframe sẽ được cấu hình tại đây
-                      </p>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-
-              {/* Bottom Section: Calendar + Clock */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                {/* Calendar */}
-                <Card className="shadow-lg border-0 bg-white dark:bg-gray-800">
-                  <CardHeader className="pb-2">
-                    <div className="flex items-center justify-between">
-                      <CardTitle className="text-base flex items-center gap-2">
-                        <Calendar className="w-4 h-4 text-emerald-500" />
-                        Lịch
-                      </CardTitle>
-                      <div className="flex items-center gap-1">
-                        <Button variant="ghost" size="icon" className="h-7 w-7" onClick={prevMonth}>
-                          <ChevronLeft className="w-4 h-4" />
-                        </Button>
-                        <Button variant="ghost" size="icon" className="h-7 w-7" onClick={nextMonth}>
-                          <ChevronRight className="w-4 h-4" />
-                        </Button>
-                      </div>
-                    </div>
-                    <p className="text-sm text-gray-500 dark:text-gray-400">
-                      {MONTH_NAMES[currentMonth.getMonth()]} {currentMonth.getFullYear()}
-                    </p>
-                  </CardHeader>
-                  <CardContent>
-                    {/* Day headers */}
-                    <div className="grid grid-cols-7 gap-1 mb-1">
-                      {DAY_NAMES.map((day) => (
-                        <div 
-                          key={day} 
-                          className={cn(
-                            "h-6 w-6 flex items-center justify-center text-xs font-semibold",
-                            day === 'CN' ? "text-red-500" : "text-gray-500 dark:text-gray-400"
-                          )}
-                        >
-                          {day}
-                        </div>
-                      ))}
-                    </div>
-                    {/* Calendar grid */}
-                    <div className="grid grid-cols-7 gap-1">
-                      {renderCalendar()}
-                    </div>
-                  </CardContent>
-                </Card>
-
-                {/* Clock */}
-                <Card className="shadow-lg border-0 bg-gradient-to-br from-emerald-500 to-teal-600 dark:from-emerald-600 dark:to-teal-700 text-white">
-                  <CardContent className="p-6 text-center flex flex-col items-center justify-center">
-                    <div className="flex items-center justify-center gap-2 mb-2">
-                      <Clock className="w-5 h-5" />
-                      <span className="text-sm font-medium text-emerald-100">Đồng hồ</span>
-                    </div>
-                    <div className="text-4xl font-bold tracking-wider tabular-nums mb-2">
-                      {formatTime(currentTime)}
-                    </div>
-                    <div className="text-sm text-emerald-100">
-                      {formatDate(currentTime)}
-                    </div>
-                  </CardContent>
-                </Card>
+            <div className="w-full h-full flex items-center justify-center">
+              <div className="text-center">
+                <div className="w-24 h-24 mx-auto mb-4 rounded-full bg-gray-800 flex items-center justify-center">
+                  <Globe className="w-12 h-12 text-gray-600" />
+                </div>
+                <h2 className="text-xl font-bold text-gray-600 mb-2">
+                  Khu vực hiển thị nội dung
+                </h2>
+                <p className="text-gray-500 text-sm">
+                  Iframe sẽ được cấu hình tại đây
+                </p>
               </div>
             </div>
           )}
+        </main>
+      </div>
+
+      {/* Iframe Overlay - Fullscreen when clicking menu items */}
+      {showIframeOverlay && (
+        <div className="fixed inset-0 z-[100] bg-gray-900 flex flex-col animate-in fade-in duration-200">
+          {/* Top Bar */}
+          <div className="flex items-center justify-between px-4 py-2 bg-emerald-600 text-white shadow-lg flex-shrink-0">
+            <div className="flex items-center gap-3">
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={handleCloseOverlay}
+                className="text-white hover:bg-white/20 gap-2"
+              >
+                <ArrowLeft className="w-4 h-4" />
+                Quay lại
+              </Button>
+              <div className="h-5 w-px bg-white/30" />
+              <h2 className="font-semibold text-sm hidden sm:block">{iframeTitle}</h2>
+            </div>
+            <div className="flex items-center gap-2">
+              {iframeLoading && (
+                <div className="flex items-center gap-2 text-emerald-100">
+                  <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                  <span className="text-sm hidden sm:block">Đang mở {iframeTitle}...</span>
+                </div>
+              )}
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={handleRefreshIframe}
+                className="text-white hover:bg-white/20"
+              >
+                <RefreshCw className={cn("w-4 h-4", iframeLoading && "animate-spin")} />
+              </Button>
+            </div>
+          </div>
+          
+          {/* Loading Progress Bar */}
+          {iframeLoading && (
+            <div className="h-0.5 bg-gray-700">
+              <div className="h-full bg-gradient-to-r from-emerald-400 to-teal-500 animate-pulse" style={{ width: '60%' }} />
+            </div>
+          )}
+          
+          {/* Iframe */}
+          <iframe
+            src={iframeUrl}
+            className="flex-1 w-full border-0"
+            onLoad={handleIframeLoad}
+            title={iframeTitle}
+            sandbox="allow-scripts allow-same-origin allow-forms allow-popups"
+          />
         </div>
-      </main>
+      )}
 
       {/* Footer */}
-      <footer className="bg-white dark:bg-gray-900 border-t border-gray-200 dark:border-gray-800 py-3 px-4">
-        <div className="flex flex-col sm:flex-row items-center justify-between gap-2 text-sm">
+      <footer className="bg-gray-800 border-t border-gray-700 py-2 px-4 flex-shrink-0">
+        <div className="flex flex-col sm:flex-row items-center justify-between gap-1 text-xs">
           <div className="flex items-center gap-2">
-            <div className="w-6 h-6 rounded-full overflow-hidden border border-emerald-500">
+            <div className="w-5 h-5 rounded-full overflow-hidden border border-emerald-500">
               <img src="/prd-logo.png" alt="Logo" className="w-full h-full object-cover" />
             </div>
-            <span className="text-gray-600 dark:text-gray-400">Phòng Đào Tạo</span>
+            <span className="text-gray-400">Phòng Đào Tạo</span>
           </div>
-          <p className="text-gray-500 dark:text-gray-500 text-center">
+          <p className="text-gray-500 text-center">
             © 2026 Phòng Đào Tạo - Trường Chính sách công và PTNT. All rights reserved.
           </p>
         </div>

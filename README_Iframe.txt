@@ -6,7 +6,30 @@ File chính: `src/app/page.tsx`
 
 ---
 
-## 1. CẤU HÌNH CÁC NÚT ĐIỀU HƯỚNG (Sidebar Menu)
+## 1. IFRAME CHÍNH TẠI KHU VỰC TRANG CHỦ (NỀN ĐEN)
+
+### Vị trí trong code:
+Tìm biến `mainIframeUrl` ở đầu component (khoảng dòng 70):
+
+```typescript
+const [mainIframeUrl] = useState('') // URL cho iframe chính tại khu vực đen
+```
+
+### Cách chèn link:
+```typescript
+const [mainIframeUrl] = useState('https://YOUR_LINK_HERE')
+```
+
+### Ví dụ:
+```typescript
+const [mainIframeUrl] = useState('https://script.google.com/macros/s/AKfycb.../exec')
+```
+
+Khi có link, iframe sẽ hiển thị tại khu vực chính (nền đen) trên trang chủ.
+
+---
+
+## 2. CẤU HÌNH CÁC NÚT ĐIỀU HƯỚNG (Sidebar Menu)
 
 ### Vị trí trong code:
 Tìm đoạn code bắt đầu bằng `const menuItems: MenuItem[] = [`
@@ -17,8 +40,7 @@ Tìm đoạn code bắt đầu bằng `const menuItems: MenuItem[] = [`
   id: 'gantt',                    // ID duy nhất (không trùng lặp)
   title: 'Gantt Chart TKB',       // Tiêu đề hiển thị
   icon: <Calendar className="w-5 h-5" />,  // Icon (xem bảng icon bên dưới)
-  link: 'https://YOUR_LINK_HERE', // URL của Google Apps Script
-  description: 'Mô tả ngắn'       // Mô tả hiển thị dưới tiêu đề
+  link: 'https://YOUR_LINK_HERE'  // URL của Google Apps Script
 }
 ```
 
@@ -28,8 +50,7 @@ Tìm đoạn code bắt đầu bằng `const menuItems: MenuItem[] = [`
   id: 'new-report',
   title: 'Báo cáo mới',
   icon: <FileText className="w-5 h-5" />,
-  link: 'https://script.google.com/macros/s/AKfycb.../exec',
-  description: 'Báo cáo tháng mới'
+  link: 'https://script.google.com/macros/s/AKfycb.../exec'
 }
 ```
 
@@ -47,7 +68,7 @@ link: ''
 
 ---
 
-## 2. CÁC ICON KHẢ DỤNG
+## 3. CÁC ICON KHẢ DỤNG
 
 | Icon | Component | Dùng cho |
 |------|-----------|----------|
@@ -75,7 +96,7 @@ icon: <Settings className="w-5 h-5" />
 
 ---
 
-## 3. CẤU HÌNH LIÊN KẾT NHANH (Quick Links)
+## 4. CẤU HÌNH LIÊN KẾT NHANH (Quick Links)
 
 ### Vị trí trong code:
 Tìm đoạn code bắt đầu bằng `const quickLinks = [`
@@ -96,29 +117,6 @@ Tìm đoạn code bắt đầu bằng `const quickLinks = [`
   url: 'https://dangky.prd.edu.vn',
   icon: <ExternalLink className="w-4 h-4" />
 }
-```
-
----
-
-## 4. IFRAME CHÍNH TRÊN TRANG CHỦ
-
-### Vị trí trong code:
-Tìm đoạn code có comment `/* Main Iframe Placeholder */`
-
-### Để chèn link iframe chính:
-Thay thế phần placeholder bằng iframe thực:
-
-```typescript
-<Card className="h-[400px] lg:h-[500px] mb-6 shadow-xl border-0 bg-white dark:bg-gray-800 overflow-hidden">
-  <CardContent className="p-0 h-full">
-    <iframe
-      src="https://YOUR_EMBED_LINK_HERE"
-      className="w-full h-full border-0"
-      title="Nội dung chính"
-      sandbox="allow-scripts allow-same-origin allow-forms allow-popups"
-    />
-  </CardContent>
-</Card>
 ```
 
 ---
@@ -150,46 +148,46 @@ link: 'https://script.google.com/macros/s/AKfycb.../exec'
 
 | Tác vụ | Vị trí | Biến cần đổi |
 |--------|--------|--------------|
+| Iframe chính trang chủ | `mainIframeUrl` | `useState('URL')` |
 | Đổi link menu | `menuItems` | `link: 'URL'` |
 | Đổi tên menu | `menuItems` | `title: 'Tên mới'` |
 | Đổi icon menu | `menuItems` | `icon: <Icon />` |
 | Thêm menu mới | `menuItems` | Thêm object mới vào array |
 | Đổi link nhanh | `quickLinks` | `url: 'URL'` |
-| Đổi iframe chính | Home view | `src="URL"` trong iframe |
 
 ---
 
 ## 7. VÍ DỤ HOÀN CHỈNH
 
 ```typescript
+// Iframe chính tại trang chủ
+const [mainIframeUrl] = useState('https://script.google.com/macros/s/AKfycb.../exec')
+
+// Các nút menu trong sidebar
 const menuItems: MenuItem[] = [
   {
     id: 'gantt',
     title: 'Gantt Chart TKB',
     icon: <Calendar className="w-5 h-5" />,
-    link: 'https://script.google.com/macros/s/AKfycbwBAGPYifJbBpITeTV05H3y7mcf3ysU8KYIA5aRLB41lOfJT03jJU_1qBFKK1rotYkd/exec',
-    description: 'Xem thời khóa biểu dạng Gantt'
+    link: 'https://script.google.com/macros/s/AKfycbwBAGPYifJbBpITeTV05H3y7mcf3ysU8KYIA5aRLB41lOfJT03jJU_1qBFKK1rotYkd/exec'
   },
   {
     id: 'stats',
     title: 'Thống kê giờ giảng',
     icon: <BarChart3 className="w-5 h-5" />,
-    link: '', // Để trống = "Đang cập nhật"
-    description: 'Báo cáo giờ giảng giảng viên'
+    link: '' // Để trống = "Đang cập nhật"
   },
   {
     id: 'progress',
     title: 'Báo cáo tiến độ',
     icon: <FileText className="w-5 h-5" />,
-    link: 'https://script.google.com/macros/s/AKfycby8vKr9lT4nj-EAkBFJxx5WW8GHqRFQM3jG5plty9zzxItwkv9r0X-WZsxr3XPrQxug/exec',
-    description: 'Theo dõi tiến độ công việc'
+    link: 'https://script.google.com/macros/s/AKfycby8vKr9lT4nj-EAkBFJxx5WW8GHqRFQM3jG5plty9zzxItwkv9r0X-WZsxr3XPrQxug/exec'
   },
   {
     id: 'classes',
     title: 'Tình hình mở lớp',
     icon: <Users className="w-5 h-5" />,
-    link: 'https://script.google.com/macros/s/AKfycbylUhTwKcdq76gjvf5eKGOioVt3GMcFqnRFGzDNrgRHVIp75CUp15rBAYB0bopUHfKuaQ/exec',
-    description: 'Quản lý tình trạng lớp học'
+    link: 'https://script.google.com/macros/s/AKfycbylUhTwKcdq76gjvf5eKGOioVt3GMcFqnRFGzDNrgRHVIp75CUp15rBAYB0bopUHfKuaQ/exec'
   }
 ]
 ```
