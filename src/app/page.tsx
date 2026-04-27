@@ -257,7 +257,7 @@ export default function HomePage() {
             {!sidebarCollapsed && (
               <>
                 <h1 className="mt-2 text-sm font-bold text-center">Phòng Đào Tạo</h1>
-                <p className="text-emerald-200 text-[10px] text-center">Trường CPC & PTNT</p>
+                <p className="text-emerald-200 text-[10px] text-center">Trường CSC & PTNT</p>
               </>
             )}
           </div>
