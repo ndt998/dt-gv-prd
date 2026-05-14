@@ -40,7 +40,7 @@ const menuItems: MenuItem[] = [
   },
   {
     id: 'stats',
-    title: 'Thống kê giờ giảng',
+    title: '',
     icon: <BarChart3 className="w-5 h-5" />,
     link: '' // Đang cập nhật
   },
