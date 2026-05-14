@@ -40,13 +40,13 @@ const menuItems: MenuItem[] = [
   },
   {
     id: 'stats',
-    title: '',
+    title: 'Tiến độ tháng 5 - cập nhật 14-5-26',
     icon: <BarChart3 className="w-5 h-5" />,
-    link: '' // Đang cập nhật
+    link: 'https://script.google.com/macros/s/AKfycbw47sz8uPDzlTkxNLdyUMSBgHIs90HlzF9jFCln4RVPuzcLuvQZnbWrq4FWgnLmDxR4XA/exec' // Đang cập nhật
   },
   {
     id: 'progress',
-    title: 'Báo cáo tiến độ',
+    title: 'Báo cáo tiến độ tháng 4',
     icon: <FileText className="w-5 h-5" />,
     link: 'https://script.google.com/macros/s/AKfycby8vKr9lT4nj-EAkBFJxx5WW8GHqRFQM3jG5plty9zzxItwkv9r0X-WZsxr3XPrQxug/exec'
   },
