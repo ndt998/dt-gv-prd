@@ -40,7 +40,7 @@ const menuItems: MenuItem[] = [
   },
   {
     id: 'stats',
-    title: 'Báo cáo tiến độ tháng 5 - 25-5-26,
+    title: 'Báo cáo tiến độ tháng 5 - 25-5-26',
     icon: <BarChart3 className="w-5 h-5" />,
     link: 'https://script.google.com/macros/s/AKfycbw47sz8uPDzlTkxNLdyUMSBgHIs90HlzF9jFCln4RVPuzcLuvQZnbWrq4FWgnLmDxR4XA/exec' // Đang cập nhật
   },
