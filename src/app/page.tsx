@@ -42,19 +42,19 @@ const menuItems: MenuItem[] = [
     id: 'stats',
     title: 'Phân tích chất lượng tiết giảng',
     icon: <BarChart3 className="w-5 h-5" />,
-    link: // Đang cập nhật
+    link: ''// Đang cập nhật
   },
   {
     id: 'progress',
     title: 'Tiến độ biên soạn tài liệu',
     icon: <FileText className="w-5 h-5" />,
-    link: // Đang cập nhật
+    link: ''// Đang cập nhật
   },
   {
     id: 'classes',
     title: 'Tình hình chiêu sinh',
     icon: <Users className="w-5 h-5" />,
-    link: // Đang cập nhật
+    link: ''// Đang cập nhật
   }
 ]
 
