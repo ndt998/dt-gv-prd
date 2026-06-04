@@ -34,27 +34,27 @@ interface MenuItem {
 const menuItems: MenuItem[] = [
   {
     id: 'gantt',
-    title: 'Gantt Chart TKB',
+    title: 'Lịch giảng 2026',
     icon: <Calendar className="w-5 h-5" />,
-    link: 'https://script.google.com/macros/s/AKfycbwBAGPYifJbBpITeTV05H3y7mcf3ysU8KYIA5aRLB41lOfJT03jJU_1qBFKK1rotYkd/exec'
+    link: 'https://script.google.com/macros/s/AKfycbyCdMjvkNB53u-tQnbg6YS-RhWYbKyWtSU12cFYtgdtSdvYZ-CGe-4ISoAXiKCAD1m3Ig/exec'
   },
   {
     id: 'stats',
-    title: 'Báo cáo tiến độ tháng 5 - 25-5-26',
+    title: 'Đánh giá chất lượng giờ giảng',
     icon: <BarChart3 className="w-5 h-5" />,
-    link: 'https://script.google.com/macros/s/AKfycbw47sz8uPDzlTkxNLdyUMSBgHIs90HlzF9jFCln4RVPuzcLuvQZnbWrq4FWgnLmDxR4XA/exec' // Đang cập nhật
+    link: ' // Đang cập nhật
   },
   {
     id: 'progress',
-    title: 'Báo cáo tiến độ tháng 4',
+    title: 'Tiến độ biên soạn tài liệu',
     icon: <FileText className="w-5 h-5" />,
-    link: 'https://script.google.com/macros/s/AKfycby8vKr9lT4nj-EAkBFJxx5WW8GHqRFQM3jG5plty9zzxItwkv9r0X-WZsxr3XPrQxug/exec'
+    link: ' // Đang cập nhật
   },
   {
     id: 'classes',
-    title: 'Tình hình mở lớp',
+    title: 'Tình hình chiêu sinh',
     icon: <Users className="w-5 h-5" />,
-    link: 'https://script.google.com/macros/s/AKfycbz5JLmTGuuN_aiu69yu7Kn3BPK4hFvrBECaJ3dzr-xqnNf90HofOFFKuEKR9Fz8f4dQ/exec'
+    link: ' // Đang cập nhật
   }
 ]
 
@@ -93,7 +93,7 @@ export default function HomePage() {
   const [iframeUrl, setIframeUrl] = useState('')
   const [iframeTitle, setIframeTitle] = useState('')
   const [iframeLoading, setIframeLoading] = useState(false)
-  const [mainIframeUrl] = useState('https://ambitious-teller-887.notion.site/ebd//d142ba55ef544385b8eb718c11dd40b3') // URL cho iframe chính tại khu vực đen
+  const [mainIframeUrl] = useState() // URL cho iframe chính tại khu vực đen
 
   // Update clock every second
   useEffect(() => {
