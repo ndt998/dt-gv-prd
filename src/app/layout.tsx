@@ -15,8 +15,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Hệ Thống Đào tạo - Giảng viên",
-  description: "Hệ thống cập nhật lịch giảng.",
+  title: "Hệ Thống Phòng Đào Tạo - PRD",
+  description: "Hệ thống cập nhật tự động các công việc Phòng Đào tạo. Quản lý thời khóa biểu, thống kê giờ giảng, báo cáo tiến độ và tình hình mở lớp.",
   keywords: ["Phòng Đào Tạo", "PRD", "Thời khóa biểu", "Quản lý đào tạo", "Giờ giảng", "Báo cáo"],
   authors: [{ name: "Phòng Đào Tạo" }],
   icons: {
@@ -24,7 +24,7 @@ export const metadata: Metadata = {
   },
   openGraph: {
     title: "Hệ Thống Phòng Đào Tạo - PRD",
-    description: "Hệ thống cập nhật lịch giảng tự động",
+    description: "Hệ thống cập nhật tự động các công việc Phòng Đào tạo",
     type: "website",
   },
 };
