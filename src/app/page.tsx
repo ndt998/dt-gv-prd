@@ -40,21 +40,21 @@ const menuItems: MenuItem[] = [
   },
   {
     id: 'stats',
-    title: 'Đánh giá chất lượng tiết giảng',
+    title: 'Phân tích chất lượng tiết giảng',
     icon: <BarChart3 className="w-5 h-5" />,
-    link: ' // Đang cập nhật
+    link: // Đang cập nhật
   },
   {
     id: 'progress',
     title: 'Tiến độ biên soạn tài liệu',
     icon: <FileText className="w-5 h-5" />,
-    link: ' // Đang cập nhật
+    link: // Đang cập nhật
   },
   {
     id: 'classes',
     title: 'Tình hình chiêu sinh',
     icon: <Users className="w-5 h-5" />,
-    link: ' // Đang cập nhật
+    link: // Đang cập nhật
   }
 ]
 
@@ -93,7 +93,7 @@ export default function HomePage() {
   const [iframeUrl, setIframeUrl] = useState('')
   const [iframeTitle, setIframeTitle] = useState('')
   const [iframeLoading, setIframeLoading] = useState(false)
-  const [mainIframeUrl] = useState() // URL cho iframe chính tại khu vực đen
+  const [mainIframeUrl] = useState('https://ambitious-teller-887.notion.site/ebd//d142ba55ef544385b8eb718c11dd40b3') // URL cho iframe chính tại khu vực đen
 
   // Update clock every second
   useEffect(() => {
