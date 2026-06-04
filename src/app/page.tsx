@@ -93,7 +93,7 @@ export default function HomePage() {
   const [iframeUrl, setIframeUrl] = useState('')
   const [iframeTitle, setIframeTitle] = useState('')
   const [iframeLoading, setIframeLoading] = useState(false)
-  const [mainIframeUrl] = useState('https://ambitious-teller-887.notion.site/ebd//d142ba55ef544385b8eb718c11dd40b3') // URL cho iframe chính tại khu vực đen
+  const [mainIframeUrl] = useState('https://drive.google.com/file/d/1YI00QQTzX7Wz1mOwumscmUZCgi7ZJMbU/view?usp=sharing') // URL cho iframe chính tại khu vực đen
 
   // Update clock every second
   useEffect(() => {
