@@ -40,7 +40,7 @@ const menuItems: MenuItem[] = [
   },
   {
     id: 'stats',
-    title: 'Đánh giá chất lượng giờ giảng',
+    title: 'Đánh giá chất lượng tiết giảng',
     icon: <BarChart3 className="w-5 h-5" />,
     link: ' // Đang cập nhật
   },
