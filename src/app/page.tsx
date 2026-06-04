@@ -93,7 +93,7 @@ export default function HomePage() {
   const [iframeUrl, setIframeUrl] = useState('')
   const [iframeTitle, setIframeTitle] = useState('')
   const [iframeLoading, setIframeLoading] = useState(false)
-  const [mainIframeUrl] = useState('') // URL cho iframe chính tại khu vực đen
+  const [mainIframeUrl] = useState('http://localhost:8501/') // URL cho iframe chính tại khu vực đen
 
   // Update clock every second
   useEffect(() => {
