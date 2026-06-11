@@ -42,7 +42,7 @@ const menuItems: MenuItem[] = [
     id: 'stats',
     title: 'Phân tích chất lượng tiết giảng',
     icon: <BarChart3 className="w-5 h-5" />,
-    link: ''// Đang cập nhật
+    link: 'https://script.google.com/macros/s/AKfycbygJvuJ0PJkmEan5QJPcyD56oIBff-mfRYCB4Xg-n3KPAIcZ9QyGofN9y0x2k2EVA3p/exec'// Đang cập nhật
   },
   {
     id: 'progress',
@@ -93,7 +93,7 @@ export default function HomePage() {
   const [iframeUrl, setIframeUrl] = useState('')
   const [iframeTitle, setIframeTitle] = useState('')
   const [iframeLoading, setIframeLoading] = useState(false)
-  const [mainIframeUrl] = useState('http://localhost:8501/') // URL cho iframe chính tại khu vực đen
+  const [mainIframeUrl] = useState('https://script.google.com/macros/s/AKfycbyvv0UKhzEmCgO1k6I7762yDGL5RpSam9b6xPqyyRqpF2IhjB8_bJTXBvYkuHhb5nFz/exec') // URL cho iframe chính tại khu vực đen
 
   // Update clock every second
   useEffect(() => {
