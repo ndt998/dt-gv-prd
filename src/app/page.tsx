@@ -54,7 +54,7 @@ const menuItems: MenuItem[] = [
     id: 'classes',
     title: 'Tình hình chiêu sinh',
     icon: <Users className="w-5 h-5" />,
-    link: ''// Đang cập nhật
+    link: 'https://script.google.com/macros/s/AKfycbyvv0UKhzEmCgO1k6I7762yDGL5RpSam9b6xPqyyRqpF2IhjB8_bJTXBvYkuHhb5nFz/exec' // Đang cập nhật
   }
 ]
 
