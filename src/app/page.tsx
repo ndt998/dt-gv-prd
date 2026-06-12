@@ -42,7 +42,7 @@ const menuItems: MenuItem[] = [
     id: 'stats',
     title: 'Phân tích chất lượng tiết giảng',
     icon: <BarChart3 className="w-5 h-5" />,
-    link: 'https://script.google.com/macros/s/AKfycbygJvuJ0PJkmEan5QJPcyD56oIBff-mfRYCB4Xg-n3KPAIcZ9QyGofN9y0x2k2EVA3p/exec'// Đang cập nhật
+    link: 'https://script.google.com/macros/s/AKfycbwgEATIeK--zMY8UswuZO2G7it4OJ6gHE-6gR_0nMGQt87cpwya78kSRvGH1ubrzbs4/exec'// Đang cập nhật
   },
   {
     id: 'progress',
