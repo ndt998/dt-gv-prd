@@ -93,7 +93,7 @@ export default function HomePage() {
   const [iframeUrl, setIframeUrl] = useState('')
   const [iframeTitle, setIframeTitle] = useState('')
   const [iframeLoading, setIframeLoading] = useState(false)
-  const [mainIframeUrl] = useState('https://script.google.com/macros/s/AKfycbyvv0UKhzEmCgO1k6I7762yDGL5RpSam9b6xPqyyRqpF2IhjB8_bJTXBvYkuHhb5nFz/exec') // URL cho iframe chính tại khu vực đen
+  const [mainIframeUrl] = useState('https://script.google.com/macros/s/AKfycbz5JLmTGuuN_aiu69yu7Kn3BPK4hFvrBECaJ3dzr-xqnNf90HofOFFKuEKR9Fz8f4dQ/exec') // URL cho iframe chính tại khu vực đen
 
   // Update clock every second
   useEffect(() => {
