@@ -36,7 +36,7 @@ const menuItems: MenuItem[] = [
     id: 'gantt',
     title: 'Lịch giảng 2026',
     icon: <Calendar className="w-5 h-5" />,
-    link: 'https://script.google.com/macros/s/AKfycbyCdMjvkNB53u-tQnbg6YS-RhWYbKyWtSU12cFYtgdtSdvYZ-CGe-4ISoAXiKCAD1m3Ig/exec'
+    link: 'https://script.google.com/macros/s/AKfycbw9l7RE1E7Id2NHopXXn7cLhqKr9Sol-sLbb6jyhJKHSMarl_1vTX8CW8XKJI7p4zf_/exec'
   },
   {
     id: 'stats',
@@ -93,7 +93,7 @@ export default function HomePage() {
   const [iframeUrl, setIframeUrl] = useState('')
   const [iframeTitle, setIframeTitle] = useState('')
   const [iframeLoading, setIframeLoading] = useState(false)
-  const [mainIframeUrl] = useState('https://script.google.com/macros/s/AKfycbz5JLmTGuuN_aiu69yu7Kn3BPK4hFvrBECaJ3dzr-xqnNf90HofOFFKuEKR9Fz8f4dQ/exec') // URL cho iframe chính tại khu vực đen
+  const [mainIframeUrl] = useState('https://script.google.com/macros/s/AKfycbw8r9e7-TVajkuKsEWgz7sinN2lrtn1HWjDZV1-sDcFiGuNB1aZnIbCbV0dHPcQVX9jWg/exec') // URL cho iframe chính tại khu vực đen
 
   // Update clock every second
   useEffect(() => {
