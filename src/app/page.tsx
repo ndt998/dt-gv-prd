@@ -67,7 +67,7 @@ const quickLinks = [
   },
   {
     title: 'Thư viện số',
-    url: 'https://drive.google.com/drive/folders/13uW92umKil18ncS3m8JkF4iGEyXT-4mw?usp=sharing',
+    url: 'https://drive.google.com/drive/folders/1qrGwu2juOlOztcHGihHLv72pgwdAny8d?usp=drive_link',
     icon: <FolderOpen className="w-4 h-4" />
   }
 ]
