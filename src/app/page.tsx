@@ -52,9 +52,9 @@ const menuItems: MenuItem[] = [
   },
   {
     id: 'classes',
-    title: 'Tình hình chiêu sinh',
+    title: 'Tổng quan chiêu sinh 6 tháng đầu năm',
     icon: <Users className="w-5 h-5" />,
-    link: '' // Đang cập nhật https://script.google.com/macros/s/AKfycbyvv0UKhzEmCgO1k6I7762yDGL5RpSam9b6xPqyyRqpF2IhjB8_bJTXBvYkuHhb5nFz/exec
+    link: 'https://script.google.com/a/macros/dma.edu.vn/s/AKfycbyXSZhAKNoCPkcVqkm3Dm2-Zpt8f0pLSZOOInS1wuepVw0lb-wKeQFr4YwsAs3fgfJyiw/exec' // Đang cập nhật https://script.google.com/macros/s/AKfycbyvv0UKhzEmCgO1k6I7762yDGL5RpSam9b6xPqyyRqpF2IhjB8_bJTXBvYkuHhb5nFz/exec
   }
 ]
 
