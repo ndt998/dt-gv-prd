@@ -48,7 +48,7 @@ const menuItems: MenuItem[] = [
     id: 'progress',
     title: 'Phân tích năng lực giảng dạy GV',
     icon: <FileText className="w-5 h-5" />,
-    link: ''// Đang cập nhật
+    link: 'https://script.google.com/a/macros/dma.edu.vn/s/AKfycby1ZnSKX0o--i2q3tMWq5-e_piVUDQEn_BmGrVp6NjNXeBZOxsIjLFFJdVNnwmYjP7H/exec'// Đang cập nhật
   },
   {
     id: 'classes',
