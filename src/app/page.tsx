@@ -52,9 +52,9 @@ const menuItems: MenuItem[] = [
   },
   {
     id: 'classes',
-    title: '6 tháng đầu năm',
+    title: 'Tình hình mở lớp',
     icon: <Users className="w-5 h-5" />,
-    link: 'https://script.google.com/a/macros/dma.edu.vn/s/AKfycbyXSZhAKNoCPkcVqkm3Dm2-Zpt8f0pLSZOOInS1wuepVw0lb-wKeQFr4YwsAs3fgfJyiw/exec' // Đang cập nhật https://script.google.com/macros/s/AKfycbyvv0UKhzEmCgO1k6I7762yDGL5RpSam9b6xPqyyRqpF2IhjB8_bJTXBvYkuHhb5nFz/exec
+    link: 'https://script.google.com/macros/s/AKfycbw8r9e7-TVajkuKsEWgz7sinN2lrtn1HWjDZV1-sDcFiGuNB1aZnIbCbV0dHPcQVX9jWg/exec' // Đang cập nhật https://script.google.com/macros/s/AKfycbyvv0UKhzEmCgO1k6I7762yDGL5RpSam9b6xPqyyRqpF2IhjB8_bJTXBvYkuHhb5nFz/exec
   }
 ]
 
@@ -93,7 +93,7 @@ export default function HomePage() {
   const [iframeUrl, setIframeUrl] = useState('')
   const [iframeTitle, setIframeTitle] = useState('')
   const [iframeLoading, setIframeLoading] = useState(false)
-  const [mainIframeUrl] = useState('https://script.google.com/macros/s/AKfycbw8r9e7-TVajkuKsEWgz7sinN2lrtn1HWjDZV1-sDcFiGuNB1aZnIbCbV0dHPcQVX9jWg/exec') // URL cho iframe chính tại khu vực đen
+  const [mainIframeUrl] = useState('www.prd.edu.vn') // URL cho iframe chính tại khu vực đen
 
   // Update clock every second
   useEffect(() => {
