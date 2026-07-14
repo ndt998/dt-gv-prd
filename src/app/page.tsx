@@ -93,7 +93,7 @@ export default function HomePage() {
   const [iframeUrl, setIframeUrl] = useState('')
   const [iframeTitle, setIframeTitle] = useState('')
   const [iframeLoading, setIframeLoading] = useState(false)
-  const [mainIframeUrl] = useState('www.prd.edu.vn') // URL cho iframe chính tại khu vực đen
+  const [mainIframeUrl] = useState('https://script.google.com/a/macros/dma.edu.vn/s/AKfycbxdcSSbDfjz2WBZDBMqDqNMMVHVPkspjm11zuzo_fdbuXcBLaJ7D6K7gbW0mHQ-PILH/exec') // URL cho iframe chính tại khu vực đen
 
   // Update clock every second
   useEffect(() => {
