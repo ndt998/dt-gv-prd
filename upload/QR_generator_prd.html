@@ -839,6 +839,28 @@
       previewFileName.textContent = getSafeFileName(contentInput.value);
     }
 
+    // Logo chính thức của Phòng Đào Tạo (public/prd-logo.png) - cùng thư mục với file này
+    var LOGO_SRC = 'prd-logo.png';
+    var brandLogoImg = null;   // Ảnh logo đã tải thành công
+    var logoLoadAttempted = false;
+
+    function loadBrandLogo(onReady) {
+      if (logoLoadAttempted) {
+        if (onReady && brandLogoImg) onReady();
+        return;
+      }
+      logoLoadAttempted = true;
+      var img = new Image();
+      img.onload = function () {
+        brandLogoImg = img;
+        if (onReady) onReady();
+      };
+      img.onerror = function () {
+        console.warn('Không tải được logo ' + LOGO_SRC + '. Chuyển sang vẽ chữ PRD thay thế.');
+      };
+      img.src = LOGO_SRC;
+    }
+
     function drawCenterLogo(ctx, cx, cy, size) {
       // Tỷ lệ vàng logo: 15% kích thước mã (an toàn 100% trong ngưỡng 30% sửa lỗi Level H)
       var logoSize = Math.round(size * 0.15);
@@ -846,7 +868,7 @@
       var padding = Math.max(3, Math.round(size * 0.015)); // Đệm trắng cách ly pixel QR
 
       ctx.save();
-      
+
       // 1. Vùng đệm trắng tròn tuyệt đối
       ctx.beginPath();
       ctx.arc(cx, cy, r + padding, 0, Math.PI * 2);
@@ -858,32 +880,44 @@
       ctx.strokeStyle = '#E0E8DC';
       ctx.stroke();
 
-      // 2. Mặt nạ tròn bên trong
-      ctx.beginPath();
-      ctx.arc(cx, cy, r, 0, Math.PI * 2);
-      ctx.closePath();
-      ctx.clip();
+      if (brandLogoImg) {
+        // 2a. Vẽ logo PRD chính thức, cắt tròn (điền kín vùng tròn, giữ tỷ lệ)
+        ctx.beginPath();
+        ctx.arc(cx, cy, r, 0, Math.PI * 2);
+        ctx.closePath();
+        ctx.clip();
 
-      // Gradient nền xanh thảo mộc PRD
-      var grad = ctx.createLinearGradient(cx - r, cy - r, cx + r, cy + r);
-      grad.addColorStop(0, '#154129');
-      grad.addColorStop(1, '#276842');
-      ctx.fillStyle = grad;
-      ctx.fillRect(cx - r, cy - r, logoSize, logoSize);
+        var iw = brandLogoImg.naturalWidth || brandLogoImg.width;
+        var ih = brandLogoImg.naturalHeight || brandLogoImg.height;
+        var scale = Math.max((2 * r) / iw, (2 * r) / ih); // cover
+        var dw = iw * scale;
+        var dh = ih * scale;
+        ctx.drawImage(brandLogoImg, cx - dw / 2, cy - dh / 2, dw, dh);
+      } else {
+        // 2b. Phương án dự phòng: gradient xanh + chữ PRD (khi chưa tải được ảnh logo)
+        ctx.beginPath();
+        ctx.arc(cx, cy, r, 0, Math.PI * 2);
+        ctx.closePath();
+        ctx.clip();
 
-      // Vòng tròn trang trí mảnh
-      ctx.beginPath();
-      ctx.arc(cx, cy, r * 0.88, 0, Math.PI * 2);
-      ctx.strokeStyle = 'rgba(255, 255, 255, 0.45)';
-      ctx.lineWidth = Math.max(1.2, Math.round(size * 0.0025));
-      ctx.stroke();
+        var grad = ctx.createLinearGradient(cx - r, cy - r, cx + r, cy + r);
+        grad.addColorStop(0, '#154129');
+        grad.addColorStop(1, '#276842');
+        ctx.fillStyle = grad;
+        ctx.fillRect(cx - r, cy - r, logoSize, logoSize);
 
-      // Chữ PRD thương hiệu
-      ctx.fillStyle = '#FFFFFF';
-      ctx.textAlign = 'center';
-      ctx.textBaseline = 'middle';
-      ctx.font = 'bold ' + Math.round(r * 0.92) + 'px "Segoe UI", Roboto, Arial, sans-serif';
-      ctx.fillText('PRD', cx, cy + Math.round(r * 0.02));
+        ctx.beginPath();
+        ctx.arc(cx, cy, r * 0.88, 0, Math.PI * 2);
+        ctx.strokeStyle = 'rgba(255, 255, 255, 0.45)';
+        ctx.lineWidth = Math.max(1.2, Math.round(size * 0.0025));
+        ctx.stroke();
+
+        ctx.fillStyle = '#FFFFFF';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.font = 'bold ' + Math.round(r * 0.92) + 'px "Segoe UI", Roboto, Arial, sans-serif';
+        ctx.fillText('PRD', cx, cy + Math.round(r * 0.02));
+      }
 
       ctx.restore();
     }
@@ -1012,6 +1046,11 @@
     urlInput.addEventListener('input', updatePreview);
     contentInput.addEventListener('input', updateFileNamePreview);
 
+    // Tải logo thương hiệu trước khi vẽ để QR đầu tiên đã có logo thật;
+    // nếu ảnh logo về trễ, chủ động vẽ lại một lần.
+    loadBrandLogo(function () {
+      updatePreview();
+    });
     updatePreview();
   })();
   </script>

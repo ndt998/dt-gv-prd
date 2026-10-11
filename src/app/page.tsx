@@ -17,7 +17,8 @@ import {
   RefreshCw,
   X,
   Home,
-  Menu
+  Menu,
+  QrCode
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { ThemeToggle } from '@/components/theme-toggle'
@@ -69,6 +70,12 @@ const quickLinks = [
     title: 'Thư viện số',
     url: 'https://drive.google.com/drive/folders/1qrGwu2juOlOztcHGihHLv72pgwdAny8d?usp=drive_link',
     icon: <FolderOpen className="w-4 h-4" />
+  },
+  {
+    title: 'PRD QRcode',
+    url: '/prd-qrcode.html',
+    icon: <QrCode className="w-4 h-4" />,
+    openInIframe: true // Mở bộ công cụ trong iframe overlay thay vì tab mới
   }
 ]
 
@@ -153,7 +160,8 @@ export default function HomePage() {
     if (iframeUrl) {
       setIframeLoading(true)
       const separator = iframeUrl.includes('?') ? '&' : '?'
-      setIframeUrl(prev => prev.split('?')[0] + separator + 't=' + Date.now())
+      // Giữ nguyên path tương đối (vd: /prd-qrcode.html), chỉ thêm tham số chống cache
+      setIframeUrl(prev => prev.split(/[?#]/)[0] + separator + 't=' + Date.now())
       toast.success('Đang làm mới...', {
         icon: <RefreshCw className="w-4 h-4" />,
       })
@@ -299,17 +307,31 @@ export default function HomePage() {
             <div className="p-2 border-t border-white/10 flex-shrink-0">
               <p className="text-[10px] text-emerald-200 mb-1 px-2">Liên kết nhanh</p>
               {quickLinks.map((link, index) => (
-                <a
-                  key={index}
-                  href={link.url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex items-center gap-2 px-3 py-1.5 rounded-lg hover:bg-white/10 transition-all text-emerald-100 hover:text-white text-xs"
-                >
-                  {link.icon}
-                  <span>{link.title}</span>
-                  <ExternalLink className="w-3 h-3 ml-auto" />
-                </a>
+                link.openInIframe ? (
+                  <button
+                    key={index}
+                    onClick={() => {
+                      handleMenuClick({ id: `quick-${index}`, title: link.title, icon: link.icon, link: link.url })
+                    }}
+                    className="w-full flex items-center gap-2 px-3 py-1.5 rounded-lg hover:bg-white/10 transition-all text-emerald-100 hover:text-white text-xs text-left"
+                  >
+                    {link.icon}
+                    <span>{link.title}</span>
+                    <QrCode className="w-3 h-3 ml-auto" />
+                  </button>
+                ) : (
+                  <a
+                    key={index}
+                    href={link.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center gap-2 px-3 py-1.5 rounded-lg hover:bg-white/10 transition-all text-emerald-100 hover:text-white text-xs"
+                  >
+                    {link.icon}
+                    <span>{link.title}</span>
+                    <ExternalLink className="w-3 h-3 ml-auto" />
+                  </a>
+                )
               ))}
             </div>
           )}
