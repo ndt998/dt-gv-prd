@@ -1,0 +1,67 @@
+================================================================================
+LOG CHUNG — QWEN / QCODER
+File này dùng để ghi lại mọi thao tác của AI assistant (Qwen) khi làm việc
+trong dự án "Đào tạo - GV PRD". Sau này nếu anh/chị dùng qcoder tiếp, các
+buổi làm việc mới sẽ được BỔ SUNG LIÊN TIẾP vào cuối file này (mới nhất ở dưới).
+================================================================================
+
+--------------------------------------------------------------------------------
+BUỔI 01 — Ngày 11/10/2026 | Công cụ: Qwen (AI code assistant)
+Nhiệm vụ: Chèn logo PRD thật vào bộ công cụ QR + thêm "PRD QRcode" vào Liên kết nhanh
+--------------------------------------------------------------------------------
+
+I. TÓM TẮT BỘ SẢN PHẨM (trạng thái sau buổi làm việc)
+   Bộ công cụ "PRD QRcode" là 1 trang HTML độc lập (self-contained), gồm:
+   1. Ô nhập link/text -> sinh mã QR realtime (thư viện qrcode.js qua CDN).
+   2. Tùy chọn: màu nền/màu QR, margins, mức sửa lỗi ECC (L/M/Q/H), kích thước.
+   3. LOGO GIỮA QR: đã dùng ẢNH THẬT public/prd-logo.png (trước đây chỉ vẽ chữ
+      "PRD" giả lập). Logo được cắt tròn, căn tâm, tự scale theo kích thước QR;
+      nếu ảnh lỗi vẫn fallback về chữ PRD cũ.
+   4. Xuất file: tải PNG (512px & 1024px hi-res), tải SVG (logo nhúng base64),
+      copy nội dung link.
+   5. Giao diện: dark theme, brand color xanh ngọc đồng bộ hệ thống PRD.
+   Vị trí triển khai:
+     - Bản nguồn : upload/QR_generator_prd.html (+ upload/prd-logo.png)
+     - Bản deploy: public/prd-qrcode.html (static export -> /prd-qrcode.html)
+     - Cổng vào  : Trang chủ > sidebar trái > "Liên kết nhanh" > mục thứ 3
+                   "PRD QRcode" (dưới "Thư viện số") -> click mở IFRAME overlay
+                   toàn màn hình, có nút Quay lại / Làm mới.
+
+II. CÁC THAY ĐỔI CỤ THỂ
+   [upload/QR_generator_prd.html] (SỬA)
+     + Thêm loadBrandLogo(): new Image(), onload render lại preview, onerror fallback.
+     + Viết lại drawCenterLogo(): vẽ cover + arc + clip (cắt tròn) + drawImage ảnh
+       logo thật, size ~19% canvas (14% khi margins=none), cap theo module QR.
+   [upload/prd-logo.png] (MỚI) — copy từ public/prd-logo.png để chạy độc lập.
+   [public/prd-qrcode.html] (MỚI) — bản sao đã sửa, phục vụ qua static export.
+   [src/app/page.tsx] (SỬA)
+     + Import icon QrCode (lucide-react).
+     + QuickLinkItem thêm cờ openInIframe?: boolean.
+     + quickLinks thêm { name:"PRD QRcode", url:"/prd-qrcode.html", icon:QrCode,
+       color:"text-cyan-400", openInIframe:true } ngay sau "Thư viện số".
+     + handleQuickLinkClick: openInIframe=true -> handleMenuClick (iframe overlay);
+       ngược lại mở tab mới như cũ.
+     + handleRefreshIframe: hỗ trợ URL tương đối bắt đầu bằng "/" nối ?_r=timestamp.
+
+III. KIỂM CHỨNG ĐÃ CHẠY
+   - Kiểm tra cấu trúc JS trong HTML sau sửa: PASS (hàm/logo tham chiếu đủ).
+   - Mock jsdom + fake canvas/Image, chạy generateQR(): vòng render cuối là
+     drawImage('prd-logo.png') căn giữa tâm — PASS.
+   - npm run build (Next static export): PASS.
+   - npx serve out + curl: /prd-qrcode.html = 200, /prd-logo.png = 200,
+     index.html chứa "PRD QRcode" — PASS.
+   - Git commit (branch main):
+       1) "Add PRD brand logo to QR generator tool (replace drawn PRD text)"
+       2) "Add PRD QRcode quick link opening tool in iframe overlay"
+
+IV. GHI CHÚ CHO BUỔI SAU (qcoder / cộng tác viên)
+   - File nguồn và bản deploy HIỆN GIỐNG NHAU; sửa xong phải đồng bộ cả hai:
+       cp upload/QR_generator_prd.html public/prd-qrcode.html
+   - Trang chủ là static export, không backend; công cụ nhúng iframe phải nằm
+     trong public/ và tự chứa (CDN ngoài cần internet người dùng).
+   - Chi tiết đầy đủ buổi này xem thêm: log.txt.
+
+>>> QUY ƯỚC GHI LOG: mỗi buổi làm việc mới, thêm một khối
+    "BUỔI XX — ngày | công cụ | nhiệm vụ" vào CUỐI file này, gồm:
+    yêu cầu, thay đổi (file + mô tả), kiểm chứng, ghi chú cho buổi sau.
+================================================================================
