@@ -1,0 +1,92 @@
+================================================================================
+NHẬT KÝ CÔNG VIỆC (LOG) — PRD QRcode: CHÈN LOGO & TÍCH HỢP VÀO LIÊN KẾT NHANH
+Ngày thực hiện: 11/10/2026
+Người thực hiện: AI code assistant
+================================================================================
+
+--------------------------------------------------------------------------------
+1. BỐI CẢNH / YÊU CẦU
+--------------------------------------------------------------------------------
+- Đội dev trước đã xây bộ công cụ tạo mã QR nội bộ tại: upload/QR_generator_prd.html
+  + Công cụ: nhập link/text -> sinh QR (qrcode.js CDN), chọn màu/margins/ECC/kích
+    thước, tải ảnh PNG/SVG, copy link...
+  + Vấn đề tồn tại: phần "chèn logo giữa QR" chỉ VẼ CHỮ "PRD" bằng canvas
+    (gradient xanh + text), KHÔNG dùng file logo thật.
+- Yêu cầu của anh/chị:
+  (1) Chèn logo đúng vào bộ công cụ, logo chuẩn tại: public/prd-logo.png
+  (2) Bổ sung bộ công cụ vào mục "Liên kết nhanh" trên trang chủ, VỊ TRÍ: phía
+      dưới "Thư viện số", đặt tên "PRD QRcode", click mở trong IFRAME.
+
+--------------------------------------------------------------------------------
+2. CHI TIẾT ĐÃ LÀM
+--------------------------------------------------------------------------------
+
+[A] SỬA FILE upload/QR_generator_prd.html (chèn logo thật)
+   - Copy logo vào cạnh file: cp public/prd-logo.png upload/prd-logo.png
+     (để chạy độc lập vẫn thấy logo; tham chiếu tương đối "prd-logo.png").
+   - Thêm biến toàn cục `brandLogo` + hàm loadBrandLogo():
+     + new Image(); onload -> render lại preview ngay khi logo tải xong để QR
+       đầu tiên đã có logo; onerror -> fallback về chữ PRD cũ.
+   - Viết lại drawCenterLogo(logoCanvas):
+     + Nếu brandLogo đã sẵn sàng: tính kích thước = ~19% canvas (margins mặc
+       định) hoặc 14% (margins="none"), giới hạn tối đa theo module QR; vẽ COVER
+       (cắt tròn vừa khung) bằng ctx.save() + arc + clip() + drawImage(), giữ
+       nguyên tỷ lệ ảnh gốc, căn đúng tâm QR.
+     + Nếu chưa có ảnh: giữ nguyên logic cũ (vòng tròn gradient + chữ "PRD")
+       làm phương án dự phòng.
+   - Kết quả: QR hiển thị và QR tải về (PNG 512/1024px, SVG nhúng base64) đều
+     mang logo PRD thật. Ảnh logo gốc 1024x1024 nên xuất hi-res vẫn nét.
+
+[B] TÍCH HỢP VÀO TRANG CHỦ src/app/page.tsx (Liên kết nhanh -> PRD QRcode)
+   - Copy bản đã sửa thành public/prd-qrcode.html (Next.js static export sẽ
+     phục vụ tại đường dẫn /prd-qrcode.html; logo tham chiếu prd-logo.png cùng
+     thư mục public/ -> hoạt động cả khi mở độc lập lẫn trong iframe).
+   - Import thêm icon QrCode từ lucide-react.
+   - Mở rộng kiểu QuickLinkItem: thêm cờ tùy chọn openInIframe?: boolean.
+   - Thêm phần tử mới vào mảng quickLinks, NGAY SAU "Thư viện số":
+     { name: "PRD QRcode", url: "/prd-qrcode.html", icon: QrCode,
+       color: "text-cyan-400", openInIframe: true }
+   - Sửa handleQuickLinkClick: nếu openInIframe === true -> gọi handleMenuClick
+     (mở iframe overlay toàn màn hình, có thanh top "Quay lại" / "Làm mới"),
+     ngược lại mở tab mới như các link cũ.
+   - Sửa handleRefreshIframe: nhận biết URL tương đối bắt đầu bằng "/" để nối
+     tham số chống cache đúng cách (?_r=timestamp) — tránh lỗi Invalid URL với
+     link nội bộ /prd-qrcode.html.
+
+[C] KIỂM CHỨNG (không đoán, đều chạy thật)
+   - Kiểm tra cấu trúc HTML sau sửa: các hàm loadBrandLogo/drawCenterLogo/
+     createPrdLogoPlaceholder/canvas.arc/canvas.clip/drawImage tồn tại; chuỗi
+     "prd-logo.png" xuất hiện 3 lần; tag <script> đóng đủ.
+   - Build mock môi trường jsdom giả lập browser (canvas 2D context + Image):
+     chạy generateQR() -> capture lệnh canvas -> PASS: vòng render cuối là
+     drawImage('prd-logo.png') căn giữa tâm (230±34.5 px trên canvas 460px),
+     không còn vẽ chữ PRD.
+   - npm run build (Next.js static export): PASS.
+   - npx serve out + curl: /prd-qrcode.html HTTP 200, /prd-logo.png HTTP 200;
+     index.html chứa chuỗi "PRD QRcode".
+   - Git: commit 2 lần trên branch main:
+     + "Add PRD brand logo to QR generator tool (replace drawn PRD text)"
+     + "Add PRD QRcode quick link opening tool in iframe overlay"
+
+--------------------------------------------------------------------------------
+3. DANH SÁCH FILE THAY ĐỔI
+--------------------------------------------------------------------------------
+   M (sửa)   upload/QR_generator_prd.html ......... chèn logic logo thật
+   A (mới)  upload/prd-logo.png .................. copy logo cạnh công cụ
+   A (mới)  public/prd-qrcode.html ............... bản deploy của công cụ (đã sửa)
+   M (sửa)  src/app/page.tsx ..................... quick link "PRD QRcode" + xử lý
+                                                  mở iframe + refresh URL tương đối
+   A (mới)  log.txt .............................. file nhật ký này
+
+--------------------------------------------------------------------------------
+4. LƯU Ý CHO LẦN SAU
+--------------------------------------------------------------------------------
+   - File nguồn upload/QR_generator_prd.html và bản deploy public/prd-qrcode.html
+     hiện GIỐNG HỆT NHAU. Nếu sửa tiếp công cụ, cần đồng bộ cả hai (hoặc gộp về
+     một nơi dùng chung — có thể hỏi anh/chị nếu muốn gọn hóa).
+   - Trang chủ là static export, không có backend; mọi "công cụ" nhúng qua
+     iframe phải nằm trong public/ và tự chứa (CDN bên ngoài như qrcode.js ở đây
+     yêu cầu máy người dùng có internet).
+   - Các tài liệu readme-hdsd.txt / README_HDSD_chitiet.txt mô tả trang admin
+     là tàn dư giai đoạn cũ, không còn trong code hiện tại.
+================================================================================
