@@ -415,7 +415,7 @@ export default function HomePage() {
               src={mainIframeUrl}
               className="w-full h-full border-0"
               title="Nội dung chính"
-              sandbox="allow-scripts allow-same-origin allow-forms allow-popups"
+              sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-downloads"
             />
           ) : (
             <div className="w-full h-full flex items-center justify-center">
@@ -484,7 +484,7 @@ export default function HomePage() {
             className="flex-1 w-full border-0"
             onLoad={handleIframeLoad}
             title={iframeTitle}
-            sandbox="allow-scripts allow-same-origin allow-forms allow-popups"
+            sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-downloads"
           />
         </div>
       )}
