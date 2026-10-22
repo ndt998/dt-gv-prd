@@ -37,7 +37,7 @@ const menuItems: MenuItem[] = [
     id: 'gantt',
     title: 'Lịch giảng 2026',
     icon: <Calendar className="w-5 h-5" />,
-    link: 'https://script.google.com/macros/s/AKfycbw9l7RE1E7Id2NHopXXn7cLhqKr9Sol-sLbb6jyhJKHSMarl_1vTX8CW8XKJI7p4zf_/exec'
+    link: 'https://script.google.com/macros/s/AKfycbztbysEDHX4Rbg6tCqys9vhW5GNS3FQW5TnBOOG0H3od4oRzEe2Op9RA3R2vcCQQn83/exec'
   },
   {
     id: 'stats',
