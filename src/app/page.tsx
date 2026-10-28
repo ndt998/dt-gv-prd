@@ -52,6 +52,12 @@ const menuItems: MenuItem[] = [
     link: 'https://script.google.com/macros/s/AKfycby1ZnSKX0o--i2q3tMWq5-e_piVUDQEn_BmGrVp6NjNXeBZOxsIjLFFJdVNnwmYjP7H/exec'// Đang cập nhật
   },
   {
+    id: 'cumulative-hours',
+    title: 'Lũy kế giờ giảng',
+    icon: <Clock className="w-5 h-5" />,
+    link: 'https://script.google.com/a/macros/dma.edu.vn/s/AKfycbyfU_APxdoW3vMos82e3Js4koReJO3A65jylvjdbU3oc_bV5_Yc0BcjLgfj01MTxupa/exec'
+  },
+  {
     id: 'classes',
     title: 'Tình hình mở lớp',
     icon: <Users className="w-5 h-5" />,
