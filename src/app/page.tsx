@@ -55,7 +55,7 @@ const menuItems: MenuItem[] = [
     id: 'cumulative-hours',
     title: 'Lũy kế giờ giảng',
     icon: <Clock className="w-5 h-5" />,
-    link: 'https://script.google.com/a/macros/dma.edu.vn/s/AKfycbyfU_APxdoW3vMos82e3Js4koReJO3A65jylvjdbU3oc_bV5_Yc0BcjLgfj01MTxupa/exec'
+    link: ''
   },
   {
     id: 'classes',
